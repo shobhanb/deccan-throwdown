@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button slot="start" menu="main-menu"></ion-menu-button>
+    <ion-title>Home</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (appInstallService.showInstallButton()) {
+  <div class="install-button-container">
+    <ion-button
+      expand="full"
+      color="medium"
+      (click)="appInstallService.showInstallModal()"
+      class="install-button"
+    >
+      <span class="install-button-text">Install this app on your device</span>
+    </ion-button>
+    <ion-button color="medium" (click)="appInstallService.dontShowAgain()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </div>
+  }
+  <ion-card>
+    <img src="assets/logo/dt_logo_1024.jpg" alt="Deccan Throwdown Logo" />
+    <ion-card-header>
+      <ion-card-title>Teams 2025</ion-card-title>
+      <ion-card-subtitle>Deccan Throwdown</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Welcome!</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

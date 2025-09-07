@@ -1,0 +1,72 @@
+@if (authService.user()) {
+<ion-button shape="round" fill="outline" (click)="openModal()">
+  {{ authService.userNameInitials() }}
+</ion-button>
+<ion-modal
+  [isOpen]="isModalOpen"
+  (didDismiss)="isModalOpen = false"
+  [breakpoints]="[0, 0.25, 0.5, 0.75]"
+  [initialBreakpoint]="0.75"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>My Info</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="onClickCancel()">Cancel</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list [inset]="true">
+        <ion-list-header>
+          <ion-label>
+            {{ authService.user()?.displayName }}
+          </ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-label>
+            {{ authService.user()?.email }}
+          </ion-label>
+        </ion-item>
+
+        @if (authService.userCustomClaims()?.admin) {
+        <ion-item>
+          <ion-label color="danger">Admin</ion-label>
+        </ion-item>
+        }
+      </ion-list>
+      @if (! authService.user()?.emailVerified) {
+      <ion-list [inset]="true">
+        <ion-list-header>
+          <ion-label>Email not verified</ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-note>(Check your spam folder)</ion-note>
+        </ion-item>
+
+        <ion-item>
+          <ion-button fill="outline" (click)="onClickRefresh()"
+            >Refresh Status</ion-button
+          >
+          <ion-button
+            slot="end"
+            fill="outline"
+            color="danger"
+            (click)="onClickResendVerificationEmail()"
+            >Resend verification email</ion-button
+          >
+        </ion-item>
+      </ion-list>
+      }
+      <ion-button expand="block" class="ion-margin" (click)="onClickSignOut()"
+        >Sign Out</ion-button
+      >
+    </ion-content>
+  </ng-template>
+</ion-modal>
+} @else {
+<ion-button shape="round" routerLink="/auth/login">
+  <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+</ion-button>
+}

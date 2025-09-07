@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Teams</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Teams Management</ion-card-title>
+      <ion-card-subtitle>{{ eventData()?.event_name }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>Edit or create teams</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  @if (dataLoaded()) { @for (category of teamsCategoriesData(); track category)
+  {
+  <div class="section-title">
+    {{ category[0] + ' (' + category[1].length + ')' }}
+  </div>
+  <ion-list [inset]="true">
+    @for (team of category[1]; track team.id) {
+    <ion-item routerLink="/admin/teams/{{ team.id }}">
+      <ion-label>{{ team.team_name }}</ion-label>
+      <ion-note slot="end">{{ getAthleteNames(team.athletes) }}</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+
+  <!-- FAB button for adding new events -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addTeam()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

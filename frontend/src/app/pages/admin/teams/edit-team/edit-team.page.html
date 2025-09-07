@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/teams"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditing() ? "Edit Team" : "Create Team" }}</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (dataLoaded()) {
+
+  <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+    <ion-list [inset]="true">
+      @if (isEditing()) {
+      <ion-item>
+        <ion-label>{{ editTeam()?.event_short_name}}</ion-label>
+      </ion-item>
+      }
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Team Name"
+          labelPlacement="stacked"
+          formControlName="team_name"
+          placeholder="Enter team name"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select
+          label="Category"
+          labelPlacement="stacked"
+          formControlName="category"
+          placeholder="Select category"
+          interface="popover"
+        >
+          @for (category of categories; track category) {
+          <ion-select-option [value]="category"
+            >{{ category }}</ion-select-option
+          >
+          }
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-checkbox formControlName="paid">Payment Received</ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-checkbox formControlName="verified">Team Verified</ion-checkbox>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      class="ion-margin"
+      type="submit"
+      [disabled]="!teamFormValid()"
+      >{{ isEditing() ? "Update Team" : "Create Team" }}</ion-button
+    >
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="ion-margin"
+      type="button"
+      (click)="onCancel()"
+      >Cancel</ion-button
+    >
+  </form>
+
+  @if (isEditing()) {
+  <div class="section-title">
+    Athletes ({{ athletes().length }}/{{ athletesPerTeam }})
+  </div>
+  <ion-list [inset]="true">
+    @for (item of athleteIndexes; track $index) { @if (athletes()[item]) {
+    <ion-item
+      routerLink="/admin/athletes/edit-athlete/{{ athletes()[item].id }}"
+      [replaceUrl]="true"
+    >
+      <ion-label
+        >{{ athletes()[item].first_name + ' ' + athletes()[item].last_name }}
+      </ion-label>
+      <ion-note slot="end">{{ athletes()[item].sex }}</ion-note>
+    </ion-item>
+    } @else {
+    <ion-item
+      routerLink="/admin/athletes/create-athlete/{{ editTeam()?.id }}"
+      [replaceUrl]="true"
+    >
+      <ion-label>Add athlete</ion-label>
+    </ion-item>
+    } }
+  </ion-list>
+
+  @if (isEditing()) {
+  <ion-button
+    expand="block"
+    class="ion-margin"
+    type="button"
+    color="danger"
+    (click)="onDelete()"
+    >Delete Team</ion-button
+  >
+  } } } @else {
+  <!-- Loading skeleton for edit page -->
+  <ion-card>
+    <ion-card-header>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 200px; height: 24px"
+      ></ion-skeleton-text>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 300px; height: 16px"
+      ></ion-skeleton-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list [inset]="true">
+    @for (item of [1, 2, 3, 4]; track $index) {
+    <ion-item>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-skeleton-text
+    [animated]="true"
+    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"
+  ></ion-skeleton-text>
+  <ion-skeleton-text
+    [animated]="true"
+    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"
+  ></ion-skeleton-text>
+  }
+</ion-content>

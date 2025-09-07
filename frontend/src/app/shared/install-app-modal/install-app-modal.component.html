@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Install this app</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="installation-container ion-padding">
+    <ion-icon name="arrow-down-circle-outline" class="install-icon"></ion-icon>
+    <h3>
+      {{ "Install this app on your " + platformType + " device" }}
+    </h3>
+  </div>
+  @if (platformType === 'ios') {
+  <ion-list [inset]="true" lines="none">
+    <ion-item color="light">
+      <ion-note slot="start">1</ion-note>
+      <ion-label
+        >Tap the <ion-icon name="share-outline"></ion-icon> share button in your
+        browser</ion-label
+      >
+    </ion-item>
+    <ion-item color="light">
+      <ion-note slot="start">2</ion-note>
+      <ion-label>Select "Add to Home Screen" from the menu options</ion-label>
+    </ion-item>
+
+    <ion-item color="light">
+      <ion-note slot="start">3</ion-note>
+      <ion-label>PR?</ion-label>
+    </ion-item>
+  </ion-list>
+  } @else {
+  <ion-list [inset]="true" lines="none">
+    <ion-item color="light">
+      <ion-note slot="start">1</ion-note>
+      <ion-label
+        >Tap the <ion-icon name="ellipsis-vertical-outline"></ion-icon> button
+        in your browser</ion-label
+      >
+    </ion-item>
+    <ion-item color="light">
+      <ion-note slot="start">2</ion-note>
+      <ion-label>Select "Add to Home Screen" from the menu options</ion-label>
+    </ion-item>
+    <ion-item color="light">
+      <ion-note slot="start">3</ion-note>
+      <ion-label>Select "Install"</ion-label>
+    </ion-item>
+
+    <ion-item color="light">
+      <ion-note slot="start">4</ion-note>
+      <ion-label>PR?</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <ion-button
+    expand="block"
+    fill="clear"
+    class="ion-padding-horizontal"
+    (click)="closeModal()"
+    >Close</ion-button
+  >
+</ion-content>

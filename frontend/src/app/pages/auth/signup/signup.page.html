@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sign up</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-margin">
+    <h1>CFGames Community Cup</h1>
+    <h4>Sign up as a new user</h4>
+    <ion-button type="button" fill="clear" routerLink="/auth/login"
+      >Already have an account? Login!</ion-button
+    >
+  </div>
+
+  @if (showAssignAthleteForm() ) {
+
+  <form
+    [formGroup]="assignAthleteForm"
+    (ngSubmit)="onSubmitAssignAthleteForm()"
+  >
+    <ion-list [inset]="true">
+      <ion-item (click)="openAthleteSelectModal()">
+        <ion-label>Name</ion-label>
+        <ion-label slot="end"
+          >{{ selectedAthleteName() || 'Click to select'}}</ion-label
+        >
+      </ion-item>
+      @if (athleteCrossfitIds().length > 1) {
+      <ion-item>
+        <ion-select
+          label="CF ID"
+          placeholder="Click"
+          interface="popover"
+          [value]="selectedCrossfitId()"
+          (ionChange)="onAthleteCrossfitIdChange($event)"
+        >
+          @for (item of athleteCrossfitIds(); track $index) {
+          <ion-select-option [value]="item">{{ item }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      } @else if (athleteCrossfitIds().length === 1) {
+      <ion-item>
+        <ion-label>CF ID</ion-label>
+        <ion-label slot="end">{{ athleteCrossfitIds()[0] }}</ion-label>
+      </ion-item>
+      }
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      class="ion-margin-horizontal"
+      [disabled]="!assignAthleteFormValid()"
+      >That's me!</ion-button
+    >
+
+    <ion-button
+      expand="block"
+      type="button"
+      color="medium"
+      routerLink="/"
+      routerDirection="root"
+      class="ion-margin-horizontal"
+      >Cancel</ion-button
+    >
+  </form>
+
+  } @else {
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Signing up as</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label>{{ selectedAthleteName() }}</ion-label>
+      <ion-note>{{ 'CF ID: ' + selectedCrossfitId() }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{ selectedAffiliateName }}</ion-label>
+      <ion-note>{{ selectedAffiliateId }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-button fill="clear" (click)="onClickNotYou()">Not you?</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignupForm()">
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          type="email"
+          label="Email"
+          labelPlacement="stacked"
+          placeholder="froning@crossfit.com"
+          formControlName="email"
+          [required]="true"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="password"
+          label="Password"
+          labelPlacement="stacked"
+          placeholder="burpees4LYFE"
+          formControlName="password"
+          minlength="6"
+          errorText="Min 6 chars"
+          [required]="true"
+        >
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+      </ion-item>
+    </ion-list>
+
+    <br />
+    <ion-button expand="block" type="submit" class="ion-margin-top"
+      >Sign Up</ion-button
+    >
+
+    <ion-button
+      expand="block"
+      type="button"
+      color="medium"
+      routerLink="/"
+      routerDirection="root"
+      class="ion-margin-top"
+      >Cancel</ion-button
+    >
+  </form>
+  }
+</ion-content>
