@@ -6,7 +6,7 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
-from .models import Scores
+from .models import Score
 from .schemas import ScoresCreateModel, ScoresOutputModel, ScoresUpdateModel
 
 scores_router = APIRouter(prefix="/scores", tags=["scores"])
@@ -21,14 +21,14 @@ async def get_scores(
     db_session: db_dependency,
     team_id: UUID | None = None,
     wod_id: UUID | None = None,
-) -> Sequence[Scores]:
+) -> Sequence[Score]:
     filters = {}
     if team_id:
         filters["team_id"] = team_id
     if wod_id:
         filters["wod_id"] = wod_id
 
-    return await Scores.find_all(
+    return await Score.find_all(
         async_session=db_session,
         **filters,
     )
@@ -42,8 +42,8 @@ async def get_scores(
 async def get_score(
     db_session: db_dependency,
     score_id: UUID,
-) -> Scores:
-    return await Scores.find_or_raise(async_session=db_session, id=score_id)
+) -> Score:
+    return await Score.find_or_raise(async_session=db_session, id=score_id)
 
 
 @scores_router.post(
@@ -54,8 +54,8 @@ async def get_score(
 async def create_score(
     db_session: db_dependency,
     score: ScoresCreateModel,
-) -> Scores:
-    score_exists = await Scores.find(
+) -> Score:
+    score_exists = await Score.find(
         async_session=db_session,
         team_id=score.team_id,
         wod_id=score.wod_id,
@@ -63,7 +63,7 @@ async def create_score(
     if score_exists:
         raise conflict_exception()
 
-    new_score = Scores(
+    new_score = Score(
         reps=score.reps,
         time_s=score.time_s,
         tiebreak_s=score.tiebreak_s,
@@ -86,8 +86,8 @@ async def update_score(
     db_session: db_dependency,
     score_id: UUID,
     update_data: ScoresUpdateModel,
-) -> Scores:
-    score = await Scores.find_or_raise(async_session=db_session, id=score_id)
+) -> Score:
+    score = await Score.find_or_raise(async_session=db_session, id=score_id)
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -108,5 +108,5 @@ async def delete_score(
     db_session: db_dependency,
     score_id: UUID,
 ) -> None:
-    score = await Scores.find_or_raise(async_session=db_session, id=score_id)
+    score = await Score.find_or_raise(async_session=db_session, id=score_id)
     await score.delete(async_session=db_session)

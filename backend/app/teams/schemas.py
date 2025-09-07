@@ -9,7 +9,7 @@ class TeamsBaseModel(CustomBaseModel):
     team_name: str
     paid: bool
     verified: bool
-    event_id: UUID
+    event_short_name: str
 
 
 class TeamsModel(CustomBaseModel):
@@ -18,11 +18,11 @@ class TeamsModel(CustomBaseModel):
     team_name: str
     paid: bool
     verified: bool
-    event_id: UUID
+    event_short_name: str
 
 
 class TeamsOutputModel(TeamsModel):
-    athletes: list[AthleteOutputModel]
+    pass
 
 
 class TeamsCreateModel(CustomBaseModel):
@@ -30,7 +30,7 @@ class TeamsCreateModel(CustomBaseModel):
     team_name: str
     paid: bool = False
     verified: bool = False
-    event_id: UUID
+    event_short_name: str
 
 
 class TeamsUpdateModel(CustomBaseModel):
@@ -38,4 +38,8 @@ class TeamsUpdateModel(CustomBaseModel):
     team_name: str | None = None
     paid: bool | None = None
     verified: bool | None = None
-    event_id: UUID | None = None
+    event_short_name: str | None = None
+
+
+class TeamsOutputDetailModel(TeamsOutputModel):
+    athletes: list[AthleteOutputModel]

@@ -12,6 +12,7 @@ from app.database.base import Base
 from app.database.core import session_manager
 from app.events.views import events_router
 from app.firebase_auth.views import firebase_auth_router
+from app.scores.views import scores_router
 from app.settings import env_settings, url_settings
 from app.teams.views import teams_router
 from app.wods.views import wods_router
@@ -46,6 +47,7 @@ app.include_router(athletes_router)
 app.include_router(events_router)
 app.include_router(teams_router)
 app.include_router(wods_router)
+app.include_router(scores_router)
 
 
 app.add_middleware(

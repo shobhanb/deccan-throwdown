@@ -6,8 +6,8 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
-from .models import Teams
-from .schemas import TeamsCreateModel, TeamsOutputModel, TeamsUpdateModel
+from .models import Team
+from .schemas import TeamsCreateModel, TeamsOutputDetailModel, TeamsOutputModel, TeamsUpdateModel
 
 teams_router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -19,13 +19,25 @@ teams_router = APIRouter(prefix="/teams", tags=["teams"])
 )
 async def get_teams(
     db_session: db_dependency,
-    event_id: UUID,
-) -> Sequence[Teams]:
-    return await Teams.find_all(
+    event_short_name: str,
+) -> Sequence[Team]:
+    return await Team.find_all(
         async_session=db_session,
-        select_relationships=[Teams.athletes],  # ✅ Add this line
-        event_id=event_id,
+        select_relationships=[Team.athletes],  # ✅ Add this line
+        event_short_name=event_short_name,
     )
+
+
+@teams_router.get(
+    "/{team_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=TeamsOutputDetailModel,
+)
+async def get_team_info(
+    db_session: db_dependency,
+    team_id: UUID,
+) -> Team:
+    return await Team.find_or_raise(async_session=db_session, id=team_id, select_relationships=[Team.athletes])
 
 
 @teams_router.post(
@@ -36,21 +48,21 @@ async def get_teams(
 async def create_team(
     db_session: db_dependency,
     team: TeamsCreateModel,
-) -> Teams:
-    team_exists = await Teams.find(
+) -> Team:
+    team_exists = await Team.find(
         async_session=db_session,
         team_name=team.team_name,
-        event_id=team.event_id,
+        event_short_name=team.event_short_name,
     )
     if team_exists:
         raise conflict_exception()
 
-    new_team = Teams(
+    new_team = Team(
         category=team.category,
         team_name=team.team_name,
         paid=team.paid,
         verified=team.verified,
-        event_id=team.event_id,
+        event_short_name=team.event_short_name,
     )
     db_session.add(new_team)
     await db_session.commit()
@@ -67,8 +79,8 @@ async def update_team(
     db_session: db_dependency,
     team_id: UUID,
     update_data: TeamsUpdateModel,
-) -> Teams:
-    team = await Teams.find_or_raise(async_session=db_session, id=team_id)
+) -> Team:
+    team = await Team.find_or_raise(async_session=db_session, id=team_id)
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -89,5 +101,11 @@ async def delete_team(
     db_session: db_dependency,
     team_id: UUID,
 ) -> None:
-    team = await Teams.find_or_raise(async_session=db_session, id=team_id)
+    team = await Team.find_or_raise(
+        async_session=db_session,
+        select_relationships=[Team.scores],
+        id=team_id,
+    )
+    if len(team.scores) > 0:
+        raise conflict_exception(detail="Cannot delete team with associated scores.")
     await team.delete(async_session=db_session)

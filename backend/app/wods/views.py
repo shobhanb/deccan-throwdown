@@ -6,7 +6,7 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
-from .models import Wods
+from .models import Wod
 from .schemas import WodsCreateModel, WodsOutputModel, WodsUpdateModel
 
 wods_router = APIRouter(prefix="/wods", tags=["wods"])
@@ -19,15 +19,15 @@ wods_router = APIRouter(prefix="/wods", tags=["wods"])
 )
 async def get_wods(
     db_session: db_dependency,
-    event_id: UUID,
+    event_short_name: str,
     wod_number: int | None = None,
-) -> Sequence[Wods]:
+) -> Sequence[Wod]:
     filters = {}
-    filters["event_id"] = event_id
+    filters["event_short_name"] = event_short_name
     if wod_number:
         filters["wod_number"] = wod_number
 
-    return await Wods.find_all(
+    return await Wod.find_all(
         async_session=db_session,
         **filters,
     )
@@ -41,8 +41,8 @@ async def get_wods(
 async def get_wod(
     db_session: db_dependency,
     wod_id: UUID,
-) -> Wods:
-    return await Wods.find_or_raise(async_session=db_session, id=wod_id)
+) -> Wod:
+    return await Wod.find_or_raise(async_session=db_session, id=wod_id)
 
 
 @wods_router.post(
@@ -53,21 +53,21 @@ async def get_wod(
 async def create_wod(
     db_session: db_dependency,
     wod: WodsCreateModel,
-) -> Wods:
-    wod_exists = await Wods.find(
+) -> Wod:
+    wod_exists = await Wod.find(
         async_session=db_session,
         wod_number=wod.wod_number,
-        event_id=wod.event_id,
+        event_short_name=wod.event_short_name,
     )
     if wod_exists:
         raise conflict_exception()
 
-    new_wod = Wods(
+    new_wod = Wod(
         wod_number=wod.wod_number,
         wod_name=wod.wod_name,
         wod_score_type=wod.wod_score_type,
         wod_description=wod.wod_description,
-        event_id=wod.event_id,
+        event_short_name=wod.event_short_name,
     )
     db_session.add(new_wod)
     await db_session.commit()
@@ -84,8 +84,8 @@ async def update_wod(
     db_session: db_dependency,
     wod_id: UUID,
     update_data: WodsUpdateModel,
-) -> Wods:
-    wod = await Wods.find_or_raise(async_session=db_session, id=wod_id)
+) -> Wod:
+    wod = await Wod.find_or_raise(async_session=db_session, id=wod_id)
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -106,5 +106,5 @@ async def delete_wod(
     db_session: db_dependency,
     wod_id: UUID,
 ) -> None:
-    wod = await Wods.find_or_raise(async_session=db_session, id=wod_id)
+    wod = await Wod.find_or_raise(async_session=db_session, id=wod_id)
     await wod.delete(async_session=db_session)

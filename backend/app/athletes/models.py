@@ -9,15 +9,17 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 if TYPE_CHECKING:
-    from app.teams.models import Teams
+    from app.teams.models import Team
 
 
-class Athletes(Base):
-    name: Mapped[str] = mapped_column(String)
+class Athlete(Base):
+    first_name: Mapped[str] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String)
+    sex: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String)
     waiver: Mapped[bool] = mapped_column(Boolean, default=False)
     gym: Mapped[str | None] = mapped_column(String, nullable=True)
     city: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    team_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("teams.id"))
-    team: Mapped[Teams] = relationship(back_populates="athletes")
+    team_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("team.id"))
+    team: Mapped[Team] = relationship(back_populates="athletes")

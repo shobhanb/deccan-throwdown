@@ -4,8 +4,10 @@ from app.schemas import CustomBaseModel
 
 
 class AthleteBaseModel(CustomBaseModel):
-    name: str
-    email: str | None = None
+    first_name: str
+    last_name: str
+    email: str
+    sex: str
     waiver: bool
     gym: str | None = None
     city: str | None = None
@@ -14,8 +16,10 @@ class AthleteBaseModel(CustomBaseModel):
 
 class AthleteModel(CustomBaseModel):
     id: UUID
-    name: str
+    first_name: str
+    last_name: str
     email: str
+    sex: str
     waiver: bool
     gym: str | None = None
     city: str | None = None
@@ -27,8 +31,10 @@ class AthleteOutputModel(AthleteModel):
 
 
 class AthleteCreateModel(CustomBaseModel):
-    name: str
+    first_name: str
+    last_name: str
     email: str
+    sex: str
     waiver: bool = False
     gym: str | None = None
     city: str | None = None
@@ -36,8 +42,10 @@ class AthleteCreateModel(CustomBaseModel):
 
 
 class AthleteUpdateModel(CustomBaseModel):
-    name: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
     email: str | None = None
+    sex: str | None = None
     waiver: bool | None = None
     gym: str | None = None
     city: str | None = None

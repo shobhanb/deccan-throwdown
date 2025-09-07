@@ -5,7 +5,7 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
-from .models import Athletes
+from .models import Athlete
 from .schemas import AthleteCreateModel, AthleteOutputModel, AthleteUpdateModel
 
 athletes_router = APIRouter(prefix="/athletes", tags=["athletes"])
@@ -19,8 +19,8 @@ athletes_router = APIRouter(prefix="/athletes", tags=["athletes"])
 async def get_athlete(
     db_session: db_dependency,
     athlete_id: UUID,
-) -> Athletes:
-    return await Athletes.find_or_raise(async_session=db_session, id=athlete_id)
+) -> Athlete:
+    return await Athlete.find_or_raise(async_session=db_session, id=athlete_id)
 
 
 @athletes_router.post(
@@ -31,17 +31,19 @@ async def get_athlete(
 async def create_athlete(
     db_session: db_dependency,
     athlete: AthleteCreateModel,
-) -> Athletes:
-    athlete_exists = await Athletes.find(async_session=db_session, email=athlete.email)
+) -> Athlete:
+    athlete_exists = await Athlete.find(async_session=db_session, email=athlete.email)
     if athlete_exists:
         raise conflict_exception()
 
-    new_athlete = Athletes(
-        name=athlete.name,
+    new_athlete = Athlete(
+        first_name=athlete.first_name,
+        last_name=athlete.last_name,
         email=athlete.email,
         waiver=athlete.waiver,
         gym=athlete.gym,
         city=athlete.city,
+        sex=athlete.sex,
         team_id=athlete.team_id,
     )
     db_session.add(new_athlete)
@@ -59,8 +61,8 @@ async def update_athlete(
     db_session: db_dependency,
     athlete_id: UUID,
     update_data: AthleteUpdateModel,
-) -> Athletes:
-    athlete = await Athletes.find_or_raise(async_session=db_session, id=athlete_id)
+) -> Athlete:
+    athlete = await Athlete.find_or_raise(async_session=db_session, id=athlete_id)
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -81,5 +83,8 @@ async def delete_athlete(
     db_session: db_dependency,
     athlete_id: UUID,
 ) -> None:
-    athlete = await Athletes.find_or_raise(async_session=db_session, id=athlete_id)
+    athlete = await Athlete.find_or_raise(
+        async_session=db_session,
+        id=athlete_id,
+    )
     await athlete.delete(async_session=db_session)

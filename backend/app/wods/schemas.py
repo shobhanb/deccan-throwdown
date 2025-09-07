@@ -10,7 +10,7 @@ class WodsBaseModel(CustomBaseModel):
     wod_name: str
     wod_score_type: str
     wod_description: dict[str, Any]
-    event_id: UUID
+    event_short_name: str
 
 
 class WodsModel(CustomBaseModel):
@@ -19,7 +19,7 @@ class WodsModel(CustomBaseModel):
     wod_name: str
     wod_score_type: str
     wod_description: dict[str, Any]
-    event_id: UUID
+    event_short_name: str
 
 
 class WodsOutputModel(WodsModel):
@@ -31,7 +31,7 @@ class WodsCreateModel(CustomBaseModel):
     wod_name: str
     wod_score_type: str
     wod_description: dict[str, Any]
-    event_id: UUID
+    event_short_name: str
 
 
 class WodsUpdateModel(CustomBaseModel):
@@ -39,7 +39,7 @@ class WodsUpdateModel(CustomBaseModel):
     wod_name: str | None = None
     wod_score_type: str | None = None
     wod_description: dict[str, Any] | None = None
-    event_id: UUID | None = None
+    event_short_name: str | None = None
 
 
 class WodsOutputModelDetail(WodsOutputModel):
