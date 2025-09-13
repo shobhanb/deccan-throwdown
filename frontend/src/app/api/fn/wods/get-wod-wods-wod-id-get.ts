@@ -8,13 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiWodsOutputModel } from '../../models/api-wods-output-model';
+import { apiWodOutputModel } from '../../models/api-wod-output-model';
 
 export interface GetWodWodsWodIdGet$Params {
   wod_id: string;
 }
 
-export function getWodWodsWodIdGet(http: HttpClient, rootUrl: string, params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+export function getWodWodsWodIdGet(http: HttpClient, rootUrl: string, params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
   const rb = new RequestBuilder(rootUrl, getWodWodsWodIdGet.PATH, 'get');
   if (params) {
     rb.path('wod_id', params.wod_id, {});
@@ -25,7 +25,7 @@ export function getWodWodsWodIdGet(http: HttpClient, rootUrl: string, params: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiWodsOutputModel>;
+      return r as StrictHttpResponse<apiWodOutputModel>;
     })
   );
 }

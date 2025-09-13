@@ -3,44 +3,28 @@ from uuid import UUID
 
 from app.schemas import CustomBaseModel
 from app.teams.schemas import TeamsOutputDetailModel
-from app.wods.schemas import WodsOutputModelDetail
+from app.wods.schemas import WodOutputModelDetail
 
 
+# Base model with all fields, using Optional for nullable fields
 class EventsBaseModel(CustomBaseModel):
     year: int
     event_name: str
     event_short_name: str
     athletes_per_team: int
-    organization_name: str
-    city: str
-    country: str
-    start_date: dt.date
-    end_date: dt.date
+    organization_name: str | None = None
+    city: str | None = None
+    country: str | None = None
+    start_date: dt.date | None = None
+    end_date: dt.date | None = None
 
 
-class EventsModel(CustomBaseModel):
+class EventsModel(EventsBaseModel):
     id: UUID
-    year: int
-    event_name: str
-    event_short_name: str
-    athletes_per_team: int
-    organization_name: str
-    city: str
-    country: str
-    start_date: dt.date
-    end_date: dt.date
 
 
-class EventsCreateModel(CustomBaseModel):
-    year: int
-    event_name: str
-    event_short_name: str
-    athletes_per_team: int
-    organization_name: str
-    city: str
-    country: str
-    start_date: dt.date
-    end_date: dt.date
+class EventsCreateModel(EventsBaseModel):
+    pass
 
 
 class EventsUpdateModel(CustomBaseModel):
@@ -60,4 +44,4 @@ class EventsModelTeamDetail(EventsModel):
 
 
 class EventsModelWodDetail(EventsModel):
-    wods: list[WodsOutputModelDetail]
+    wods: list[WodOutputModelDetail]

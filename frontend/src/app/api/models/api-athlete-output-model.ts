@@ -4,12 +4,12 @@
 
 export interface apiAthleteOutputModel {
   city?: (string | null);
-  email: string;
+  email?: (string | null);
   first_name: string;
   gym?: (string | null);
   id: string;
   last_name: string;
-  sex: string;
+  sex: 'M' | 'F';
   team_id: string;
-  waiver: boolean;
+  waiver?: boolean;
 }

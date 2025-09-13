@@ -4,12 +4,12 @@
 
 export interface apiEventsCreateModel {
   athletes_per_team: number;
-  city: string;
-  country: string;
-  end_date: string;
+  city?: (string | null);
+  country?: (string | null);
+  end_date?: (string | null);
   event_name: string;
   event_short_name: string;
-  organization_name: string;
-  start_date: string;
+  organization_name?: (string | null);
+  start_date?: (string | null);
   year: number;
 }

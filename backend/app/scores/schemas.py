@@ -1,43 +1,32 @@
-from typing import Any
 from uuid import UUID
 
 from app.schemas import CustomBaseModel
 
 
-class ScoresBaseModel(CustomBaseModel):
-    reps: int | None = None
+# Base model with all fields, using correct types and defaults
+class ScoreBaseModel(CustomBaseModel):
+    reps: int = 0
     time_s: int | None = None
     tiebreak_s: int | None = None
-    score_detail: dict[str, Any]
+    score_detail: str | None = None
     team_id: UUID
     wod_id: UUID
 
 
-class ScoresModel(CustomBaseModel):
+class ScoreModel(ScoreBaseModel):
     id: UUID
-    reps: int | None = None
-    time_s: int | None = None
-    tiebreak_s: int | None = None
-    score_detail: dict[str, Any]
-    team_id: UUID
-    wod_id: UUID
 
 
-class ScoresOutputModel(ScoresModel):
+class ScoreOutputModel(ScoreModel):
     pass
 
 
-class ScoresCreateModel(CustomBaseModel):
+class ScoreCreateModel(ScoreBaseModel):
+    pass
+
+
+class ScoreUpdateModel(CustomBaseModel):
     reps: int | None = None
     time_s: int | None = None
     tiebreak_s: int | None = None
-    score_detail: dict[str, Any]
-    team_id: UUID
-    wod_id: UUID
-
-
-class ScoresUpdateModel(CustomBaseModel):
-    reps: int | None = None
-    time_s: int | None = None
-    tiebreak_s: int | None = None
-    score_detail: dict[str, Any] | None = None
+    score_detail: str | None = None

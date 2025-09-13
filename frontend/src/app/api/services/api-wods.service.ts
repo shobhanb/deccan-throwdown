@@ -21,7 +21,7 @@ import { getWodWodsWodIdGet } from '../fn/wods/get-wod-wods-wod-id-get';
 import { GetWodWodsWodIdGet$Params } from '../fn/wods/get-wod-wods-wod-id-get';
 import { updateWodWodsWodIdPatch } from '../fn/wods/update-wod-wods-wod-id-patch';
 import { UpdateWodWodsWodIdPatch$Params } from '../fn/wods/update-wod-wods-wod-id-patch';
-import { apiWodsOutputModel } from '../models/api-wods-output-model';
+import { apiWodOutputModel } from '../models/api-wod-output-model';
 
 @Injectable({ providedIn: 'root' })
 export class apiWodsService extends BaseService {
@@ -42,7 +42,7 @@ export class apiWodsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getWodsWodsGet$Response(params: GetWodsWodsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiWodsOutputModel>>> {
+  getWodsWodsGet$Response(params: GetWodsWodsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiWodOutputModel>>> {
     return getWodsWodsGet(this.http, this.rootUrl, params, context);
   }
 
@@ -56,9 +56,9 @@ export class apiWodsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getWodsWodsGet(params: GetWodsWodsGet$Params, context?: HttpContext): Observable<Array<apiWodsOutputModel>> {
+  getWodsWodsGet(params: GetWodsWodsGet$Params, context?: HttpContext): Observable<Array<apiWodOutputModel>> {
     return this.getWodsWodsGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<apiWodsOutputModel>>): Array<apiWodsOutputModel> => r.body)
+      map((r: StrictHttpResponse<Array<apiWodOutputModel>>): Array<apiWodOutputModel> => r.body)
     );
   }
 
@@ -75,7 +75,7 @@ export class apiWodsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createWodWodsPost$Response(params: CreateWodWodsPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+  createWodWodsPost$Response(params: CreateWodWodsPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
     return createWodWodsPost(this.http, this.rootUrl, params, context);
   }
 
@@ -89,9 +89,9 @@ export class apiWodsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createWodWodsPost(params: CreateWodWodsPost$Params, context?: HttpContext): Observable<apiWodsOutputModel> {
+  createWodWodsPost(params: CreateWodWodsPost$Params, context?: HttpContext): Observable<apiWodOutputModel> {
     return this.createWodWodsPost$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiWodsOutputModel>): apiWodsOutputModel => r.body)
+      map((r: StrictHttpResponse<apiWodOutputModel>): apiWodOutputModel => r.body)
     );
   }
 
@@ -108,7 +108,7 @@ export class apiWodsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getWodWodsWodIdGet$Response(params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+  getWodWodsWodIdGet$Response(params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
     return getWodWodsWodIdGet(this.http, this.rootUrl, params, context);
   }
 
@@ -122,9 +122,9 @@ export class apiWodsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getWodWodsWodIdGet(params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<apiWodsOutputModel> {
+  getWodWodsWodIdGet(params: GetWodWodsWodIdGet$Params, context?: HttpContext): Observable<apiWodOutputModel> {
     return this.getWodWodsWodIdGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiWodsOutputModel>): apiWodsOutputModel => r.body)
+      map((r: StrictHttpResponse<apiWodOutputModel>): apiWodOutputModel => r.body)
     );
   }
 
@@ -174,7 +174,7 @@ export class apiWodsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  updateWodWodsWodIdPatch$Response(params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+  updateWodWodsWodIdPatch$Response(params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
     return updateWodWodsWodIdPatch(this.http, this.rootUrl, params, context);
   }
 
@@ -188,9 +188,9 @@ export class apiWodsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  updateWodWodsWodIdPatch(params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<apiWodsOutputModel> {
+  updateWodWodsWodIdPatch(params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<apiWodOutputModel> {
     return this.updateWodWodsWodIdPatch$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiWodsOutputModel>): apiWodsOutputModel => r.body)
+      map((r: StrictHttpResponse<apiWodOutputModel>): apiWodOutputModel => r.body)
     );
   }
 

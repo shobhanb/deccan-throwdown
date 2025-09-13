@@ -7,7 +7,7 @@ from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
 from .models import Wod
-from .schemas import WodsCreateModel, WodsOutputModel, WodsUpdateModel
+from .schemas import WodCreateModel, WodOutputModel, WodUpdateModel
 
 wods_router = APIRouter(prefix="/wods", tags=["wods"])
 
@@ -15,7 +15,7 @@ wods_router = APIRouter(prefix="/wods", tags=["wods"])
 @wods_router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=list[WodsOutputModel],
+    response_model=list[WodOutputModel],
 )
 async def get_wods(
     db_session: db_dependency,
@@ -36,7 +36,7 @@ async def get_wods(
 @wods_router.get(
     "/{wod_id}",
     status_code=status.HTTP_200_OK,
-    response_model=WodsOutputModel,
+    response_model=WodOutputModel,
 )
 async def get_wod(
     db_session: db_dependency,
@@ -48,11 +48,11 @@ async def get_wod(
 @wods_router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=WodsOutputModel,
+    response_model=WodOutputModel,
 )
 async def create_wod(
     db_session: db_dependency,
-    wod: WodsCreateModel,
+    wod: WodCreateModel,
 ) -> Wod:
     wod_exists = await Wod.find(
         async_session=db_session,
@@ -78,12 +78,12 @@ async def create_wod(
 @wods_router.patch(
     "/{wod_id}",
     status_code=status.HTTP_202_ACCEPTED,
-    response_model=WodsOutputModel,
+    response_model=WodOutputModel,
 )
 async def update_wod(
     db_session: db_dependency,
     wod_id: UUID,
-    update_data: WodsUpdateModel,
+    update_data: WodUpdateModel,
 ) -> Wod:
     wod = await Wod.find_or_raise(async_session=db_session, id=wod_id)
 

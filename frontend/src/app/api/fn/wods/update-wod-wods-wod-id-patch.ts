@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiWodsOutputModel } from '../../models/api-wods-output-model';
-import { apiWodsUpdateModel } from '../../models/api-wods-update-model';
+import { apiWodOutputModel } from '../../models/api-wod-output-model';
+import { apiWodUpdateModel } from '../../models/api-wod-update-model';
 
 export interface UpdateWodWodsWodIdPatch$Params {
   wod_id: string;
-      body: apiWodsUpdateModel
+      body: apiWodUpdateModel
 }
 
-export function updateWodWodsWodIdPatch(http: HttpClient, rootUrl: string, params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+export function updateWodWodsWodIdPatch(http: HttpClient, rootUrl: string, params: UpdateWodWodsWodIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
   const rb = new RequestBuilder(rootUrl, updateWodWodsWodIdPatch.PATH, 'patch');
   if (params) {
     rb.path('wod_id', params.wod_id, {});
@@ -28,7 +28,7 @@ export function updateWodWodsWodIdPatch(http: HttpClient, rootUrl: string, param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiWodsOutputModel>;
+      return r as StrictHttpResponse<apiWodOutputModel>;
     })
   );
 }

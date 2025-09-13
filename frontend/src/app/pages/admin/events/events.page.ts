@@ -115,18 +115,25 @@ export class EventsPage implements OnInit {
   getData() {
     this.dataLoaded.set(false);
     this.apiEvents.getEventsEventsGet().subscribe({
-      next: (events) => {
+      next: (events: apiEventsModel[]) => {
         this.events.set(
-          events.sort(
-            (a, b) =>
-              new Date(b.start_date).getTime() -
-              new Date(a.start_date).getTime()
-          )
+          events.sort((a, b) => {
+            // Sort by year descending
+            if (b.year !== a.year) {
+              return b.year - a.year;
+            }
+            // If year is the same, sort by start_date descending (if exists)
+            const dateA = a.start_date ? new Date(a.start_date).getTime() : 0;
+            const dateB = b.start_date ? new Date(b.start_date).getTime() : 0;
+            return dateB - dateA;
+          })
         );
       },
       error: (error) => {
         console.error('Error loading events:', error);
-        this.toastService.showError('Error loading events');
+        this.toastService.showError(
+          'Error loading events: ' + error.statusText
+        );
       },
       complete: () => {
         this.dataLoaded.set(true);
@@ -162,7 +169,9 @@ export class EventsPage implements OnInit {
             this.getData();
           },
           error: (error) => {
-            this.toastService.showError('Error deleting event');
+            this.toastService.showError(
+              'Error deleting event: ' + error.statusText
+            );
             console.error('Error deleting event:', error);
           },
         });

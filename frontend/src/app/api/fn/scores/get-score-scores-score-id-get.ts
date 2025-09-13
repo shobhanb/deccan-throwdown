@@ -8,13 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiScoresOutputModel } from '../../models/api-scores-output-model';
+import { apiScoreOutputModel } from '../../models/api-score-output-model';
 
 export interface GetScoreScoresScoreIdGet$Params {
   score_id: string;
 }
 
-export function getScoreScoresScoreIdGet(http: HttpClient, rootUrl: string, params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+export function getScoreScoresScoreIdGet(http: HttpClient, rootUrl: string, params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
   const rb = new RequestBuilder(rootUrl, getScoreScoresScoreIdGet.PATH, 'get');
   if (params) {
     rb.path('score_id', params.score_id, {});
@@ -25,7 +25,7 @@ export function getScoreScoresScoreIdGet(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiScoresOutputModel>;
+      return r as StrictHttpResponse<apiScoreOutputModel>;
     })
   );
 }

@@ -21,6 +21,7 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
 import { AppInstallService } from 'src/app/services/app-install.service';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
+import { appConfig, defaultConfig } from 'src/app/config/config';
 
 @Component({
   selector: 'app-home',
@@ -49,6 +50,8 @@ import { closeOutline } from 'ionicons/icons';
 })
 export class HomePage implements OnInit {
   appInstallService = inject(AppInstallService);
+
+  eventName = appConfig[defaultConfig].eventName;
 
   constructor() {
     addIcons({ closeOutline });

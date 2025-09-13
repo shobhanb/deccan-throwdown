@@ -137,11 +137,11 @@ export class EditEventPage implements OnInit {
               end_date: value.end_date,
             });
           },
-          error: (err: any) => {
-            console.error('Error getting event', err);
+          error: (error: any) => {
+            console.error('Error getting event', error);
             this.event.set(null);
             this.toastService.showError(
-              'Failed to load event data: ' + (err.message || 'Unknown error')
+              'Failed to load event data: ' + error.statusText
             );
           },
           complete: () => this.dataLoaded.set(true),
@@ -193,7 +193,9 @@ export class EditEventPage implements OnInit {
           },
           error: (error) => {
             console.error('Error updating event:', error);
-            this.toastService.showError('Failed to update event');
+            this.toastService.showError(
+              'Failed to update event: ' + error.statusText
+            );
           },
         });
     } else {
@@ -209,7 +211,9 @@ export class EditEventPage implements OnInit {
           },
           error: (error) => {
             console.error('Error creating event:', error);
-            this.toastService.showError('Failed to create event');
+            this.toastService.showError(
+              'Failed to create event: ' + error.statusText
+            );
           },
         });
     }

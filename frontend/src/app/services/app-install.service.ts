@@ -19,6 +19,9 @@ export class AppInstallService {
     } else if (this.platform.is('ios') || this.platform.is('android')) {
       this.checkStoredPreference();
     }
+
+    // Temporary
+    this.showInstallButton.set(false);
   }
 
   private checkStoredPreference(): void {

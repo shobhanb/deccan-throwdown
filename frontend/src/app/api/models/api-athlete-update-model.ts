@@ -8,7 +8,7 @@ export interface apiAthleteUpdateModel {
   first_name?: (string | null);
   gym?: (string | null);
   last_name?: (string | null);
-  sex?: (string | null);
+  sex?: ('M' | 'F' | null);
   team_id?: (string | null);
   waiver?: (boolean | null);
 }

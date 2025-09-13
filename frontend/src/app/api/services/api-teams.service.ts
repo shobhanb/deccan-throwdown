@@ -43,7 +43,7 @@ export class apiTeamsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getTeamsTeamsGet$Response(params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiTeamsOutputModel>>> {
+  getTeamsTeamsGet$Response(params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiTeamsOutputDetailModel>>> {
     return getTeamsTeamsGet(this.http, this.rootUrl, params, context);
   }
 
@@ -57,9 +57,9 @@ export class apiTeamsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getTeamsTeamsGet(params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<Array<apiTeamsOutputModel>> {
+  getTeamsTeamsGet(params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<Array<apiTeamsOutputDetailModel>> {
     return this.getTeamsTeamsGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<apiTeamsOutputModel>>): Array<apiTeamsOutputModel> => r.body)
+      map((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body)
     );
   }
 

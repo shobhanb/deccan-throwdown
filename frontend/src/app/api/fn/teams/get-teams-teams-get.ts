@@ -8,13 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiTeamsOutputModel } from '../../models/api-teams-output-model';
+import { apiTeamsOutputDetailModel } from '../../models/api-teams-output-detail-model';
 
 export interface GetTeamsTeamsGet$Params {
   event_short_name: string;
 }
 
-export function getTeamsTeamsGet(http: HttpClient, rootUrl: string, params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiTeamsOutputModel>>> {
+export function getTeamsTeamsGet(http: HttpClient, rootUrl: string, params: GetTeamsTeamsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiTeamsOutputDetailModel>>> {
   const rb = new RequestBuilder(rootUrl, getTeamsTeamsGet.PATH, 'get');
   if (params) {
     rb.query('event_short_name', params.event_short_name, {});
@@ -25,7 +25,7 @@ export function getTeamsTeamsGet(http: HttpClient, rootUrl: string, params: GetT
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<apiTeamsOutputModel>>;
+      return r as StrictHttpResponse<Array<apiTeamsOutputDetailModel>>;
     })
   );
 }

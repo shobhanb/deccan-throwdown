@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiScoresOutputModel } from '../../models/api-scores-output-model';
+import { apiScoreOutputModel } from '../../models/api-score-output-model';
 
 export interface GetScoresScoresGet$Params {
-  team_id?: (string | null);
-  wod_id?: (string | null);
+  team_id: string;
+  wod_id: string;
 }
 
-export function getScoresScoresGet(http: HttpClient, rootUrl: string, params?: GetScoresScoresGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiScoresOutputModel>>> {
+export function getScoresScoresGet(http: HttpClient, rootUrl: string, params: GetScoresScoresGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
   const rb = new RequestBuilder(rootUrl, getScoresScoresGet.PATH, 'get');
   if (params) {
     rb.query('team_id', params.team_id, {});
@@ -27,7 +27,7 @@ export function getScoresScoresGet(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<apiScoresOutputModel>>;
+      return r as StrictHttpResponse<apiScoreOutputModel>;
     })
   );
 }

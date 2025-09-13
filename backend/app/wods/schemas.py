@@ -1,46 +1,37 @@
-from typing import Any
 from uuid import UUID
 
 from app.schemas import CustomBaseModel
-from app.scores.schemas import ScoresOutputModel
+from app.scores.schemas import ScoreOutputModel
 
 
-class WodsBaseModel(CustomBaseModel):
+# Base model with all fields, using correct types and defaults
+class WodBaseModel(CustomBaseModel):
     wod_number: int
     wod_name: str
     wod_score_type: str
-    wod_description: dict[str, Any]
+    wod_description: str | None = None
     event_short_name: str
 
 
-class WodsModel(CustomBaseModel):
+class WodModel(WodBaseModel):
     id: UUID
-    wod_number: int
-    wod_name: str
-    wod_score_type: str
-    wod_description: dict[str, Any]
-    event_short_name: str
 
 
-class WodsOutputModel(WodsModel):
+class WodOutputModel(WodModel):
     pass
 
 
-class WodsCreateModel(CustomBaseModel):
-    wod_number: int
-    wod_name: str
-    wod_score_type: str
-    wod_description: dict[str, Any]
-    event_short_name: str
+class WodCreateModel(WodBaseModel):
+    pass
 
 
-class WodsUpdateModel(CustomBaseModel):
+class WodUpdateModel(CustomBaseModel):
     wod_number: int | None = None
     wod_name: str | None = None
     wod_score_type: str | None = None
-    wod_description: dict[str, Any] | None = None
+    wod_description: str | None = None
     event_short_name: str | None = None
 
 
-class WodsOutputModelDetail(WodsOutputModel):
-    scores: list[ScoresOutputModel]
+class WodOutputModelDetail(WodOutputModel):
+    scores: list[ScoreOutputModel]

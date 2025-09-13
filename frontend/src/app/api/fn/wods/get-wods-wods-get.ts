@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiWodsOutputModel } from '../../models/api-wods-output-model';
+import { apiWodOutputModel } from '../../models/api-wod-output-model';
 
 export interface GetWodsWodsGet$Params {
   event_short_name: string;
   wod_number?: (number | null);
 }
 
-export function getWodsWodsGet(http: HttpClient, rootUrl: string, params: GetWodsWodsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiWodsOutputModel>>> {
+export function getWodsWodsGet(http: HttpClient, rootUrl: string, params: GetWodsWodsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiWodOutputModel>>> {
   const rb = new RequestBuilder(rootUrl, getWodsWodsGet.PATH, 'get');
   if (params) {
     rb.query('event_short_name', params.event_short_name, {});
@@ -27,7 +27,7 @@ export function getWodsWodsGet(http: HttpClient, rootUrl: string, params: GetWod
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<apiWodsOutputModel>>;
+      return r as StrictHttpResponse<Array<apiWodOutputModel>>;
     })
   );
 }

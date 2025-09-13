@@ -11,13 +11,25 @@ import {
   IonLabel,
   IonMenu,
   MenuController,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  barbellOutline,
+  barChartOutline,
+  calculatorOutline,
+  calendarOutline,
+  homeOutline,
+  peopleOutline,
+} from 'ionicons/icons';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   imports: [
+    IonButton,
     IonLabel,
     IonIcon,
     IonItem,
@@ -32,7 +44,20 @@ import {
 })
 export class MenuComponent implements OnInit {
   private menuController = inject(MenuController);
-  constructor() {}
+  private appConfig = inject(AppConfigService);
+
+  eventShortName = this.appConfig.eventShortName;
+
+  constructor() {
+    addIcons({
+      homeOutline,
+      barChartOutline,
+      calendarOutline,
+      peopleOutline,
+      barbellOutline,
+      calculatorOutline,
+    });
+  }
 
   ngOnInit() {}
 

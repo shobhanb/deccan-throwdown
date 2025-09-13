@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from uuid import UUID
 
 from fastapi import APIRouter, status
@@ -7,7 +6,7 @@ from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 
 from .models import Score
-from .schemas import ScoresCreateModel, ScoresOutputModel, ScoresUpdateModel
+from .schemas import ScoreCreateModel, ScoreOutputModel, ScoreUpdateModel
 
 scores_router = APIRouter(prefix="/scores", tags=["scores"])
 
@@ -15,29 +14,24 @@ scores_router = APIRouter(prefix="/scores", tags=["scores"])
 @scores_router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=list[ScoresOutputModel],
+    response_model=ScoreOutputModel,
 )
 async def get_scores(
     db_session: db_dependency,
-    team_id: UUID | None = None,
-    wod_id: UUID | None = None,
-) -> Sequence[Score]:
-    filters = {}
-    if team_id:
-        filters["team_id"] = team_id
-    if wod_id:
-        filters["wod_id"] = wod_id
-
-    return await Score.find_all(
+    team_id: UUID,
+    wod_id: UUID,
+) -> Score:
+    return await Score.find_or_raise(
         async_session=db_session,
-        **filters,
+        team_id=team_id,
+        wod_id=wod_id,
     )
 
 
 @scores_router.get(
     "/{score_id}",
     status_code=status.HTTP_200_OK,
-    response_model=ScoresOutputModel,
+    response_model=ScoreOutputModel,
 )
 async def get_score(
     db_session: db_dependency,
@@ -49,11 +43,11 @@ async def get_score(
 @scores_router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=ScoresOutputModel,
+    response_model=ScoreOutputModel,
 )
 async def create_score(
     db_session: db_dependency,
-    score: ScoresCreateModel,
+    score: ScoreCreateModel,
 ) -> Score:
     score_exists = await Score.find(
         async_session=db_session,
@@ -80,12 +74,12 @@ async def create_score(
 @scores_router.patch(
     "/{score_id}",
     status_code=status.HTTP_202_ACCEPTED,
-    response_model=ScoresOutputModel,
+    response_model=ScoreOutputModel,
 )
 async def update_score(
     db_session: db_dependency,
     score_id: UUID,
-    update_data: ScoresUpdateModel,
+    update_data: ScoreUpdateModel,
 ) -> Score:
     score = await Score.find_or_raise(async_session=db_session, id=score_id)
 

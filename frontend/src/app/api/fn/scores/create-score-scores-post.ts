@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiScoresCreateModel } from '../../models/api-scores-create-model';
-import { apiScoresOutputModel } from '../../models/api-scores-output-model';
+import { apiScoreCreateModel } from '../../models/api-score-create-model';
+import { apiScoreOutputModel } from '../../models/api-score-output-model';
 
 export interface CreateScoreScoresPost$Params {
-      body: apiScoresCreateModel
+      body: apiScoreCreateModel
 }
 
-export function createScoreScoresPost(http: HttpClient, rootUrl: string, params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+export function createScoreScoresPost(http: HttpClient, rootUrl: string, params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
   const rb = new RequestBuilder(rootUrl, createScoreScoresPost.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,7 @@ export function createScoreScoresPost(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiScoresOutputModel>;
+      return r as StrictHttpResponse<apiScoreOutputModel>;
     })
   );
 }

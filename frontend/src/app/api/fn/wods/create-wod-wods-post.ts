@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiWodsCreateModel } from '../../models/api-wods-create-model';
-import { apiWodsOutputModel } from '../../models/api-wods-output-model';
+import { apiWodCreateModel } from '../../models/api-wod-create-model';
+import { apiWodOutputModel } from '../../models/api-wod-output-model';
 
 export interface CreateWodWodsPost$Params {
-      body: apiWodsCreateModel
+      body: apiWodCreateModel
 }
 
-export function createWodWodsPost(http: HttpClient, rootUrl: string, params: CreateWodWodsPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodsOutputModel>> {
+export function createWodWodsPost(http: HttpClient, rootUrl: string, params: CreateWodWodsPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiWodOutputModel>> {
   const rb = new RequestBuilder(rootUrl, createWodWodsPost.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,7 @@ export function createWodWodsPost(http: HttpClient, rootUrl: string, params: Cre
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiWodsOutputModel>;
+      return r as StrictHttpResponse<apiWodOutputModel>;
     })
   );
 }

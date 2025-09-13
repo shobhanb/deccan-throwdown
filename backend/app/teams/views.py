@@ -15,7 +15,7 @@ teams_router = APIRouter(prefix="/teams", tags=["teams"])
 @teams_router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=list[TeamsOutputModel],
+    response_model=list[TeamsOutputDetailModel],
 )
 async def get_teams(
     db_session: db_dependency,
@@ -23,7 +23,7 @@ async def get_teams(
 ) -> Sequence[Team]:
     return await Team.find_all(
         async_session=db_session,
-        select_relationships=[Team.athletes],  # ✅ Add this line
+        select_relationships=[Team.athletes],
         event_short_name=event_short_name,
     )
 

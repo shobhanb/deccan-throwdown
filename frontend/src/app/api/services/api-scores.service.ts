@@ -19,7 +19,7 @@ import { getScoreScoresScoreIdGet } from '../fn/scores/get-score-scores-score-id
 import { GetScoreScoresScoreIdGet$Params } from '../fn/scores/get-score-scores-score-id-get';
 import { getScoresScoresGet } from '../fn/scores/get-scores-scores-get';
 import { GetScoresScoresGet$Params } from '../fn/scores/get-scores-scores-get';
-import { apiScoresOutputModel } from '../models/api-scores-output-model';
+import { apiScoreOutputModel } from '../models/api-score-output-model';
 import { updateScoreScoresScoreIdPatch } from '../fn/scores/update-score-scores-score-id-patch';
 import { UpdateScoreScoresScoreIdPatch$Params } from '../fn/scores/update-score-scores-score-id-patch';
 
@@ -42,7 +42,7 @@ export class apiScoresService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getScoresScoresGet$Response(params?: GetScoresScoresGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<apiScoresOutputModel>>> {
+  getScoresScoresGet$Response(params: GetScoresScoresGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
     return getScoresScoresGet(this.http, this.rootUrl, params, context);
   }
 
@@ -56,9 +56,9 @@ export class apiScoresService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getScoresScoresGet(params?: GetScoresScoresGet$Params, context?: HttpContext): Observable<Array<apiScoresOutputModel>> {
+  getScoresScoresGet(params: GetScoresScoresGet$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.getScoresScoresGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<apiScoresOutputModel>>): Array<apiScoresOutputModel> => r.body)
+      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
     );
   }
 
@@ -75,7 +75,7 @@ export class apiScoresService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createScoreScoresPost$Response(params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+  createScoreScoresPost$Response(params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
     return createScoreScoresPost(this.http, this.rootUrl, params, context);
   }
 
@@ -89,9 +89,9 @@ export class apiScoresService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createScoreScoresPost(params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<apiScoresOutputModel> {
+  createScoreScoresPost(params: CreateScoreScoresPost$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.createScoreScoresPost$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiScoresOutputModel>): apiScoresOutputModel => r.body)
+      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
     );
   }
 
@@ -108,7 +108,7 @@ export class apiScoresService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getScoreScoresScoreIdGet$Response(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+  getScoreScoresScoreIdGet$Response(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
     return getScoreScoresScoreIdGet(this.http, this.rootUrl, params, context);
   }
 
@@ -122,9 +122,9 @@ export class apiScoresService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getScoreScoresScoreIdGet(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<apiScoresOutputModel> {
+  getScoreScoresScoreIdGet(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.getScoreScoresScoreIdGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiScoresOutputModel>): apiScoresOutputModel => r.body)
+      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
     );
   }
 
@@ -174,7 +174,7 @@ export class apiScoresService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  updateScoreScoresScoreIdPatch$Response(params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+  updateScoreScoresScoreIdPatch$Response(params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
     return updateScoreScoresScoreIdPatch(this.http, this.rootUrl, params, context);
   }
 
@@ -188,9 +188,9 @@ export class apiScoresService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  updateScoreScoresScoreIdPatch(params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<apiScoresOutputModel> {
+  updateScoreScoresScoreIdPatch(params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.updateScoreScoresScoreIdPatch$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiScoresOutputModel>): apiScoresOutputModel => r.body)
+      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
     );
   }
 

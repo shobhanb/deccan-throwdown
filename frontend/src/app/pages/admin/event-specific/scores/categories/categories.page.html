@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        [defaultHref]="['/admin', eventShortName(),'scores']"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categories</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Score Keeping</ion-card-title>
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>Select Category</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list inset="true">
+    @for (category of teamsCategoriesData(); track $index) {
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header">
+          <ion-label>{{ category[0] }}</ion-label>
+        </ion-item>
+        <div class="ion-padding-vertical" slot="content">
+          <ion-list>
+            @for (team of category[1]; track $index) {
+            <ion-item [routerLink]="[team.id]">
+              <ion-label>{{ team.team_name }}</ion-label>
+            </ion-item>
+            }
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+  </ion-list>
+</ion-content>

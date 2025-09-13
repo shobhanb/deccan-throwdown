@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { apiScoresOutputModel } from '../../models/api-scores-output-model';
-import { apiScoresUpdateModel } from '../../models/api-scores-update-model';
+import { apiScoreOutputModel } from '../../models/api-score-output-model';
+import { apiScoreUpdateModel } from '../../models/api-score-update-model';
 
 export interface UpdateScoreScoresScoreIdPatch$Params {
   score_id: string;
-      body: apiScoresUpdateModel
+      body: apiScoreUpdateModel
 }
 
-export function updateScoreScoresScoreIdPatch(http: HttpClient, rootUrl: string, params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoresOutputModel>> {
+export function updateScoreScoresScoreIdPatch(http: HttpClient, rootUrl: string, params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
   const rb = new RequestBuilder(rootUrl, updateScoreScoresScoreIdPatch.PATH, 'patch');
   if (params) {
     rb.path('score_id', params.score_id, {});
@@ -28,7 +28,7 @@ export function updateScoreScoresScoreIdPatch(http: HttpClient, rootUrl: string,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<apiScoresOutputModel>;
+      return r as StrictHttpResponse<apiScoreOutputModel>;
     })
   );
 }

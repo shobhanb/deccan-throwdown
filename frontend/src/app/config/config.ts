@@ -1,12 +1,12 @@
-export interface CategoryConfig {
-  [key: string]: {
-    categories: string[];
-    athletesPerTeam: number;
-  };
+export interface AppConfig {
+  eventName: string;
+  categories: string[];
+  athletesPerTeam: number;
 }
 
-export const categoryConfig: CategoryConfig = {
+export const appConfig: { [key: string]: AppConfig } = {
   dtpairs2025: {
+    eventName: 'Deccan Throwdown Pairs 2025',
     categories: [
       'FF-Beginners',
       'MF-Beginners',
@@ -18,7 +18,10 @@ export const categoryConfig: CategoryConfig = {
     athletesPerTeam: 2,
   },
   dtteams2025: {
+    eventName: 'Deccan Throwdown Teams 2025',
     categories: ['Beginner', 'Intermediate', 'Advanced'],
     athletesPerTeam: 4,
   },
 };
+
+export const defaultConfig = 'dtpairs2025';
