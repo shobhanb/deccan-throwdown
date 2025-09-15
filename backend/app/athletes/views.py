@@ -3,7 +3,6 @@ from uuid import UUID
 from fastapi import APIRouter, status
 
 from app.database.dependencies import db_dependency
-from app.exceptions import conflict_exception
 
 from .models import Athlete
 from .schemas import AthleteCreateModel, AthleteOutputModel, AthleteUpdateModel
@@ -32,10 +31,6 @@ async def create_athlete(
     db_session: db_dependency,
     athlete: AthleteCreateModel,
 ) -> Athlete:
-    athlete_exists = await Athlete.find(async_session=db_session, email=athlete.email)
-    if athlete_exists:
-        raise conflict_exception()
-
     new_athlete = Athlete(
         first_name=athlete.first_name,
         last_name=athlete.last_name,

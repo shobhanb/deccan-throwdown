@@ -103,26 +103,6 @@ class Base(DeclarativeBase):
         nested_relationships: list[Any] | None = None,
         **kwargs,  # noqa: ANN003
     ) -> Self | None:
-        """
-        Find a single record with deeply nested relationships.
-
-        Args:
-            async_session: The database session
-            nested_relationships: List of nested selectinload options
-            **kwargs: Filter criteria
-
-        Example:
-            # Load Event with Teams (including Athletes and Scores) and Wods (including Scores)
-            event = await Events.find_with_nested_relationships(
-                async_session=db_session,
-                nested_relationships=[
-                    selectinload(Events.teams).selectinload(Teams.athletes),
-                    selectinload(Events.teams).selectinload(Teams.scores),
-                    selectinload(Events.wods).selectinload(Wods.scores),
-                ],
-                id=event_id
-            )
-        """
         stmt = select(cls).filter_by(**kwargs)
         if nested_relationships:
             stmt = stmt.options(*nested_relationships)
@@ -135,26 +115,6 @@ class Base(DeclarativeBase):
         nested_relationships: list[Any] | None = None,
         **kwargs,  # noqa: ANN003
     ) -> Self:
-        """
-        Find a single record with deeply nested relationships or raise an exception if not found.
-
-        Args:
-            async_session: The database session
-            nested_relationships: List of nested selectinload options
-            **kwargs: Filter criteria
-
-        Example:
-            # Load Event with Teams (including Athletes and Scores) and Wods (including Scores)
-            event = await Events.find_or_raise_with_nested_relationships(
-                async_session=db_session,
-                nested_relationships=[
-                    selectinload(Events.teams).selectinload(Teams.athletes),
-                    selectinload(Events.teams).selectinload(Teams.scores),
-                    selectinload(Events.wods).selectinload(Wods.scores),
-                ],
-                id=event_id
-            )
-        """
         resp = await cls.find_with_nested_relationships(async_session, nested_relationships, **kwargs)
         if not resp:
             raise not_found_error(msg=f"{cls.__name__} not found")

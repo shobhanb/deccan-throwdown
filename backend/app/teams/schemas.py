@@ -2,6 +2,7 @@ from uuid import UUID
 
 from app.athletes.schemas import AthleteOutputModel
 from app.schemas import CustomBaseModel
+from app.scores.schemas import ScoreOutputModel
 
 
 class TeamsBaseModel(CustomBaseModel):
@@ -22,7 +23,7 @@ class TeamsModel(CustomBaseModel):
 
 
 class TeamsOutputModel(TeamsModel):
-    pass
+    overall_rank: int | None = None
 
 
 class TeamsCreateModel(CustomBaseModel):
@@ -43,3 +44,4 @@ class TeamsUpdateModel(CustomBaseModel):
 
 class TeamsOutputDetailModel(TeamsOutputModel):
     athletes: list[AthleteOutputModel]
+    scores: list[ScoreOutputModel]

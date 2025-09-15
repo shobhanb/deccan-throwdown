@@ -23,7 +23,7 @@ async def get_teams(
 ) -> Sequence[Team]:
     return await Team.find_all(
         async_session=db_session,
-        select_relationships=[Team.athletes],
+        select_relationships=[Team.athletes, Team.scores],
         event_short_name=event_short_name,
     )
 
@@ -37,7 +37,11 @@ async def get_team_info(
     db_session: db_dependency,
     team_id: UUID,
 ) -> Team:
-    return await Team.find_or_raise(async_session=db_session, id=team_id, select_relationships=[Team.athletes])
+    return await Team.find_or_raise(
+        async_session=db_session,
+        id=team_id,
+        select_relationships=[Team.athletes, Team.scores],
+    )
 
 
 @teams_router.post(
