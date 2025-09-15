@@ -2,6 +2,13 @@ export interface AppConfig {
   eventName: string;
   categories: string[];
   athletesPerTeam: number;
+  wods: WodConfig[];
+}
+
+export interface WodConfig {
+  wodNumber: number;
+  wodName: string;
+  wodDescription: string;
 }
 
 export const appConfig: { [key: string]: AppConfig } = {
@@ -16,11 +23,45 @@ export const appConfig: { [key: string]: AppConfig } = {
       'MM-Open',
     ],
     athletesPerTeam: 2,
+    wods: [
+      {
+        wodNumber: 1,
+        wodName: 'Head, Shoulders, Knees & Toes',
+        wodDescription: 'woder 1',
+      },
+      {
+        wodNumber: 2,
+        wodName: 'काका ! मला वाचवा !',
+        wodDescription: 'woder 2 bro',
+      },
+      {
+        wodNumber: 3,
+        wodName: 'Love Boat',
+        wodDescription: 'woder 2 bro',
+      },
+      {
+        wodNumber: 4,
+        wodName: 'Heavy Triple',
+        wodDescription: '5 mins to establish a Max. 3-Rep Hang Clean',
+      },
+    ],
   },
   dtteams2025: {
     eventName: 'Deccan Throwdown Teams 2025',
     categories: ['Beginner', 'Intermediate', 'Advanced'],
     athletesPerTeam: 4,
+    wods: [
+      {
+        wodNumber: 1,
+        wodName: 'WOD 1',
+        wodDescription: 'asdf',
+      },
+      {
+        wodNumber: 2,
+        wodName: 'WOD 2',
+        wodDescription: 'asdf',
+      },
+    ],
   },
 };
 

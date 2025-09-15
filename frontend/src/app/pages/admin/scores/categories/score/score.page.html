@@ -1,0 +1,127 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        [defaultHref]="['/', eventShortName(), 'admin', 'scores']"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Score</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (dataLoaded()) {
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Score Keeping</ion-card-title>
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>{{ `WOD ${wod().wodNumber}: ${wod().wodName}` }}</ion-text>
+      <br />
+      <ion-text>{{ teamData()?.team_name }}</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <form [formGroup]="scoreForm" (ngSubmit)="submitScore()">
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          type="number"
+          label="Reps"
+          labelPlacement="stacked"
+          formControlName="reps"
+          placeholder="Enter number of reps"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          type="number"
+          label="Time (Minutes)"
+          labelPlacement="stacked"
+          formControlName="time_minutes"
+        ></ion-input>
+
+        <ion-input
+          type="number"
+          label="Time (Seconds)"
+          labelPlacement="stacked"
+          formControlName="time_seconds"
+          min="0"
+          max="59"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          type="number"
+          label="Tiebreak (Minutes)"
+          labelPlacement="stacked"
+          formControlName="tiebreak_minutes"
+        ></ion-input>
+
+        <ion-input
+          type="number"
+          label="Tiebreak (Seconds)"
+          labelPlacement="stacked"
+          formControlName="tiebreak_seconds"
+          min="0"
+          max="59"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          label="Score Detail"
+          labelPlacement="stacked"
+          formControlName="score_detail"
+          placeholder="Enter additional score details"
+          rows="4"
+          autoGrow="true"
+        ></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      class="ion-margin"
+      type="submit"
+      [disabled]="!scoreFormValid()"
+      >{{ isEditing() ? "Update Score" : "Submit Score" }}</ion-button
+    >
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="ion-margin"
+      type="button"
+      (click)="onCancel()"
+      >Cancel</ion-button
+    >
+  </form>
+
+  @if (isEditing()) {
+  <ion-button
+    expand="block"
+    class="ion-margin"
+    type="button"
+    color="danger"
+    (click)="onDelete()"
+    >Delete</ion-button
+  >
+  } } @else {
+  <!-- Loading skeleton for edit page -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Loading...</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+  }
+</ion-content>

@@ -10,16 +10,16 @@ import { RequestBuilder } from '../../request-builder';
 
 import { apiScoreOutputModel } from '../../models/api-score-output-model';
 
-export interface GetScoresScoresGet$Params {
-  team_id: string;
-  wod_number: number;
+export interface UpdateScoreVerificationScoresVerifyScoreIdPatch$Params {
+  score_id: string;
+  verified: boolean;
 }
 
-export function getScoresScoresGet(http: HttpClient, rootUrl: string, params: GetScoresScoresGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
-  const rb = new RequestBuilder(rootUrl, getScoresScoresGet.PATH, 'get');
+export function updateScoreVerificationScoresVerifyScoreIdPatch(http: HttpClient, rootUrl: string, params: UpdateScoreVerificationScoresVerifyScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
+  const rb = new RequestBuilder(rootUrl, updateScoreVerificationScoresVerifyScoreIdPatch.PATH, 'patch');
   if (params) {
-    rb.query('team_id', params.team_id, {});
-    rb.query('wod_number', params.wod_number, {});
+    rb.path('score_id', params.score_id, {});
+    rb.query('verified', params.verified, {});
   }
 
   return http.request(
@@ -32,4 +32,4 @@ export function getScoresScoresGet(http: HttpClient, rootUrl: string, params: Ge
   );
 }
 
-getScoresScoresGet.PATH = '/scores/';
+updateScoreVerificationScoresVerifyScoreIdPatch.PATH = '/scores/verify/{score_id}';

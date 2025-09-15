@@ -4,10 +4,12 @@
 
 export interface apiScoreOutputModel {
   id: string;
-  reps?: number;
+  reps?: (number | null);
   score_detail?: (string | null);
   team_id: string;
   tiebreak_s?: (number | null);
   time_s?: (number | null);
-  wod_id: string;
+  verified: boolean;
+  wod_number: number;
+  wod_rank?: (number | null);
 }

@@ -6,6 +6,7 @@ export interface apiTeamsOutputModel {
   category: string;
   event_short_name: string;
   id: string;
+  overall_rank?: (number | null);
   paid: boolean;
   team_name: string;
   verified: boolean;

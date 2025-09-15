@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Scoring Wods</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title
+        >{{ verificationMode() ? 'Score Verification' : 'Score Keeping'
+        }}</ion-card-title
+      >
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>Select WOD</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list inset="true">
+    @for (wod of wods(); track wod.wodNumber) {
+    <ion-item [routerLink]="[wod.wodNumber]">
+      <div slot="start">{{ wod.wodNumber }}</div>
+      <ion-label>{{ wod.wodName }}</ion-label>
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

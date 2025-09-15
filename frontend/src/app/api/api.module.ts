@@ -8,9 +8,7 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { apiFireauthService } from './services/api-fireauth.service';
 import { apiAthletesService } from './services/api-athletes.service';
-import { apiEventsService } from './services/api-events.service';
 import { apiTeamsService } from './services/api-teams.service';
-import { apiWodsService } from './services/api-wods.service';
 import { apiScoresService } from './services/api-scores.service';
 
 /**
@@ -23,9 +21,7 @@ import { apiScoresService } from './services/api-scores.service';
   providers: [
     apiFireauthService,
     apiAthletesService,
-    apiEventsService,
     apiTeamsService,
-    apiWodsService,
     apiScoresService,
     ApiConfiguration
   ],

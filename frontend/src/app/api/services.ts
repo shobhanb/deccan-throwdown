@@ -4,7 +4,5 @@
 
 export { apiFireauthService } from './services/api-fireauth.service';
 export { apiAthletesService } from './services/api-athletes.service';
-export { apiEventsService } from './services/api-events.service';
 export { apiTeamsService } from './services/api-teams.service';
-export { apiWodsService } from './services/api-wods.service';
 export { apiScoresService } from './services/api-scores.service';

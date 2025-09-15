@@ -15,13 +15,13 @@ import { createScoreScoresPost } from '../fn/scores/create-score-scores-post';
 import { CreateScoreScoresPost$Params } from '../fn/scores/create-score-scores-post';
 import { deleteScoreScoresScoreIdDelete } from '../fn/scores/delete-score-scores-score-id-delete';
 import { DeleteScoreScoresScoreIdDelete$Params } from '../fn/scores/delete-score-scores-score-id-delete';
-import { getScoreScoresScoreIdGet } from '../fn/scores/get-score-scores-score-id-get';
-import { GetScoreScoresScoreIdGet$Params } from '../fn/scores/get-score-scores-score-id-get';
 import { getScoresScoresGet } from '../fn/scores/get-scores-scores-get';
 import { GetScoresScoresGet$Params } from '../fn/scores/get-scores-scores-get';
 import { apiScoreOutputModel } from '../models/api-score-output-model';
 import { updateScoreScoresScoreIdPatch } from '../fn/scores/update-score-scores-score-id-patch';
 import { UpdateScoreScoresScoreIdPatch$Params } from '../fn/scores/update-score-scores-score-id-patch';
+import { updateScoreVerificationScoresVerifyScoreIdPatch } from '../fn/scores/update-score-verification-scores-verify-score-id-patch';
+import { UpdateScoreVerificationScoresVerifyScoreIdPatch$Params } from '../fn/scores/update-score-verification-scores-verify-score-id-patch';
 
 @Injectable({ providedIn: 'root' })
 export class apiScoresService extends BaseService {
@@ -95,39 +95,6 @@ export class apiScoresService extends BaseService {
     );
   }
 
-  /** Path part for operation `getScoreScoresScoreIdGet()` */
-  static readonly GetScoreScoresScoreIdGetPath = '/scores/{score_id}';
-
-  /**
-   * Get Score.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getScoreScoresScoreIdGet()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getScoreScoresScoreIdGet$Response(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
-    return getScoreScoresScoreIdGet(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Get Score.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getScoreScoresScoreIdGet$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getScoreScoresScoreIdGet(params: GetScoreScoresScoreIdGet$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
-    return this.getScoreScoresScoreIdGet$Response(params, context).pipe(
-      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
-    );
-  }
-
   /** Path part for operation `deleteScoreScoresScoreIdDelete()` */
   static readonly DeleteScoreScoresScoreIdDeletePath = '/scores/{score_id}';
 
@@ -190,6 +157,39 @@ export class apiScoresService extends BaseService {
    */
   updateScoreScoresScoreIdPatch(params: UpdateScoreScoresScoreIdPatch$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.updateScoreScoresScoreIdPatch$Response(params, context).pipe(
+      map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
+    );
+  }
+
+  /** Path part for operation `updateScoreVerificationScoresVerifyScoreIdPatch()` */
+  static readonly UpdateScoreVerificationScoresVerifyScoreIdPatchPath = '/scores/verify/{score_id}';
+
+  /**
+   * Update Score Verification.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateScoreVerificationScoresVerifyScoreIdPatch()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateScoreVerificationScoresVerifyScoreIdPatch$Response(params: UpdateScoreVerificationScoresVerifyScoreIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<apiScoreOutputModel>> {
+    return updateScoreVerificationScoresVerifyScoreIdPatch(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Update Score Verification.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateScoreVerificationScoresVerifyScoreIdPatch$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateScoreVerificationScoresVerifyScoreIdPatch(params: UpdateScoreVerificationScoresVerifyScoreIdPatch$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
+    return this.updateScoreVerificationScoresVerifyScoreIdPatch$Response(params, context).pipe(
       map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
     );
   }

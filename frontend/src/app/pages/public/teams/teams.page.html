@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Teams</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Athletes</ion-card-title>
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+
+  @if (dataLoaded()) { @for (category of teamsCategoriesData(); track category)
+  {
+  <div class="section-title">
+    {{ category[0] + ' (' + category[1].length + ')' }}
+  </div>
+  <ion-list [inset]="true">
+    @for (team of category[1]; track team.id) {
+
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header">
+          <ion-label>{{ team.team_name }}</ion-label>
+        </ion-item>
+        <div class="ion-padding-vertical" slot="content">
+          <ion-list>
+            @for (athlete of team.athletes; track athlete.id) {
+            <ion-item>
+              <ion-icon
+                [name]="athlete.sex === 'M' ? 'man-outline' : 'woman-outline'"
+                slot="start"
+              ></ion-icon>
+              <ion-label
+                >{{ athlete.first_name + ' ' + athlete.last_name }}</ion-label
+              >
+              <ion-note slot="end">{{ athlete.gym}}</ion-note>
+            </ion-item>
+            }
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+  </ion-list>
+  }}
+</ion-content>

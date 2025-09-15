@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonHeader,
   IonToolbar,
@@ -19,9 +19,11 @@ import {
   barChartOutline,
   calculatorOutline,
   calendarOutline,
+  checkmarkCircleOutline,
   homeOutline,
   peopleOutline,
 } from 'ionicons/icons';
+import { appConfig, defaultConfig } from 'src/app/config/config';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
@@ -44,9 +46,10 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 })
 export class MenuComponent implements OnInit {
   private menuController = inject(MenuController);
-  private appConfig = inject(AppConfigService);
+  private appConfigService = inject(AppConfigService);
 
-  eventShortName = this.appConfig.eventShortName;
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
 
   constructor() {
     addIcons({
@@ -56,10 +59,13 @@ export class MenuComponent implements OnInit {
       peopleOutline,
       barbellOutline,
       calculatorOutline,
+      checkmarkCircleOutline,
     });
   }
 
   ngOnInit() {}
+
+  ionViewWillEnter() {}
 
   async closeMenu() {
     await this.menuController.close('main-menu');

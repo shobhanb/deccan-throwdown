@@ -6,69 +6,88 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonButton,
+  IonMenuButton,
   IonRefresher,
   IonRefresherContent,
-  IonIcon,
   IonCard,
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
   IonCardContent,
-  IonMenuButton,
+  IonText,
+  IonList,
+  IonItem,
+  IonIcon,
+  IonLabel,
+  IonNote,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
-import { AppInstallService } from 'src/app/services/app-install.service';
-import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { appConfig, defaultConfig } from 'src/app/config/config';
-import { ActivatedRoute } from '@angular/router';
+import { ToastService } from 'src/app/services/toast.service';
+import { apiTeamsService } from 'src/app/api/services';
+import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  selector: 'app-scores',
+  templateUrl: './scores.page.html',
+  styleUrls: ['./scores.page.scss'],
   standalone: true,
   imports: [
+    IonNote,
+    IonLabel,
+    IonIcon,
+    IonItem,
+    IonList,
+    IonText,
     IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,
     IonCard,
-    IonIcon,
     IonRefresherContent,
     IonRefresher,
-    IonButton,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
     CommonModule,
     FormsModule,
-    ToolbarButtonsComponent,
     IonMenuButton,
+    ToolbarButtonsComponent,
+    RouterLink,
   ],
 })
-export class HomePage implements OnInit {
+export class ScoresPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
-  appInstallService = inject(AppInstallService);
+
+  dataLoaded = signal<boolean>(false);
+  verificationMode = signal<boolean>(false);
 
   eventShortName = signal<string>('');
   eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
+  wods = computed(() => appConfig[this.eventShortName()]?.wods || []);
 
-  constructor() {
-    addIcons({ closeOutline });
-  }
+  constructor() {}
 
   ngOnInit() {}
 
   ionViewWillEnter() {
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
+    this.getData();
   }
 
   handleRefresh(event: CustomEvent) {
+    this.getData();
     (event.target as HTMLIonRefresherElement).complete();
+  }
+
+  getData() {
+    this.dataLoaded.set(false);
+    this.eventShortName.set(
+      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
+    );
+    this.verificationMode.set(
+      this.activatedRoute.snapshot.data['verificationMode'] || false
+    );
   }
 }

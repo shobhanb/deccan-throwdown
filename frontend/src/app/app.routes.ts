@@ -1,24 +1,25 @@
 import { Routes } from '@angular/router';
+import { defaultConfig } from './config/config';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    loadComponent: () =>
-      import('./pages/public/home/home.page').then((m) => m.HomePage),
+    path: ':eventShortName/public',
+    loadChildren: () =>
+      import('./pages/public/public.routes').then((m) => m.routes),
   },
   {
-    path: 'admin',
+    path: ':eventShortName/admin',
     loadChildren: () =>
       import('./pages/admin/admin.routes').then((m) => m.routes),
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: `${defaultConfig}/public/home`,
     pathMatch: 'full',
   },
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: `${defaultConfig}/public/home`,
     pathMatch: 'full',
   },
 ];

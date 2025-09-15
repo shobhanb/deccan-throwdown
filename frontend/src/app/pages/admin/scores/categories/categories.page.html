@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        [defaultHref]="verificationMode() ? ['/', eventShortName(), 'admin', 'scores', 'verify'] : ['/', eventShortName(), 'admin', 'scores']"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Scoring Categories</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title
+        >{{ verificationMode() ? 'Score Verification' : 'Score
+        Keeping'}}</ion-card-title
+      >
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text
+        >{{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading
+        WOD...' }}</ion-text
+      >
+      <br />
+      <br />
+      <ion-text>Click the checkbox to verify scores</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list inset="true">
+    @for (category of teamsCategoriesData(); track $index) {
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header">
+          <ion-label>{{ category[0] }}</ion-label>
+        </ion-item>
+        <div class="ion-padding-vertical" slot="content">
+          <ion-list>
+            @if (verificationMode()) { @for (team of category[1]; track $index)
+            {
+            <ion-item>
+              <ion-label>
+                <h2>{{ team.team_name }}</h2>
+                <p>{{ getAthleteNames(team.athletes) }}</p>
+              </ion-label>
+              <ion-label slot="end" class="ion-text-end">
+                @if (getScore(team.id).reps) {
+                <h3>{{ 'Reps: ' + getScore(team.id).reps }}</h3>
+                } @if (getScore(team.id).time_s) {
+                <h3>
+                  {{ 'Time: ' +
+                  convertSecondsToMinunites(getScore(team.id).time_s ?? 0) }}
+                </h3>
+                } @if (getScore(team.id).tiebreak_s) {
+                <h3>
+                  {{ 'Tiebreak: ' +
+                  convertSecondsToMinunites(getScore(team.id).tiebreak_s ?? 0)
+                  }}
+                </h3>
+                }
+              </ion-label>
+              <ion-checkbox
+                slot="end"
+                [checked]="getScore(team.id).verified"
+                (ionChange)="onVerificationCheckboxChange($event, team.id)"
+              ></ion-checkbox>
+            </ion-item>
+
+            } } @else { @for (team of category[1]; track $index) {
+            <ion-item [routerLink]="[team.id]">
+              <ion-label>
+                <h2>{{ team.team_name }}</h2>
+                <p>{{ getAthleteNames(team.athletes) }}</p>
+              </ion-label>
+              <ion-label slot="end" class="ion-text-end">
+                @if (getScore(team.id).reps) {
+                <h3>{{ 'Reps: ' + getScore(team.id).reps }}</h3>
+                } @if (getScore(team.id).time_s) {
+                <h3>
+                  {{ 'Time: ' +
+                  convertSecondsToMinunites(getScore(team.id).time_s ?? 0) }}
+                </h3>
+                } @if (getScore(team.id).tiebreak_s) {
+                <h3>
+                  {{ 'Tiebreak: ' +
+                  convertSecondsToMinunites(getScore(team.id).tiebreak_s ?? 0)
+                  }}
+                </h3>
+                }
+              </ion-label>
+            </ion-item>
+            } }
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+  </ion-list>
+</ion-content>

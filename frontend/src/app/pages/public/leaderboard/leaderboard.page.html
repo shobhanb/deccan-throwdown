@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Leaderboard</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="section-title">{{ eventName() }}</div>
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-select
+        label="Select Category"
+        labelPlacement="floating"
+        [value]="selectedCategory()"
+        (ionChange)="onClickChangeCategory($event)"
+      >
+        @for (category of categories() || []; track category) {
+        <ion-select-option [value]="category">{{ category }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        label="Select WOD"
+        labelPlacement="floating"
+        [value]="selectedWod()"
+        (ionChange)="onClickChangeWod($event)"
+      >
+        @for (wod of wods() || []; track wod.wodNumber) {
+        <ion-select-option [value]="wod.wodNumber"
+          >{{ wod.wodNumber + ': ' + wod.wodName }}</ion-select-option
+        >
+        }
+        <ion-select-option [value]="0">Overall</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <div class="section-title">Leaderboard</div>
+  @if (selectedWod() === 0) {
+  <!-- Overall Ranks -->
+  <ion-list [inset]="true">
+    @for (team of filteredSortedTeamsData(); track $index) { @if (team.rank) {
+    <ion-item>
+      <div slot="start">{{ team.rank }}</div>
+      <ion-label>
+        <h2>{{ team.team_name }}</h2>
+        <p>{{ getAthleteNames(team.athletes) }}</p>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end">
+        @for (rank of getOverallScore(team); track $index) {
+        <h3>{{ rank || 'NA' }}</h3>
+        }
+      </ion-label> </ion-item
+    >} }
+  </ion-list>
+  } @else {
+  <!-- WOD Ranks -->
+
+  <ion-list [inset]="true">
+    @for (team of filteredSortedTeamsData(); track $index) { @if (team.rank) {
+    <ion-item>
+      <div slot="start">{{ team.rank }}</div>
+      <ion-label>
+        <h2>{{ team.team_name }}</h2>
+        <p>{{ getAthleteNames(team.athletes) }}</p>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end">
+        @if (getWodScore(team)?.reps) {
+        <h3>{{ 'Reps: ' + getWodScore(team)!.reps }}</h3>
+        } @if (getWodScore(team)?.time_s) {
+        <h3>
+          {{ 'Time: ' + convertSecondsToMinunites(getWodScore(team)!.time_s) }}
+        </h3>
+        } @if (getWodScore(team)?.tiebreak_s) {
+        <h3>
+          {{ 'Tiebreak: ' +
+          convertSecondsToMinunites(getWodScore(team)!.tiebreak_s) }}
+        </h3>
+        }
+      </ion-label> </ion-item
+    >} }
+  </ion-list>
+  }
+</ion-content>

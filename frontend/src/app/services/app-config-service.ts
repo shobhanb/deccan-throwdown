@@ -5,12 +5,12 @@ import { appConfig, AppConfig, defaultConfig } from '../config/config';
   providedIn: 'root',
 })
 export class AppConfigService {
-  private config: AppConfig;
+  private _config: AppConfig;
   private _eventShortName: string;
 
   constructor() {
     const subdomain = window.location.hostname.split('.')[0];
-    this.config = appConfig[subdomain] || appConfig[defaultConfig];
+    this._config = appConfig[subdomain] || appConfig[defaultConfig];
 
     if (subdomain === 'localhost' || subdomain === '127') {
       this._eventShortName = defaultConfig;
@@ -19,19 +19,23 @@ export class AppConfigService {
     }
   }
 
+  get config(): AppConfig {
+    return this._config;
+  }
+
   get eventShortName(): string {
     return this._eventShortName;
   }
 
   get eventName(): string {
-    return this.config.eventName;
+    return this._config.eventName;
   }
 
   get categories(): string[] {
-    return this.config.categories;
+    return this._config.categories;
   }
 
   get athletesPerTeam(): number {
-    return this.config.athletesPerTeam;
+    return this._config.athletesPerTeam;
   }
 }
