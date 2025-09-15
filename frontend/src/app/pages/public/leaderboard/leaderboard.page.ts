@@ -41,6 +41,7 @@ import {
 } from 'src/app/api/models';
 import { apiTeamsService } from 'src/app/api/services';
 import { ToastService } from 'src/app/services/toast.service';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -77,16 +78,17 @@ export class LeaderboardPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
+  private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);
 
-  eventShortName = signal<string>('');
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
-  wods = computed(() => appConfig[this.eventShortName()]?.wods || []);
-  categories = computed(() => appConfig[this.eventShortName()]?.categories);
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
+  wods = this.appConfigService.wods;
+  categories = this.appConfigService.categories;
 
   selectedCategory = linkedSignal<string | null>(
-    () => this.categories()?.[0] || null
+    () => this.categories?.[0] || null
   );
   selectedWod = signal<number>(0);
 
@@ -180,13 +182,10 @@ export class LeaderboardPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
 
     this.apiTeams
       .getTeamsTeamsGet({
-        event_short_name: this.eventShortName(),
+        event_short_name: this.eventShortName,
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {

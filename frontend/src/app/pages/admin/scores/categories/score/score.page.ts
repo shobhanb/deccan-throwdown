@@ -49,6 +49,7 @@ import {
   apiTeamsOutputModel,
 } from 'src/app/api/models';
 import { AlertService } from 'src/app/services/alert.service';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-score',
@@ -90,23 +91,20 @@ export class ScorePage implements OnInit {
   private location = inject(Location);
   private router = inject(Router);
   private alertService = inject(AlertService);
+  private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);
   scoreData = signal<apiScoreOutputModel | null>(null);
   isEditing = computed(() => !!this.scoreData());
 
-  eventShortName = signal<string>('');
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
+
   wodNumber = signal<number>(0);
+  wod = computed(() => this.appConfigService.getWodByNumber(this.wodNumber()));
+
   teamId = signal<string>('');
   teamData = signal<apiTeamsOutputDetailModel | null>(null);
-
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
-  wod = computed(
-    () =>
-      appConfig[this.eventShortName()].wods.filter(
-        (value: WodConfig) => value.wodNumber === this.wodNumber()
-      )[0] || null
-  );
 
   constructor() {}
 
@@ -123,9 +121,6 @@ export class ScorePage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
     this.wodNumber.set(
       Number(this.activatedRoute.snapshot.paramMap.get('wodNumber')) || 0
     );

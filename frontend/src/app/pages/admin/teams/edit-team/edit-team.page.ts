@@ -45,6 +45,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { appConfig } from 'src/app/config/config';
 import { addIcons } from 'ionicons';
 import { manOutline, womanOutline } from 'ionicons/icons';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-edit-team',
@@ -87,6 +88,7 @@ export class EditTeamPage implements OnInit {
   private toastService = inject(ToastService);
   private location = inject(Location);
   private alertService = inject(AlertService);
+  private appConfigService = inject(AppConfigService);
 
   isEditing = signal<boolean>(false);
   dataLoaded = signal<boolean>(false);
@@ -108,17 +110,13 @@ export class EditTeamPage implements OnInit {
       ) || []
   );
 
-  eventShortName = signal<string>('');
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
-  categories = computed(
-    () => appConfig[this.eventShortName()]?.categories || []
-  );
-  athletesPerTeam = computed(
-    () => appConfig[this.eventShortName()]?.athletesPerTeam || 1
-  );
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
+  categories = this.appConfigService.categories;
+  athletesPerTeam = this.appConfigService.athletesPerTeam;
 
   get athleteIndexes(): number[] {
-    return Array.from({ length: this.athletesPerTeam() }, (_, i) => i);
+    return Array.from({ length: this.athletesPerTeam }, (_, i) => i);
   }
 
   teamForm = new FormGroup({
@@ -147,9 +145,6 @@ export class EditTeamPage implements OnInit {
   }
 
   private async getData() {
-    this.eventShortName.set(
-      this.route.snapshot.paramMap.get('eventShortName') || ''
-    );
     const teamId = this.route.snapshot.paramMap.get('teamId');
     if (teamId) {
       this.isEditing.set(true);
@@ -198,18 +193,15 @@ export class EditTeamPage implements OnInit {
       category: formValue.category!,
       paid: formValue.paid!,
       verified: formValue.verified!,
-      event_short_name: this.eventShortName(),
+      event_short_name: this.eventShortName,
     };
 
     this.apiTeams.createTeamTeamsPost({ body: createModel }).subscribe({
       next: (data: apiTeamsOutputModel) => {
         this.toastService.showSuccess('Team created successfully');
-        this.router.navigate(
-          ['/', this.eventShortName(), 'admin', 'teams', data.id],
-          {
-            replaceUrl: true,
-          }
-        );
+        this.router.navigate(['/admin', 'teams', data.id], {
+          replaceUrl: true,
+        });
       },
       error: (error) => {
         console.error('Error creating team:', error);
@@ -227,7 +219,7 @@ export class EditTeamPage implements OnInit {
       category: formValue.category,
       paid: formValue.paid,
       verified: formValue.verified,
-      event_short_name: this.eventShortName(),
+      event_short_name: this.eventShortName,
     };
 
     this.apiTeams
@@ -237,7 +229,7 @@ export class EditTeamPage implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.router.navigate(['/', this.eventShortName(), 'admin', 'teams'], {
+          this.router.navigate(['/admin', 'teams'], {
             replaceUrl: true,
           });
           this.toastService.showSuccess('Team updated successfully');
@@ -261,12 +253,9 @@ export class EditTeamPage implements OnInit {
           .deleteTeamTeamsTeamIdDelete({ team_id: this.editTeam()!.id })
           .subscribe({
             next: () => {
-              this.router.navigate(
-                ['/', this.eventShortName(), 'admin', 'teams'],
-                {
-                  replaceUrl: true,
-                }
-              );
+              this.router.navigate(['/admin', 'teams'], {
+                replaceUrl: true,
+              });
               this.toastService.showSuccess('Team deleted successfully');
             },
             error: (error) => {

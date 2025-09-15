@@ -27,6 +27,7 @@ import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ToastService } from 'src/app/services/toast.service';
 import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-scores',
@@ -60,13 +61,14 @@ import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 })
 export class ScoresPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
+  private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);
   verificationMode = signal<boolean>(false);
 
-  eventShortName = signal<string>('');
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
-  wods = computed(() => appConfig[this.eventShortName()]?.wods || []);
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
+  wods = this.appConfigService.wods;
 
   constructor() {}
 
@@ -83,9 +85,6 @@ export class ScoresPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
     this.verificationMode.set(
       this.activatedRoute.snapshot.data['verificationMode'] || false
     );

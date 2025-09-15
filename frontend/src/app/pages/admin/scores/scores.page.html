@@ -17,7 +17,7 @@
         >{{ verificationMode() ? 'Score Verification' : 'Score Keeping'
         }}</ion-card-title
       >
-      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
       <ion-text>Select WOD</ion-text>
@@ -25,7 +25,7 @@
   </ion-card>
 
   <ion-list inset="true">
-    @for (wod of wods(); track wod.wodNumber) {
+    @for (wod of wods; track wod.wodNumber) {
     <ion-item [routerLink]="[wod.wodNumber]">
       <div slot="start">{{ wod.wodNumber }}</div>
       <ion-label>{{ wod.wodName }}</ion-label>

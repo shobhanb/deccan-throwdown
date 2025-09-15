@@ -1,9 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        [defaultHref]="['/', eventShortName(), 'admin', 'teams']"
-      ></ion-back-button>
+      <ion-back-button [defaultHref]="['/admin', 'teams']"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ isEditing() ? "Edit Team" : "Create Team" }}</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
@@ -37,7 +35,7 @@
           placeholder="Select category"
           interface="popover"
         >
-          @for (category of categories(); track category) {
+          @for (category of categories; track category) {
           <ion-select-option [value]="category"
             >{{ category }}</ion-select-option
           >
@@ -72,7 +70,7 @@
 
   @if (isEditing()) {
   <div class="section-title">
-    Athletes ({{ athletes().length }}/{{ athletesPerTeam() }})
+    Athletes ({{ athletes().length }}/{{ athletesPerTeam }})
   </div>
   <ion-list [inset]="true">
     @for (item of athleteIndexes; track $index) { @if (athletes()[item]) {

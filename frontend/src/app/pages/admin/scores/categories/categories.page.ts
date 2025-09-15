@@ -33,6 +33,7 @@ import {
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-categories',
@@ -71,23 +72,18 @@ export class CategoriesPage implements OnInit {
   private apiScores = inject(apiScoresService);
   private activatedRoute = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);
   verificationMode = signal<boolean>(false);
 
-  eventShortName = signal<string>('');
-  wodNumber = signal<number>(0);
-  wod = computed(
-    () =>
-      appConfig[this.eventShortName()]?.wods?.filter(
-        (value: WodConfig) => value.wodNumber === this.wodNumber()
-      )[0] || null
-  );
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
+  categories = this.appConfigService.categories;
 
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
-  categories = computed(
-    () => appConfig[this.eventShortName()]?.categories || []
-  );
+  wodNumber = signal<number>(0);
+  wod = computed(() => this.appConfigService.getWodByNumber(this.wodNumber()));
+
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
 
   teamsCategoriesData = computed(() => {
@@ -120,9 +116,6 @@ export class CategoriesPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
     this.wodNumber.set(
       Number(this.activatedRoute.snapshot.paramMap.get('wodNumber') || '0')
     );
@@ -133,7 +126,7 @@ export class CategoriesPage implements OnInit {
 
     this.apiTeams
       .getTeamsTeamsGet({
-        event_short_name: this.eventShortName(),
+        event_short_name: this.eventShortName,
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {

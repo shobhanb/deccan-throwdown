@@ -9,49 +9,34 @@
       {{ eventShortName }}
     </div>
     <ion-list [inset]="true">
-      <ion-item
-        [routerLink]="[eventShortName, 'public', 'home']"
-        (click)="closeMenu()"
-      >
+      <ion-item [routerLink]="['home']" (click)="closeMenu()">
         <ion-icon name="home-outline" slot="start"></ion-icon>
         <ion-label>Home</ion-label>
       </ion-item>
-      <ion-item
-        [routerLink]="[eventShortName, 'public', 'teams']"
-        (click)="closeMenu()"
-      >
+      <ion-item [routerLink]="['teams']" (click)="closeMenu()">
         <ion-icon name="people-outline" slot="start"></ion-icon>
         <ion-label>Teams & Athletes</ion-label>
       </ion-item>
-      <ion-item
-        [routerLink]="[eventShortName, 'public', 'leaderboard']"
-        (click)="closeMenu()"
-      >
+      <ion-item [routerLink]="['leaderboard']" (click)="closeMenu()">
         <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
         <ion-label>Leaderboard</ion-label>
       </ion-item>
     </ion-list>
 
     <div class="section-title">
-      {{ eventShortName() + " Admin" }}
+      {{ eventShortName + " Admin" }}
     </div>
     <ion-list [inset]="true">
-      <ion-item
-        [routerLink]="[eventShortName, 'admin', 'teams']"
-        (click)="closeMenu()"
-      >
+      <ion-item [routerLink]="['admin', 'teams']" (click)="closeMenu()">
         <ion-icon name="people-outline" slot="start"></ion-icon>
         <ion-label>Teams & Athletes</ion-label>
       </ion-item>
-      <ion-item
-        [routerLink]="[eventShortName, 'admin', 'scores']"
-        (click)="closeMenu()"
-      >
+      <ion-item [routerLink]="['admin', 'scores']" (click)="closeMenu()">
         <ion-icon name="calculator-outline" slot="start"></ion-icon>
         <ion-label>Score Entry</ion-label>
       </ion-item>
       <ion-item
-        [routerLink]="[eventShortName, 'admin', 'scores', 'verify']"
+        [routerLink]="['admin', 'scores', 'verify']"
         (click)="closeMenu()"
       >
         <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
@@ -63,8 +48,8 @@
       expand="block"
       color="medium"
       fill="outline"
-      class="admin-signin-button"
-      routerLink="/admin/signin"
+      class="/admin-signin-button"
+      routerLink="//admin/signin"
     >
       Admin Sign In</ion-button
     >

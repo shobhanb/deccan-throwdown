@@ -34,6 +34,7 @@ import {
 } from 'src/app/api/models';
 import { HelperFunctionsService } from 'src/app/services/helper-functions.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-athletes',
@@ -68,10 +69,11 @@ export class AthletesPage implements OnInit {
   private toastService = inject(ToastService);
   private router = inject(Router);
   private location = inject(Location);
-  private helperFunctions = inject(HelperFunctionsService);
   private alertService = inject(AlertService);
+  private appConfigService = inject(AppConfigService);
 
-  eventShortName = signal<string>('');
+  eventShortName = this.appConfigService.eventShortName;
+
   dataLoaded = signal<boolean>(false);
   isEditing = signal<boolean>(false);
   editAthlete = signal<apiAthleteOutputModel | null>(null);
@@ -102,9 +104,6 @@ export class AthletesPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
     const teamId = this.activatedRoute.snapshot.paramMap.get('teamId');
     const athleteId = this.activatedRoute.snapshot.paramMap.get('athleteId');
 
@@ -177,13 +176,7 @@ export class AthletesPage implements OnInit {
             next: (data) => {
               this.toastService.showSuccess('Athlete updated successfully');
               this.router.navigate(
-                [
-                  '/',
-                  this.eventShortName(),
-                  'admin',
-                  'teams',
-                  this.editAthlete()!.team_id,
-                ],
+                ['/admin', 'teams', this.editAthlete()!.team_id],
                 { replaceUrl: true }
               );
             },
@@ -206,12 +199,9 @@ export class AthletesPage implements OnInit {
           .subscribe({
             next: (data) => {
               this.toastService.showSuccess('Athlete created successfully');
-              this.router.navigate(
-                ['/', this.eventShortName(), 'admin', 'teams', this.teamId()],
-                {
-                  replaceUrl: true,
-                }
-              );
+              this.router.navigate(['/admin', 'teams', this.teamId()], {
+                replaceUrl: true,
+              });
             },
             error: (error) => {
               console.error('Error creating athlete:', error);
@@ -248,13 +238,7 @@ export class AthletesPage implements OnInit {
           next: () => {
             this.toastService.showSuccess('Athlete deleted successfully');
             this.router.navigate(
-              [
-                '/',
-                this.eventShortName(),
-                'admin',
-                'teams',
-                this.editAthlete()!.team_id,
-              ],
+              ['/admin', 'teams', this.editAthlete()!.team_id],
               { replaceUrl: true }
             );
           },

@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button
-        [defaultHref]="verificationMode() ? ['/', eventShortName(), 'admin', 'scores', 'verify'] : ['/', eventShortName(), 'admin', 'scores']"
+        [defaultHref]="verificationMode() ? ['/admin', 'scores', 'verify'] : ['/admin', 'scores']"
       ></ion-back-button>
     </ion-buttons>
     <ion-title>Scoring Categories</ion-title>
@@ -21,7 +21,7 @@
         >{{ verificationMode() ? 'Score Verification' : 'Score
         Keeping'}}</ion-card-title
       >
-      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
       <ion-text
@@ -44,7 +44,7 @@
         <div class="ion-padding-vertical" slot="content">
           <ion-list>
             @if (verificationMode()) { @for (team of category[1]; track $index)
-            {
+            { @if (!!getScore(team.id)) {
             <ion-item>
               <ion-label>
                 <h2>{{ team.team_name }}</h2>
@@ -72,8 +72,7 @@
                 (ionChange)="onVerificationCheckboxChange($event, team.id)"
               ></ion-checkbox>
             </ion-item>
-
-            } } @else { @for (team of category[1]; track $index) {
+            } } } @else { @for (team of category[1]; track $index) {
             <ion-item [routerLink]="[team.id]">
               <ion-label>
                 <h2>{{ team.team_name }}</h2>

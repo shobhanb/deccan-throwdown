@@ -43,6 +43,7 @@ import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { appConfig } from 'src/app/config/config';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-teams',
@@ -81,14 +82,14 @@ import { appConfig } from 'src/app/config/config';
 export class TeamsPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
-  private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+  private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
 
-  eventShortName = signal<string>('');
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
 
   teamsCategoriesData = computed(() => {
     const teams = this.teamsData().sort((a, b) =>
@@ -122,12 +123,9 @@ export class TeamsPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
     this.apiTeams
       .getTeamsTeamsGet({
-        event_short_name: this.eventShortName(),
+        event_short_name: this.eventShortName,
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {

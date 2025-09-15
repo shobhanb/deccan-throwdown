@@ -23,6 +23,7 @@ import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-home',
@@ -51,10 +52,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class HomePage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
+  private appConfigService = inject(AppConfigService);
   appInstallService = inject(AppInstallService);
 
-  eventShortName = signal<string>('');
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
+  eventShortName = this.appConfigService.eventShortName;
+  eventName = this.appConfigService.eventName;
 
   constructor() {
     addIcons({ closeOutline });
@@ -62,11 +64,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {}
 
-  ionViewWillEnter() {
-    this.eventShortName.set(
-      this.activatedRoute.snapshot.paramMap.get('eventShortName') || ''
-    );
-  }
+  ionViewWillEnter() {}
 
   handleRefresh(event: CustomEvent) {
     (event.target as HTMLIonRefresherElement).complete();

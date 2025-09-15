@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { appConfig, AppConfig, defaultConfig } from '../config/config';
+import {
+  appConfig,
+  AppConfig,
+  defaultConfig,
+  WodConfig,
+} from '../config/config';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +42,17 @@ export class AppConfigService {
 
   get athletesPerTeam(): number {
     return this._config.athletesPerTeam;
+  }
+
+  get wods(): WodConfig[] {
+    return this._config.wods;
+  }
+
+  getWodByNumber(wodNumber: number): WodConfig | null {
+    return (
+      this._config.wods.filter(
+        (value: WodConfig) => value.wodNumber === wodNumber
+      )[0] || null
+    );
   }
 }

@@ -49,7 +49,7 @@ export class MenuComponent implements OnInit {
   private appConfigService = inject(AppConfigService);
 
   eventShortName = this.appConfigService.eventShortName;
-  eventName = computed(() => appConfig[this.eventShortName()]?.eventName || '');
+  eventName = this.appConfigService.eventName;
 
   constructor() {
     addIcons({
