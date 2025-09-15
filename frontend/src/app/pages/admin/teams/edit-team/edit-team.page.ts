@@ -27,7 +27,6 @@ import {
   IonRefresherContent,
   IonList,
   IonSkeletonText,
-  IonNote,
   IonIcon,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -42,7 +41,6 @@ import {
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ToastService } from 'src/app/services/toast.service';
 import { AlertService } from 'src/app/services/alert.service';
-import { appConfig } from 'src/app/config/config';
 import { addIcons } from 'ionicons';
 import { manOutline, womanOutline } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -54,7 +52,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   standalone: true,
   imports: [
     IonIcon,
-    IonNote,
     IonList,
     IonRefresherContent,
     IonRefresher,

@@ -65,4 +65,4 @@ export const appConfig: { [key: string]: AppConfig } = {
   },
 };
 
-export const defaultConfig = 'dtteams2025';
+export const defaultConfig = 'dtpairs2025';

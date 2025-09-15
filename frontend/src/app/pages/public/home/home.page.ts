@@ -16,13 +16,12 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonMenuButton,
+  IonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppInstallService } from 'src/app/services/app-install.service';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
-import { appConfig, defaultConfig } from 'src/app/config/config';
-import { ActivatedRoute } from '@angular/router';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
@@ -31,6 +30,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   styleUrls: ['./home.page.scss'],
   standalone: true,
   imports: [
+    IonText,
     IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
@@ -51,7 +51,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   ],
 })
 export class HomePage implements OnInit {
-  private activatedRoute = inject(ActivatedRoute);
   private appConfigService = inject(AppConfigService);
   appInstallService = inject(AppInstallService);
 

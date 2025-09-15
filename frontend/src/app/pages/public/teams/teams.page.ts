@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  Input,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -18,11 +11,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent,
-  IonText,
   IonItem,
-  IonFab,
-  IonFabButton,
   IonIcon,
   IonList,
   IonLabel,
@@ -34,15 +23,10 @@ import {
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiTeamsService } from 'src/app/api/services';
-import {
-  apiAthleteOutputModel,
-  apiTeamsOutputDetailModel,
-} from 'src/app/api/models';
+import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
 import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { appConfig } from 'src/app/config/config';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
@@ -58,11 +42,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonLabel,
     IonList,
     IonIcon,
-    IonFabButton,
-    IonFab,
     IonItem,
-    IonText,
-    IonCardContent,
     IonCardTitle,
     IonCardHeader,
     IonCard,
@@ -75,14 +55,12 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     CommonModule,
     FormsModule,
     ToolbarButtonsComponent,
-    RouterLink,
     IonMenuButton,
   ],
 })
 export class TeamsPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
-  private activatedRoute = inject(ActivatedRoute);
   private appConfigService = inject(AppConfigService);
 
   dataLoaded = signal<boolean>(false);

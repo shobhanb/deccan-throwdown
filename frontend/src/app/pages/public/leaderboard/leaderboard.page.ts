@@ -16,21 +16,12 @@ import {
   IonMenuButton,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonList,
   IonItem,
   IonLabel,
-  IonIcon,
   IonSelect,
   IonSelectOption,
 } from '@ionic/angular/standalone';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { appConfig } from 'src/app/config/config';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { addIcons } from 'ionicons';
 import { trophyOutline } from 'ionicons/icons';
@@ -49,18 +40,11 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   styleUrls: ['./leaderboard.page.scss'],
   standalone: true,
   imports: [
-    IonIcon,
     IonLabel,
     IonItem,
     IonList,
     IonSelect,
     IonSelectOption,
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonRefresherContent,
     IonRefresher,
     IonContent,
@@ -71,11 +55,9 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     FormsModule,
     IonMenuButton,
     ToolbarButtonsComponent,
-    RouterLink,
   ],
 })
 export class LeaderboardPage implements OnInit {
-  private activatedRoute = inject(ActivatedRoute);
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
   private appConfigService = inject(AppConfigService);

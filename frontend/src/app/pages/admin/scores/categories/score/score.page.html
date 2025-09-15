@@ -17,14 +17,11 @@
 
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Score Keeping</ion-card-title>
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
+      <ion-card-title>{{ teamData()?.team_name }} </ion-card-title>
+      <ion-card-subtitle
+        >{{ `WOD ${wod()?.wodNumber}: ${wod()?.wodName}` }}</ion-card-subtitle
+      >
     </ion-card-header>
-    <ion-card-content>
-      <ion-text>{{ `WOD ${wod()?.wodNumber}: ${wod()?.wodName}` }}</ion-text>
-      <br />
-      <ion-text>{{ teamData()?.team_name }}</ion-text>
-    </ion-card-content>
   </ion-card>
 
   <form [formGroup]="scoreForm" (ngSubmit)="submitScore()">
@@ -32,10 +29,10 @@
       <ion-item>
         <ion-input
           type="number"
-          label="Reps"
+          label="Reps or weight"
           labelPlacement="stacked"
           formControlName="reps"
-          placeholder="Enter number of reps"
+          placeholder="Enter number of reps or weight"
         ></ion-input>
       </ion-item>
 

@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  Input,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -40,7 +33,6 @@ import { ToastService } from 'src/app/services/toast.service';
 import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { appConfig } from 'src/app/config/config';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({

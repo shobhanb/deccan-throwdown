@@ -24,15 +24,13 @@ import {
   IonCheckbox,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
-import { apiAthletesService, apiTeamsService } from 'src/app/api/services';
+import { apiAthletesService } from 'src/app/api/services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
 import {
   apiAthleteCreateModel,
   apiAthleteOutputModel,
-  apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
-import { HelperFunctionsService } from 'src/app/services/helper-functions.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
@@ -64,7 +62,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 })
 export class AthletesPage implements OnInit {
   private apiAthlete = inject(apiAthletesService);
-  private apiTeams = inject(apiTeamsService);
   private activatedRoute = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private router = inject(Router);

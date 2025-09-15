@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import {
   FormControl,
@@ -30,10 +23,7 @@ import {
   IonCardContent,
   IonText,
   IonList,
-  IonAccordionGroup,
-  IonAccordion,
   IonItem,
-  IonLabel,
   IonButton,
   IonInput,
   IonTextarea,
@@ -42,11 +32,9 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
-import { appConfig, WodConfig } from 'src/app/config/config';
 import {
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
-  apiTeamsOutputModel,
 } from 'src/app/api/models';
 import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -60,7 +48,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonTextarea,
     IonInput,
     IonButton,
-    IonLabel,
     IonItem,
     IonList,
     IonText,

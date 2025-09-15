@@ -32,6 +32,21 @@
       <ion-card-title>Welcome!</ion-card-title>
       <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
     </ion-card-header>
-    <ion-card-content> </ion-card-content>
+    @if ( eventShortName === 'dtpairs2025') {
+    <ion-card-content>
+      <ion-text>{{ 'Looking for Deccan Throwdown Teams?' }}</ion-text>
+    </ion-card-content>
+    <ion-button fill="clear" href="http://dtteams2025.cfgames.site"
+      >Click here</ion-button
+    >
+    } @else {
+    <ion-card-content>
+      <ion-text>{{ 'Looking for Deccan Throwdown Pairs?' }}</ion-text>
+    </ion-card-content>
+    <ion-button fill="clear" href="http://dtpairs2025.cfgames.site"
+      >Click here</ion-button
+    >
+
+    }
   </ion-card>
 </ion-content>

@@ -19,7 +19,6 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
-import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-auth-state',
@@ -44,7 +43,6 @@ import { ToastService } from 'src/app/services/toast.service';
   ],
 })
 export class AuthStateComponent implements OnInit {
-  private toastService = inject(ToastService);
   authService = inject(AuthService);
 
   @ViewChild(IonModal) modal!: IonModal;

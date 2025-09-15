@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -17,16 +17,10 @@ import {
   IonText,
   IonList,
   IonItem,
-  IonIcon,
   IonLabel,
-  IonNote,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { appConfig, defaultConfig } from 'src/app/config/config';
-import { ToastService } from 'src/app/services/toast.service';
-import { apiTeamsService } from 'src/app/api/services';
-import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
@@ -35,9 +29,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   styleUrls: ['./scores.page.scss'],
   standalone: true,
   imports: [
-    IonNote,
     IonLabel,
-    IonIcon,
     IonItem,
     IonList,
     IonText,
