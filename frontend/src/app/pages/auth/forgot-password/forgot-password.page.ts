@@ -17,7 +17,14 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonText,
 } from '@ionic/angular/standalone';
+import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 
@@ -27,6 +34,12 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
   imports: [
+    IonText,
+    IonCardContent,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonCardHeader,
+    IonCard,
     IonTitle,
     IonToolbar,
     IonHeader,
@@ -43,6 +56,9 @@ export class ForgotPasswordPage implements OnInit {
   private toastService = inject(ToastService);
   private fireAuth = inject(Auth);
   private router = inject(Router);
+  private appConfigService = inject(AppConfigService);
+
+  eventName = this.appConfigService.eventName;
 
   emailForm = new FormGroup({
     email: new FormControl('', {
@@ -50,27 +66,29 @@ export class ForgotPasswordPage implements OnInit {
     }),
   });
 
+  isEmailFormValid() {
+    return this.emailForm.valid && this.emailForm.dirty;
+  }
+
   async onSubmit() {
-    if (this.emailForm.valid && this.emailForm.dirty) {
+    if (this.isEmailFormValid()) {
       sendPasswordResetEmail(this.fireAuth, this.emailForm.value.email!)
         .then(() => {
-          this.toastService.showToast(
-            `Password reset link sent to ${this.emailForm.value.email}`,
-            'success',
-            '/',
-            3000
+          this.toastService.showSuccess(
+            `Password reset link sent to ${this.emailForm.value.email}`
           );
+          this.router.navigate(['/home'], { replaceUrl: true });
         })
         .catch((err: FirebaseError) => {
           console.error(err);
-          this.toastService.showToast(err.message, 'danger', '/', 3000);
+          this.toastService.showError(err.message);
         });
     }
   }
 
   onCancel() {
     this.emailForm.reset();
-    this.router.navigate(['/']);
+    this.router.navigate(['/home'], { replaceUrl: true });
   }
 
   constructor() {}

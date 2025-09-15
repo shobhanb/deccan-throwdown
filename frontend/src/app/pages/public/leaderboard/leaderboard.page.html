@@ -11,7 +11,15 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <div class="section-title">{{ eventName }}</div>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Leaderboard</ion-card-title>
+      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+
+  @if (dataLoaded()) {
+
   <ion-list [inset]="true">
     <ion-item>
       <ion-select
@@ -42,7 +50,6 @@
     </ion-item>
   </ion-list>
 
-  <div class="section-title">Leaderboard</div>
   @if (selectedWod() === 0) {
   <!-- Overall Ranks -->
   <ion-list [inset]="true">
@@ -87,5 +94,68 @@
       </ion-label> </ion-item
     >} }
   </ion-list>
+  } } @else {
+  <!-- Loading skeleton for leaderboard -->
+
+  <!-- Loading skeleton for selectors -->
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 30%; height: 16px; margin-bottom: 4px"
+      ></ion-skeleton-text>
+      <br />
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 70%; height: 20px"
+      ></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 25%; height: 16px; margin-bottom: 4px"
+      ></ion-skeleton-text>
+      <br />
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 60%; height: 20px"
+      ></ion-skeleton-text>
+    </ion-item>
+  </ion-list>
+
+  <!-- Loading skeleton for leaderboard items -->
+  <ion-list [inset]="true">
+    @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
+    <ion-item>
+      <div slot="start">
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 20px; height: 20px"
+        ></ion-skeleton-text>
+      </div>
+      <ion-label>
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 80%; height: 20px; margin-bottom: 4px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 60%; height: 16px"
+        ></ion-skeleton-text>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end">
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 40px; height: 18px; margin-bottom: 2px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 50px; height: 18px"
+        ></ion-skeleton-text>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+
   }
 </ion-content>

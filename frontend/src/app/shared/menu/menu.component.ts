@@ -19,10 +19,12 @@ import {
   barChartOutline,
   calculatorOutline,
   checkmarkCircleOutline,
+  fingerPrintOutline,
   homeOutline,
   peopleOutline,
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -45,6 +47,9 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 export class MenuComponent implements OnInit {
   private menuController = inject(MenuController);
   private appConfigService = inject(AppConfigService);
+  private authService = inject(AuthService);
+
+  adminUser = this.authService.adminUser;
 
   eventShortName = this.appConfigService.eventShortName;
   eventName = this.appConfigService.eventName;
@@ -57,6 +62,7 @@ export class MenuComponent implements OnInit {
       barbellOutline,
       calculatorOutline,
       checkmarkCircleOutline,
+      fingerPrintOutline,
     });
   }
 

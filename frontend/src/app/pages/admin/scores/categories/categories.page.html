@@ -36,6 +36,7 @@
     </ion-card-content>
   </ion-card>
 
+  @if (dataLoaded()) {
   <ion-list inset="true">
     @for (category of teamsCategoriesData(); track $index) {
     <ion-accordion-group>
@@ -104,4 +105,51 @@
     </ion-accordion-group>
     }
   </ion-list>
+  } @else {
+  <!-- Loading skeleton -->
+  <ion-list inset="true">
+    @for (category of [1, 2, 3]; track $index) {
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header">
+          <ion-label>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 60%; height: 16px"
+            ></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+        <div class="ion-padding-vertical" slot="content">
+          <ion-list>
+            @for (team of [1, 2, 3, 4]; track $index) {
+            <ion-item>
+              <ion-label>
+                <h2>
+                  <ion-skeleton-text
+                    [animated]="true"
+                    style="width: 70%; height: 16px"
+                  ></ion-skeleton-text>
+                </h2>
+                <p>
+                  <ion-skeleton-text
+                    [animated]="true"
+                    style="width: 90%; height: 14px"
+                  ></ion-skeleton-text>
+                </p>
+              </ion-label>
+              <ion-label slot="end" class="ion-text-end">
+                <ion-skeleton-text
+                  [animated]="true"
+                  style="width: 60px; height: 14px"
+                ></ion-skeleton-text>
+              </ion-label>
+            </ion-item>
+            }
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+  </ion-list>
+  }
 </ion-content>

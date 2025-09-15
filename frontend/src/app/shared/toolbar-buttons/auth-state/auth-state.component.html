@@ -3,9 +3,8 @@
   {{ authService.userNameInitials() }}
 </ion-button>
 <ion-modal
-  [isOpen]="isModalOpen"
-  (didDismiss)="isModalOpen = false"
-  [breakpoints]="[0, 0.25, 0.5, 0.75]"
+  [isOpen]="isModalOpen()"
+  (didDismiss)="isModalOpen.set(false)"
   [initialBreakpoint]="0.75"
 >
   <ng-template>
@@ -30,13 +29,13 @@
           </ion-label>
         </ion-item>
 
-        @if (authService.userCustomClaims()?.admin) {
+        @if (authService.adminUser()) {
         <ion-item>
           <ion-label color="danger">Admin</ion-label>
         </ion-item>
         }
       </ion-list>
-      @if (! authService.user()?.emailVerified) {
+      @if (! authService.verifiedUser()) {
       <ion-list [inset]="true">
         <ion-list-header>
           <ion-label>Email not verified</ion-label>

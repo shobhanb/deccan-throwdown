@@ -22,6 +22,7 @@ import {
   IonSelectOption,
   IonInput,
   IonCheckbox,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiAthletesService } from 'src/app/api/services';
@@ -52,6 +53,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSkeletonText,
     CommonModule,
     ReactiveFormsModule,
     ToolbarButtonsComponent,

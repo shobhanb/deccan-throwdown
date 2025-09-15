@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonButtons,
@@ -53,11 +53,11 @@ export class AuthStateComponent implements OnInit {
 
   ngOnInit() {}
 
-  isModalOpen: boolean = false;
+  isModalOpen = signal(false);
 
   openModal() {
     this.authService.forceRefreshToken();
-    this.isModalOpen = true;
+    this.isModalOpen.set(true);
   }
 
   async onClickResendVerificationEmail() {
@@ -70,10 +70,10 @@ export class AuthStateComponent implements OnInit {
 
   async onClickSignOut() {
     await this.authService.logout();
-    this.isModalOpen = false;
+    this.isModalOpen.set(false);
   }
 
   onClickCancel() {
-    this.isModalOpen = false;
+    this.isModalOpen.set(false);
   }
 }

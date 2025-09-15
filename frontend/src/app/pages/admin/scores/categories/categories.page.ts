@@ -22,6 +22,7 @@ import {
   IonAccordionGroup,
   IonButtons,
   IonCheckbox,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
@@ -59,6 +60,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSkeletonText,
     CommonModule,
     FormsModule,
     ToolbarButtonsComponent,

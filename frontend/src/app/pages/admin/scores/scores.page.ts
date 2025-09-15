@@ -18,6 +18,7 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -44,6 +45,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSkeletonText,
     CommonModule,
     FormsModule,
     IonMenuButton,
@@ -76,7 +78,7 @@ export class ScoresPage implements OnInit {
   }
 
   getData() {
-    this.dataLoaded.set(false);
+    this.dataLoaded.set(true);
     this.verificationMode.set(
       this.activatedRoute.snapshot.data['verificationMode'] || false
     );

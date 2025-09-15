@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Users</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Admin User Management</ion-card-title>
+      <ion-card-subtitle>Deccan Throwdown</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>Manage admin user access</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  @if (dataLoaded()) {
+  <ion-list [inset]="true">
+    @for (user of allUsers(); track user.uid) {
+    <ion-item>
+      <ion-label>
+        <ion-label><strong> {{ user.display_name }}</strong></ion-label>
+        <ion-note>{{ user.email }}</ion-note>
+      </ion-label>
+
+      @if (user.custom_claims?.admin) {
+      <ion-label slot="end">Admin</ion-label>
+      } @if (!user.email_verified) {
+      <ion-label slot="end" color="medium">Not Verified</ion-label>
+      }
+      <ion-button slot="end" fill="clear" (click)="presentActionSheet(user)">
+        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+    }
+  </ion-list>
+  } @else {
+  <!-- Loading skeleton for users list -->
+  <ion-list [inset]="true">
+    @for (item of [1, 2, 3, 4, 5, 6]; track $index) {
+    <ion-item>
+      <ion-label>
+        <!-- User display name -->
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 65%; height: 18px; margin-bottom: 6px"
+        ></ion-skeleton-text>
+        <!-- User email -->
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 80%; height: 14px; margin-bottom: 2px"
+        ></ion-skeleton-text>
+      </ion-label>
+
+      <!-- Admin status label -->
+      <ion-label slot="end">
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 50px; height: 16px; border-radius: 8px"
+        ></ion-skeleton-text>
+      </ion-label>
+
+      <!-- Action button -->
+      <ion-button slot="end" fill="clear">
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 24px; height: 24px; border-radius: 4px"
+        ></ion-skeleton-text>
+      </ion-button>
+    </ion-item>
+    }
+  </ion-list>
+  }
+</ion-content>

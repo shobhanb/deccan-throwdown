@@ -24,6 +24,7 @@
     </ion-card-content>
   </ion-card>
 
+  @if (dataLoaded()) {
   <ion-list inset="true">
     @for (wod of wods; track wod.wodNumber) {
     <ion-item [routerLink]="[wod.wodNumber]">
@@ -32,4 +33,25 @@
     </ion-item>
     }
   </ion-list>
+  } @else {
+  <!-- Loading skeleton -->
+  <ion-list inset="true">
+    @for (item of [1, 2, 3, 4, 5]; track $index) {
+    <ion-item>
+      <div slot="start">
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 20px; height: 20px; border-radius: 4px"
+        ></ion-skeleton-text>
+      </div>
+      <ion-label>
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 80%; height: 16px"
+        ></ion-skeleton-text>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }
 </ion-content>

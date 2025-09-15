@@ -18,7 +18,9 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { ApiModule } from './app/api/api.module';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpInterceptor } from './app/providers/http.interceptor';
-import { environment } from './environments/environment';
+import { AppConfigService } from './app/services/app-config-service';
+
+const appConfigService = new AppConfigService();
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -29,7 +31,8 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding()
     ),
-    ...(ApiModule.forRoot({ rootUrl: environment.apiBaseUrl }).providers ?? []),
+    ...(ApiModule.forRoot({ rootUrl: appConfigService.apiBaseUrl }).providers ??
+      []),
     provideHttpClient(withInterceptors([httpInterceptor])),
     provideFirebaseApp(() =>
       initializeApp({

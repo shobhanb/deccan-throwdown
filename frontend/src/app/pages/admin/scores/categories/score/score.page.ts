@@ -27,6 +27,7 @@ import {
   IonButton,
   IonInput,
   IonTextarea,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
@@ -50,8 +51,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonButton,
     IonItem,
     IonList,
-    IonText,
-    IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,
@@ -64,6 +63,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSkeletonText,
     CommonModule,
     FormsModule,
     ToolbarButtonsComponent,

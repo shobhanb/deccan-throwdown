@@ -12,6 +12,7 @@ import {
 export class AppConfigService {
   private _config: AppConfig;
   private _eventShortName: string;
+  private _apiBaseUrl: string;
 
   constructor() {
     const subdomain = window.location.hostname.split('.')[0];
@@ -19,13 +20,19 @@ export class AppConfigService {
 
     if (subdomain === 'localhost' || subdomain === '127') {
       this._eventShortName = defaultConfig;
+      this._apiBaseUrl = `http://localhost:8000`;
     } else {
       this._eventShortName = subdomain;
+      this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;
     }
   }
 
   get config(): AppConfig {
     return this._config;
+  }
+
+  get apiBaseUrl(): string {
+    return this._apiBaseUrl;
   }
 
   get eventShortName(): string {

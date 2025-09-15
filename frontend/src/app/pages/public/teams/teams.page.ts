@@ -20,13 +20,19 @@ import {
   IonMenuButton,
   IonAccordionGroup,
   IonAccordion,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
 import { addIcons } from 'ionicons';
-import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  manOutline,
+  womanOutline,
+  personOutline,
+} from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
@@ -52,6 +58,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSkeletonText,
     CommonModule,
     FormsModule,
     ToolbarButtonsComponent,
@@ -85,7 +92,7 @@ export class TeamsPage implements OnInit {
   });
 
   constructor() {
-    addIcons({ addOutline, manOutline, womanOutline });
+    addIcons({ personOutline, addOutline, manOutline, womanOutline });
   }
 
   ngOnInit() {}

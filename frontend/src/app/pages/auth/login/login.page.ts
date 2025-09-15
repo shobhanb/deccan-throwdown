@@ -17,9 +17,15 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonText,
 } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   Auth,
   signInWithEmailAndPassword,
@@ -29,6 +35,7 @@ import { LoadingService } from 'src/app/services/loading.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { FirebaseError } from '@angular/fire/app';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AppConfigService } from 'src/app/services/app-config-service';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +43,12 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
+    IonText,
+    IonCardContent,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonCardHeader,
+    IonCard,
     IonTitle,
     IonToolbar,
     IonHeader,
@@ -54,9 +67,12 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
 })
 export class LoginPage implements OnInit {
   private fireAuth = inject(Auth);
-  private authService = inject(AuthService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private appConfigService = inject(AppConfigService);
+  private router = inject(Router);
+
+  eventName = this.appConfigService.eventName;
 
   constructor() {}
 
@@ -69,63 +85,43 @@ export class LoginPage implements OnInit {
     password: new FormControl('', { validators: [Validators.required] }),
   });
 
-  onClickLogin() {
-    if (
-      this.loginForm.valid &&
-      this.loginForm.dirty &&
-      this.loginForm.value.email &&
-      this.loginForm.value.password
-    ) {
-      this.loadingService.showLoading('Logging in');
+  isLoginFormValid() {
+    return this.loginForm.valid && this.loginForm.dirty;
+  }
 
-      signInWithEmailAndPassword(
-        this.fireAuth,
-        this.loginForm.value.email,
-        this.loginForm.value.password
-      )
-        .then((value: UserCredential) => {
-          if (value.user.emailVerified) {
-            this.loadingService.showLoading('Getting athlete info');
-            this.authService
-              .getMyAthleteInfo()
-              .then(() => {
-                this.loadingService.dismissLoading();
-                this.toastService.showToast(
-                  `Logged in as ${value.user.displayName}`,
-                  'success',
-                  '/',
-                  1000
-                );
-              })
-              .catch((err) => {
-                this.loadingService.dismissLoading();
-                this.toastService.showToast(
-                  `Error loading athlete info: ${err.message}`,
-                  'danger',
-                  '/',
-                  3000
-                );
-              });
-          } else {
-            this.loadingService.dismissLoading();
-            this.toastService.showToast(
-              'Logged in. Please verify your email',
-              'warning',
-              '/',
-              5000
-            );
-          }
-        })
-        .catch((err: FirebaseError) => {
-          console.error(err);
-          this.loadingService.dismissLoading();
-          this.toastService.showToast(
-            `Error logging in: ${err.message}`,
-            'danger',
-            '/',
-            3000
-          );
-        });
+  async onClickLogin() {
+    if (!this.isLoginFormValid()) {
+      return;
     }
+
+    this.loadingService.showLoading('Logging in');
+
+    signInWithEmailAndPassword(
+      this.fireAuth,
+      this.loginForm.value.email!,
+      this.loginForm.value.password!
+    )
+      .then((value: UserCredential) => {
+        this.loadingService.dismissLoading();
+        if (value.user.emailVerified) {
+          this.toastService.showSuccess('Logged in successfully');
+        } else {
+          this.toastService.showToast(
+            'Logged in. Please verify your email',
+            'warning'
+          );
+        }
+        this.router.navigate(['/home'], { replaceUrl: true });
+      })
+      .catch((err: FirebaseError) => {
+        console.error(err);
+        this.loadingService.dismissLoading();
+        this.toastService.showError(`Error logging in: ${err.message}`);
+      });
+  }
+
+  onClickCancel() {
+    this.loginForm.reset();
+    this.router.navigate(['/home'], { replaceUrl: true });
   }
 }

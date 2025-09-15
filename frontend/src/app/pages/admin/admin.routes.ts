@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadChildren: () => import('./scores/scores.routes').then((m) => m.routes),
   },
   {
+    path: 'users',
+    loadComponent: () => import('./users/users.page').then((m) => m.UsersPage),
+  },
+  {
     path: '',
     redirectTo: 'teams',
     pathMatch: 'full',

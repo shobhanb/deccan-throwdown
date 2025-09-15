@@ -18,6 +18,7 @@ import { apiFirebaseCustomClaims } from '../api/models';
 import { FirebaseError } from '@angular/fire/app';
 import { ToastService } from './toast.service';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,7 @@ import { Subscription } from 'rxjs';
 export class AuthService {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   private auth = inject(Auth);
   private user$ = user(this.auth);
@@ -88,35 +90,23 @@ export class AuthService {
   async logout() {
     await signOut(this.auth)
       .then(() => {
-        this.toastService.showToast('Logged out', 'primary', '/', 1000);
+        this.toastService.showSuccess('Logged out');
+        this.router.navigate(['/home']);
         this.userCustomClaims.set(null);
       })
       .catch((err: FirebaseError) => {
-        this.toastService.showToast(
-          `Error logging out: ${err.message}`,
-          'danger',
-          null,
-          1000
-        );
+        this.toastService.showError(`Error logging out: ${err.message}`);
       });
   }
 
   async sendVerificationEmail() {
     sendEmailVerification(this.user()!)
       .then(() => {
-        this.toastService.showToast(
-          'Sent verification email',
-          'success',
-          null,
-          1000
-        );
+        this.toastService.showSuccess('Sent verification email');
       })
       .catch((err: FirebaseError) => {
-        this.toastService.showToast(
-          `Error sending verification email: ${err.message}`,
-          'danger',
-          null,
-          1000
+        this.toastService.showError(
+          `Error sending verification email: ${err.message}`
         );
       });
   }

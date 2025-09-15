@@ -51,5 +51,51 @@
     </ion-accordion-group>
     }
   </ion-list>
-  }}
+  }} @else {
+  <!-- Loading skeleton -->
+  @for (category of [1, 2, 3]; track $index) {
+  <div class="section-title">
+    <ion-skeleton-text
+      [animated]="true"
+      style="width: 40%; height: 16px"
+    ></ion-skeleton-text>
+  </div>
+  <ion-list [inset]="true">
+    @for (team of [1, 2, 3, 4]; track $index) {
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header">
+          <ion-label>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 70%; height: 16px"
+            ></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+        <div class="ion-padding-vertical" slot="content">
+          <ion-list>
+            @for (athlete of [1, 2, 3, 4]; track $index) {
+            <ion-item>
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              <ion-label>
+                <ion-skeleton-text
+                  [animated]="true"
+                  style="width: 80%; height: 16px"
+                ></ion-skeleton-text>
+              </ion-label>
+              <ion-note slot="end">
+                <ion-skeleton-text
+                  [animated]="true"
+                  style="width: 60px; height: 14px"
+                ></ion-skeleton-text>
+              </ion-note>
+            </ion-item>
+            }
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+  </ion-list>
+  } }
 </ion-content>
