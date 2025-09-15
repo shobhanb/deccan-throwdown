@@ -1,7 +1,7 @@
-# CF Open Community Cup Webapp
+# Deccan Throwdown Competition Webapp
 
 - Angular
-- TailwindCSS / Daisyui
+- Ionic
 - FastAPI
 - nginx
 - certbot / letsencrypt
