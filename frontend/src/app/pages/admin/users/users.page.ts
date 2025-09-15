@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -6,17 +6,12 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonButtons,
-  IonBackButton,
   IonRefresher,
   IonRefresherContent,
   IonList,
-  IonSegment,
-  IonSegmentButton,
   IonLabel,
   IonItem,
   IonSkeletonText,
-  IonSearchbar,
   IonNote,
   IonIcon,
   IonButton,
@@ -53,17 +48,12 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
     IonButton,
     IonIcon,
     IonNote,
-    IonSearchbar,
     IonSkeletonText,
     IonItem,
     IonLabel,
-    IonSegmentButton,
-    IonSegment,
     IonList,
     IonRefresherContent,
     IonRefresher,
-    IonBackButton,
-    IonButtons,
     IonContent,
     IonHeader,
     IonTitle,

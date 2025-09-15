@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,13 +12,7 @@ import {
   IonInput,
   IonInputPasswordToggle,
   IonButton,
-  IonSelect,
-  IonSelectOption,
-  IonLabel,
-  IonNote,
-  IonListHeader,
   IonHeader,
-  IonRouterLink,
   IonToolbar,
   IonTitle,
   IonMenuButton,
@@ -38,7 +32,7 @@ import {
 } from '@angular/fire/auth';
 import { FirebaseError } from '@angular/fire/app';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiCreateUser } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -59,21 +53,14 @@ import { LoadingService } from 'src/app/services/loading.service';
     IonTitle,
     IonToolbar,
     IonHeader,
-    IonListHeader,
-    IonNote,
-    IonLabel,
     IonButton,
     IonList,
     IonItem,
     IonContent,
     IonInputPasswordToggle,
     IonInput,
-    IonSelect,
-    IonSelectOption,
     ReactiveFormsModule,
     ToolbarButtonsComponent,
-    RouterLink,
-    IonRouterLink,
     IonMenuButton,
   ],
 })

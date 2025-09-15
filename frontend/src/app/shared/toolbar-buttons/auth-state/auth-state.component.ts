@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import {
   IonButtons,
   IonLabel,
@@ -11,8 +10,6 @@ import {
   IonHeader,
   IonToolbar,
   IonListHeader,
-  IonIcon,
-  IonRouterLink,
   IonNote,
   IonTitle,
 } from '@ionic/angular/standalone';
@@ -27,7 +24,6 @@ import { AuthService } from 'src/app/services/auth.service';
   imports: [
     IonTitle,
     IonNote,
-    IonIcon,
     IonListHeader,
     IonToolbar,
     IonHeader,
@@ -38,8 +34,6 @@ import { AuthService } from 'src/app/services/auth.service';
     IonLabel,
     IonItem,
     IonContent,
-    RouterLink,
-    IonRouterLink,
   ],
 })
 export class AuthStateComponent implements OnInit {
