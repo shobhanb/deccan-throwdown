@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonHeader,
   IonToolbar,
@@ -42,14 +42,13 @@ import { AuthService } from 'src/app/services/auth.service';
     IonToolbar,
     IonHeader,
     IonMenu,
-    RouterLink,
-    IonRouterLink,
   ],
 })
 export class MenuComponent implements OnInit {
   private menuController = inject(MenuController);
   private appConfigService = inject(AppConfigService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   adminUser = this.authService.adminUser;
 
@@ -72,5 +71,10 @@ export class MenuComponent implements OnInit {
 
   async closeMenu() {
     await this.menuController.close('main-menu');
+  }
+
+  async navigateTo(route: string[]) {
+    await this.menuController.close('main-menu');
+    this.router.navigate(route);
   }
 }
