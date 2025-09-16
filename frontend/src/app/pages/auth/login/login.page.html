@@ -47,6 +47,7 @@
       class="ion-margin-horizontal"
       type="button"
       routerLink="/auth/forgot-password"
+      routerDirection="forward"
     >
       <a>Forgot Password?</a>
     </ion-button>
@@ -63,7 +64,9 @@
       type="button"
       fill="outline"
       class="ion-margin"
-      (click)="onClickCancel()"
+      [routerLink]="['/home']"
+      routerDirection="root"
+      [replaceUrl]="true"
       >Cancel</ion-button
     >
   </form>

@@ -28,6 +28,7 @@ import {
   IonList,
   IonSkeletonText,
   IonIcon,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { apiTeamsService } from 'src/app/api/services';
@@ -76,6 +77,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     ReactiveFormsModule,
     ToolbarButtonsComponent,
     RouterLink,
+    IonRouterLink,
   ],
 })
 export class EditTeamPage implements OnInit {
@@ -258,15 +260,11 @@ export class EditTeamPage implements OnInit {
             error: (error) => {
               console.error('Error deleting team:', error);
               this.toastService.showError(
-                'Failed to delete team: ' + error.statusText
+                'Failed to delete team: ' + error.error.detail
               );
             },
           });
       }
     }
-  }
-
-  onCancel() {
-    this.location.back();
   }
 }

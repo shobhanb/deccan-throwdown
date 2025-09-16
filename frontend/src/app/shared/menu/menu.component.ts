@@ -12,6 +12,7 @@ import {
   IonMenu,
   MenuController,
   IonButton,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -42,6 +43,7 @@ import { AuthService } from 'src/app/services/auth.service';
     IonHeader,
     IonMenu,
     RouterLink,
+    IonRouterLink,
   ],
 })
 export class MenuComponent implements OnInit {

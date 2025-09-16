@@ -20,18 +20,17 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonList,
   IonItem,
   IonButton,
   IonInput,
   IonTextarea,
   IonSkeletonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
 import {
   apiScoreOutputModel,
@@ -68,6 +67,8 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     FormsModule,
     ToolbarButtonsComponent,
     ReactiveFormsModule,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class ScorePage implements OnInit {
@@ -75,7 +76,6 @@ export class ScorePage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private activatedRoute = inject(ActivatedRoute);
   private toastService = inject(ToastService);
-  private location = inject(Location);
   private router = inject(Router);
   private alertService = inject(AlertService);
   private appConfigService = inject(AppConfigService);
@@ -235,10 +235,6 @@ export class ScorePage implements OnInit {
 
   scoreFormValid() {
     return this.scoreForm.valid && this.scoreForm.dirty;
-  }
-
-  onCancel() {
-    this.location.back();
   }
 
   async onDelete() {

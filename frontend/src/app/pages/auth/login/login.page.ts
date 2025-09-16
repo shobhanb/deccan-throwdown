@@ -24,7 +24,6 @@ import {
   IonCardContent,
   IonText,
 } from '@ionic/angular/standalone';
-import { AuthService } from 'src/app/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import {
   Auth,
@@ -118,10 +117,5 @@ export class LoginPage implements OnInit {
         this.loadingService.dismissLoading();
         this.toastService.showError(`Error logging in: ${err.message}`);
       });
-  }
-
-  onClickCancel() {
-    this.loginForm.reset();
-    this.router.navigate(['/home'], { replaceUrl: true });
   }
 }

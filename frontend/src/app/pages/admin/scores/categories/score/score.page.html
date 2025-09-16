@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="['/admin', 'scores']"></ion-back-button>
+      <ion-back-button
+        [defaultHref]="['/admin', 'scores', wodNumber()]"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>Edit Score</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
@@ -97,7 +99,8 @@
       fill="outline"
       class="ion-margin"
       type="button"
-      (click)="onCancel()"
+      [routerLink]="['/admin', 'scores', wodNumber()]"
+      routerDirection="back"
       >Cancel</ion-button
     >
   </form>

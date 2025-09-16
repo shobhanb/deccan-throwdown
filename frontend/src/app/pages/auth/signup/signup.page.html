@@ -70,7 +70,9 @@
       fill="outline"
       type="cancel"
       class="ion-margin"
-      (click)="onClickCancel()"
+      [routerLink]="['/home']"
+      routerDirection="root"
+      [replaceUrl]="true"
       >Cancel</ion-button
     >
   </form>

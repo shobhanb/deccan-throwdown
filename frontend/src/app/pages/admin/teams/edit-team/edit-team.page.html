@@ -63,7 +63,8 @@
       fill="outline"
       class="ion-margin"
       type="button"
-      (click)="onCancel()"
+      [routerLink]="['/admin', 'teams']"
+      routerDirection="back"
       >Cancel</ion-button
     >
   </form>
@@ -76,6 +77,7 @@
     @for (item of athleteIndexes; track $index) { @if (athletes()[item]) {
     <ion-item
       [routerLink]="['..', 'edit-athlete', athletes()[item].id]"
+      routerDirection="forward"
       [replaceUrl]="true"
     >
       <ion-icon
@@ -89,6 +91,7 @@
     } @else {
     <ion-item
       [routerLink]="['..', 'create-athlete', editTeam()?.id]"
+      routerDirection="forward"
       [replaceUrl]="true"
     >
       <ion-label>Add athlete</ion-label>

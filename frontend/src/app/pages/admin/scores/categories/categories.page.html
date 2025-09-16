@@ -76,7 +76,7 @@
               ></ion-checkbox>
             </ion-item>
             } } } @else { @for (team of category[1]; track $index) {
-            <ion-item [routerLink]="[team.id]">
+            <ion-item [routerLink]="[team.id]" routerDirection="forward">
               <ion-label>
                 <h2>{{ team.team_name }}</h2>
                 <p>{{ getAthleteNames(team.athletes) }}</p>

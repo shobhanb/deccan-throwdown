@@ -27,7 +27,7 @@
   @if (dataLoaded()) {
   <ion-list inset="true">
     @for (wod of wods; track wod.wodNumber) {
-    <ion-item [routerLink]="[wod.wodNumber]">
+    <ion-item [routerLink]="[wod.wodNumber]" routerDirection="forward">
       <div slot="start">{{ wod.wodNumber }}</div>
       <ion-label>{{ wod.wodName }}</ion-label>
     </ion-item>

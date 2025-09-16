@@ -22,6 +22,7 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToastService } from 'src/app/services/toast.service';
 import {
@@ -32,7 +33,7 @@ import {
 } from '@angular/fire/auth';
 import { FirebaseError } from '@angular/fire/app';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiCreateUser } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -62,6 +63,8 @@ import { LoadingService } from 'src/app/services/loading.service';
     ReactiveFormsModule,
     ToolbarButtonsComponent,
     IonMenuButton,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class SignupPage implements OnInit {
@@ -145,10 +148,5 @@ export class SignupPage implements OnInit {
         this.router.navigate(['/home'], { replaceUrl: true });
       },
     });
-  }
-
-  onClickCancel() {
-    this.signupForm.reset();
-    this.router.navigate(['/home'], { replaceUrl: true });
   }
 }

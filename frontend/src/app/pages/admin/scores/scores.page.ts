@@ -19,6 +19,7 @@ import {
   IonItem,
   IonLabel,
   IonSkeletonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -51,6 +52,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonMenuButton,
     ToolbarButtonsComponent,
     RouterLink,
+    IonRouterLink,
   ],
 })
 export class ScoresPage implements OnInit {

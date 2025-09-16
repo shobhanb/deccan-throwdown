@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonButton,
@@ -23,6 +23,7 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -50,6 +51,8 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
     IonContent,
     ReactiveFormsModule,
     ToolbarButtonsComponent,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class ForgotPasswordPage implements OnInit {
@@ -84,11 +87,6 @@ export class ForgotPasswordPage implements OnInit {
           this.toastService.showError(err.message);
         });
     }
-  }
-
-  onCancel() {
-    this.emailForm.reset();
-    this.router.navigate(['/home'], { replaceUrl: true });
   }
 
   constructor() {}

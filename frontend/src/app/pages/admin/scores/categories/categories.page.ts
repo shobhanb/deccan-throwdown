@@ -23,12 +23,12 @@ import {
   IonButtons,
   IonCheckbox,
   IonSkeletonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
-import { appConfig, WodConfig } from 'src/app/config/config';
 import {
   apiAthleteOutputModel,
   apiScoreOutputModel,
@@ -67,6 +67,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     RouterLink,
     IonAccordion,
     IonAccordionGroup,
+    IonRouterLink,
   ],
 })
 export class CategoriesPage implements OnInit {

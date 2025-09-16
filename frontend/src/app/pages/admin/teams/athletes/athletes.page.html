@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="['/admin', 'teams']"></ion-back-button>
+      <ion-back-button
+        [defaultHref]="['/admin', 'teams', teamId()]"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>{{ isEditing() ? "Edit Athlete" : "Add Athlete" }}</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
@@ -101,7 +103,8 @@
       fill="outline"
       class="ion-margin"
       type="button"
-      (click)="onCancel()"
+      [routerLink]="['/admin', 'teams', teamId()]"
+      routerDirection="back"
       >Cancel</ion-button
     >
   </form>

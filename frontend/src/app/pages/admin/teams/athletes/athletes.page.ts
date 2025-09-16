@@ -22,11 +22,12 @@ import {
   IonSelectOption,
   IonInput,
   IonCheckbox,
+  IonRouterLink,
   IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiAthletesService } from 'src/app/api/services';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
 import {
   apiAthleteCreateModel,
@@ -60,6 +61,8 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonInput,
     IonSelect,
     IonSelectOption,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class AthletesPage implements OnInit {
@@ -211,10 +214,6 @@ export class AthletesPage implements OnInit {
           });
       }
     }
-  }
-
-  onCancel() {
-    this.location.back();
   }
 
   async onDelete() {
