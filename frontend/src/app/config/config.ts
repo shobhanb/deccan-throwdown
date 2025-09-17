@@ -10,6 +10,7 @@ export interface AppConfig {
 export interface WodConfig {
   wodNumber: number;
   wodName: string;
+  wodSummary: string;
   wodDescription: string[];
   scoreTypes: ScoreType[];
 }
@@ -30,8 +31,8 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 1,
         wodName: 'Head, Shoulders, Knees & Toes',
+        wodSummary: 'AMRAP 15 mins Pullups, Toes-to-bar, Shoulder-to-overheads',
         wodDescription: [
-          'AMRAP 15 mins',
           'Open: 2 Pull-ups, 5 Toes-to-bar, 7 Shoulder-to-overheads  (♀25kg ♂40kg)',
           'Beginner: 4 Jumping Pull-Ups, 5 Hanging Knee Raises, 7 Shoulder-to-Overheads (♀15kg ♂25kg)',
         ],
@@ -40,8 +41,8 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 2,
         wodName: 'काका ! मला वाचवा !',
+        wodSummary: 'For Time: 100m Run, 100m Sled Pull, 100m Run',
         wodDescription: [
-          'For Time: 100m Run, 100m Loaded Sled Pull, 100m Run',
           'Load on the sled:',
           'Open: ⚢ 30kg ⚤ 40kg ⚣ 50kg',
           'Beginners: ⚢ 20kg ⚤ 30kg ⚣ 40kg',
@@ -51,6 +52,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 3,
         wodName: 'Love Boat',
+        wodSummary: 'For Time: Dumbbell Lunges, Row, Support Hold',
         wodDescription: [
           'For Time (Time cap 12 mins):',
           '30 Alternating Synchronised Dumbbell Front Rack Lunges',
@@ -65,7 +67,8 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 4,
         wodName: 'Heavy Triple',
-        wodDescription: ['5 mins to establish a Max. 3-Rep Hang Clean'],
+        wodSummary: '5 mins to establish a Max. 3-Rep Hang Clean',
+        wodDescription: [],
         scoreTypes: ['Weight'],
       },
     ],
@@ -78,14 +81,15 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 1,
         wodName: 'Hagne ka time',
-        wodDescription: ['20 mins to establish a max dump weight'],
+        wodSummary: '20 mins to establish a max dump weight',
+        wodDescription: [],
         scoreTypes: ['Weight'],
       },
       {
         wodNumber: 2,
         wodName: 'Beer and Burpees',
+        wodSummary: 'Drink beer while doing burpees (Time cap 20 mins)',
         wodDescription: [
-          'Drink beer while doing burpees (Time cap 20 mins)',
           '20 beers',
           'Every time you take a sip, do 15 burpees',
         ],
@@ -93,7 +97,8 @@ export const appConfig: { [key: string]: AppConfig } = {
       },
       {
         wodNumber: 3,
-        wodName: 'Ok lets WOD also (25.2)',
+        wodName: 'Ok lets WOD also',
+        wodSummary: 'Repeat of Crossfit Open 25.2',
         wodDescription: [
           'For Time:',
           '21 pull-ups',
@@ -114,10 +119,8 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 4,
         wodName: 'Soneka Time',
-        wodDescription: [
-          'Sleep for as long as possible',
-          'Tiebreak is measured when you actually fall asleep',
-        ],
+        wodSummary: 'Sleep for as long as possible',
+        wodDescription: ['Tiebreak is recorded when you actually fall asleep'],
         scoreTypes: ['Time', 'Tiebreak'],
       },
     ],

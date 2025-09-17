@@ -29,7 +29,10 @@
     @for (wod of wods; track wod.wodNumber) {
     <ion-item [routerLink]="[wod.wodNumber]" routerDirection="forward">
       <div slot="start">{{ wod.wodNumber }}</div>
-      <ion-label>{{ wod.wodName }}</ion-label>
+      <ion-label>
+        <h2>{{ wod.wodName }}</h2>
+        <p>{{ wod.wodSummary }}</p>
+      </ion-label>
     </ion-item>
     }
   </ion-list>

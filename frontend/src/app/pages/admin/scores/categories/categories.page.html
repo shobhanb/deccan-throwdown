@@ -24,13 +24,15 @@
       <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <ion-text
-        >{{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading
-        WOD...' }}</ion-text
-      >
-      <br />
+      <ion-text>
+        <strong>
+          {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading
+          WOD...' }}
+        </strong>
+      </ion-text>
+      <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
+      <div class="wod-summary">{{ wod()?.wodSummary }}</div>
       @if (verificationMode()) {
-      <br />
       <ion-text>Click the checkbox to verify scores</ion-text>
       }
     </ion-card-content>

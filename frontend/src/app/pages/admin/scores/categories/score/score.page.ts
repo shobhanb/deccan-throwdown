@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   FormControl,
   FormGroup,
@@ -24,7 +24,6 @@ import {
   IonItem,
   IonButton,
   IonInput,
-  IonTextarea,
   IonSkeletonText,
   IonRouterLink,
   IonCardContent,
@@ -49,7 +48,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   imports: [
     IonText,
     IonCardContent,
-    IonTextarea,
     IonInput,
     IonButton,
     IonItem,

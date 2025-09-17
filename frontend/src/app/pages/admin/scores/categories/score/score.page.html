@@ -20,11 +20,17 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>{{ teamData()?.team_name }} </ion-card-title>
-      <ion-card-subtitle
-        >{{ `WOD ${wod()?.wodNumber}: ${wod()?.wodName}` }}</ion-card-subtitle
-      >
+      <ion-card-subtitle>Edit Score</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
+      <ion-text>
+        <strong>
+          {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading
+          WOD...' }}
+        </strong>
+      </ion-text>
+      <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
+      <div class="wod-summary">{{ wod()?.wodSummary }}</div>
       @if (isVerified()) {
       <ion-text>This score is verified. Editing is disabled.</ion-text>
       } @else {
@@ -35,6 +41,8 @@
 
   <form [formGroup]="scoreForm" (ngSubmit)="submitScore()">
     <ion-list [inset]="true">
+      @if (wod()?.scoreTypes?.includes('Reps') ||
+      wod()?.scoreTypes?.includes('Weight')) {
       <ion-item>
         <ion-input
           type="number"
@@ -44,7 +52,7 @@
           placeholder="Enter number of reps or weight"
         ></ion-input>
       </ion-item>
-
+      } @if (wod()?.scoreTypes?.includes('Time') ) {
       <ion-item>
         <ion-input
           type="number"
@@ -63,6 +71,7 @@
         ></ion-input>
       </ion-item>
 
+      } @if (wod()?.scoreTypes?.includes('Tiebreak') ) {
       <ion-item>
         <ion-input
           type="number"
@@ -80,8 +89,9 @@
           max="59"
         ></ion-input>
       </ion-item>
+      }
 
-      <ion-item>
+      <!-- <ion-item>
         <ion-textarea
           label="Score Detail"
           labelPlacement="stacked"
@@ -90,7 +100,7 @@
           rows="4"
           autoGrow="true"
         ></ion-textarea>
-      </ion-item>
+      </ion-item> -->
     </ion-list>
 
     @if (!isVerified()) {

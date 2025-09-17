@@ -27,10 +27,10 @@
     <ion-card-content>
       <div>
         <div class="wod-score-type">{{ 'Scoring: ' + wod.scoreTypes }}</div>
-        <div class="wod-description-first">{{ wod.wodDescription[0] }}</div>
-        @for (line of wod.wodDescription; track $index) { @if ($index > 0) {
+        <div class="wod-summary">{{ wod.wodSummary }}</div>
+        @for (line of wod.wodDescription; track $index) {
         <div class="wod-description-line">{{ line }}</div>
-        } }
+        }
       </div>
     </ion-card-content>
   </ion-card>
