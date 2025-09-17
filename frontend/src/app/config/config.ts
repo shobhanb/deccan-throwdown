@@ -1,3 +1,5 @@
+type ScoreType = 'Reps' | 'Weight' | 'Time' | 'Tiebreak';
+
 export interface AppConfig {
   eventName: string;
   categories: string[];
@@ -8,7 +10,8 @@ export interface AppConfig {
 export interface WodConfig {
   wodNumber: number;
   wodName: string;
-  wodDescription: string;
+  wodDescription: string[];
+  scoreTypes: ScoreType[];
 }
 
 export const appConfig: { [key: string]: AppConfig } = {
@@ -27,22 +30,43 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 1,
         wodName: 'Head, Shoulders, Knees & Toes',
-        wodDescription: 'woder 1',
+        wodDescription: [
+          'AMRAP 15 mins',
+          'Open: 2 Pull-ups, 5 Toes-to-bar, 7 Shoulder-to-overheads  (♀25kg ♂40kg)',
+          'Beginner: 4 Jumping Pull-Ups, 5 Hanging Knee Raises, 7 Shoulder-to-Overheads (♀15kg ♂25kg)',
+        ],
+        scoreTypes: ['Reps'],
       },
       {
         wodNumber: 2,
         wodName: 'काका ! मला वाचवा !',
-        wodDescription: 'woder 2 bro',
+        wodDescription: [
+          'For Time: 100m Run, 100m Loaded Sled Pull, 100m Run',
+          'Load on the sled:',
+          'Open: ⚢ 30kg ⚤ 40kg ⚣ 50kg',
+          'Beginners: ⚢ 20kg ⚤ 30kg ⚣ 40kg',
+        ],
+        scoreTypes: ['Time'],
       },
       {
         wodNumber: 3,
         wodName: 'Love Boat',
-        wodDescription: 'woder 2 bro',
+        wodDescription: [
+          'For Time (Time cap 12 mins):',
+          '30 Alternating Synchronised Dumbbell Front Rack Lunges',
+          'Calorie Row / Support Hold / High Plank',
+          '30 Alternating Synchronised Dumbbell Front Rack Lunges',
+          'DB weights: Open: ♀ 10kg ♂15kg; Beginners: ♀ 5kg ♂7.5kg',
+          'Row cals: Open: ⚢ 50 ⚤ 60 ⚣ 75; Beginners: ⚢ 40 ⚤ 50 ⚣ 60',
+          'During row cals: Open: Parallel Bar Support Hold; Beginners: High Plank',
+        ],
+        scoreTypes: ['Reps', 'Time'],
       },
       {
         wodNumber: 4,
         wodName: 'Heavy Triple',
-        wodDescription: '5 mins to establish a Max. 3-Rep Hang Clean',
+        wodDescription: ['5 mins to establish a Max. 3-Rep Hang Clean'],
+        scoreTypes: ['Weight'],
       },
     ],
   },
@@ -54,22 +78,47 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 1,
         wodName: 'Hagne ka time',
-        wodDescription: 'Hago',
+        wodDescription: ['20 mins to establish a max dump weight'],
+        scoreTypes: ['Weight'],
       },
       {
         wodNumber: 2,
         wodName: 'Beer and Burpees',
-        wodDescription: 'Drink beer while doing burpees',
+        wodDescription: [
+          'Drink beer while doing burpees (Time cap 20 mins)',
+          '20 beers',
+          'Every time you take a sip, do 15 burpees',
+        ],
+        scoreTypes: ['Reps', 'Time'],
       },
       {
         wodNumber: 3,
-        wodName: 'Ok lets WOD also',
-        wodDescription: 'asdf',
+        wodName: 'Ok lets WOD also (25.2)',
+        wodDescription: [
+          'For Time:',
+          '21 pull-ups',
+          '42 double-unders',
+          '21 thrusters (weight 1)',
+          '18 chest-to-bar pull-ups',
+          '36 double-unders',
+          '18 thrusters (weight 2)',
+          '15 bar muscle-ups',
+          '30 double-unders',
+          '15 thrusters (weight 3)',
+          'Time cap: 12 minutes',
+          '♀ 65, 75, 85 lb (29, 34, 38 kg)',
+          '♂ 95, 115, 135 lb (43, 52, 61 kg)',
+        ],
+        scoreTypes: ['Reps', 'Time', 'Tiebreak'],
       },
       {
         wodNumber: 4,
         wodName: 'Soneka Time',
-        wodDescription: 'asdf',
+        wodDescription: [
+          'Sleep for as long as possible',
+          'Tiebreak is measured when you actually fall asleep',
+        ],
+        scoreTypes: ['Time', 'Tiebreak'],
       },
     ],
   },

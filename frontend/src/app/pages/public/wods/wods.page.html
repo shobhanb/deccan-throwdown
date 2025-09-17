@@ -13,81 +13,28 @@
 
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Leaderboard</ion-card-title>
+      <ion-card-title>WODs</ion-card-title>
       <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
     </ion-card-header>
   </ion-card>
 
-  @if (dataLoaded()) {
-
-  <ion-list [inset]="true">
-    <ion-item>
-      <ion-select
-        label="Select WOD"
-        labelPlacement="floating"
-        [value]="selectedWod()"
-        (ionChange)="onClickChangeWod($event)"
-      >
-        @for (wod of wods() || []; track wod.wodNumber) {
-        <ion-select-option [value]="wod.wodNumber"
-          >{{ wod.wodNumber + ': ' + wod.wodName }}</ion-select-option
-        >
-        }
-        <ion-select-option [value]="0">Overall</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-select
-        label="Select Category"
-        labelPlacement="floating"
-        [value]="selectedCategory()"
-        (ionChange)="onClickChangeCategory($event)"
-      >
-        @for (category of categories() || []; track category) {
-        <ion-select-option [value]="category">{{ category }}</ion-select-option>
-        }
-      </ion-select>
-    </ion-item>
-  </ion-list>
-
-  <ion-list [inset]="true">
-    @for (team of filteredSortedTeamsData(); track $index) { @if (team.rank) {
-    <ion-item>
-      <div slot="start">{{ team.rank }}</div>
-      <ion-label>
-        <h2><strong>{{ team.team_name }}</strong></h2>
-        @for (athlete of team.athletes; track $index) {
-        <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
-        }
-      </ion-label>
-      @if (selectedWod() === 0) {
-      <!-- Overall Ranks -->
-      <ion-label slot="end" class="ion-text-end">
-        @for (rank of getOverallScore(team); track $index) {
-        <p>{{ rank || 'NA' }}</p>
-        }
-      </ion-label>
-      } @else {
-      <!-- WOD Ranks -->
-      <ion-label slot="end" class="ion-text-end">
-        @if (getWodScore(team)?.reps) {
-        <h3>{{ 'Reps: ' + getWodScore(team)!.reps }}</h3>
-        } @if (getWodScore(team)?.time_s) {
-        <h3>
-          {{ 'Time: ' + convertSecondsToMinunites(getWodScore(team)!.time_s) }}
-        </h3>
-        } @if (getWodScore(team)?.tiebreak_s) {
-        <h3>
-          {{ 'Tiebreak: ' +
-          convertSecondsToMinunites(getWodScore(team)!.tiebreak_s) }}
-        </h3>
-        }
-      </ion-label>
-      }
-    </ion-item>
-    } }
-  </ion-list>
-  } @else {
+  @if (dataLoaded()) { @for (wod of wods(); track wod.wodNumber) {
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ wod.wodName }}</ion-card-title>
+      <ion-card-subtitle>{{ 'WOD ' + wod.wodNumber}}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div>
+        <div class="wod-score-type">{{ 'Scoring: ' + wod.scoreTypes }}</div>
+        <div class="wod-description-first">{{ wod.wodDescription[0] }}</div>
+        @for (line of wod.wodDescription; track $index) { @if ($index > 0) {
+        <div class="wod-description-line">{{ line }}</div>
+        } }
+      </div>
+    </ion-card-content>
+  </ion-card>
+  } } @else {
   <!-- Loading skeleton for leaderboard -->
 
   <!-- Loading skeleton for selectors -->

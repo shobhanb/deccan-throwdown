@@ -26,12 +26,13 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
+  IonText,
+  IonCardContent,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { addIcons } from 'ionicons';
 import { trophyOutline } from 'ionicons/icons';
 import {
-  apiAthleteOutputModel,
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
@@ -46,6 +47,8 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./leaderboard.page.scss'],
   standalone: true,
   imports: [
+    IonCardContent,
+    IonText,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,
@@ -84,6 +87,11 @@ export class LeaderboardPage implements OnInit {
     () => this.categories()?.[0] || null
   );
   selectedWod = signal<number>(0);
+  selectedWodName = computed(
+    () =>
+      this.wods().find((w) => w.wodNumber === this.selectedWod())?.wodName ||
+      'Overall'
+  );
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
 

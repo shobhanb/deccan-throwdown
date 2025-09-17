@@ -24,6 +24,14 @@ export const routes: Routes = [
     loadComponent: () => import('./teams/teams.page').then((m) => m.TeamsPage),
   },
   {
+    path: 'wods',
+    loadComponent: () => import('./wods/wods.page').then((m) => m.WodsPage),
+  },
+  {
+    path: 'wods/:eventShortName',
+    loadComponent: () => import('./wods/wods.page').then((m) => m.WodsPage),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',

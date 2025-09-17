@@ -1,0 +1,18 @@
+
+.wod-score-type {
+    color: var(--ion-color-dark, #000000)
+}
+
+.wod-description-first {
+  font-weight: bold;
+  color: var(--ion-color-primary, #3880ff);
+  padding: 8px 0;
+  margin-bottom: 4px;
+  font-size: 1.1em;
+}
+
+.wod-description-line {
+  color: var(--ion-color-medium, #92949c);
+  padding: 4px 0;
+  line-height: 1.4;
+}
