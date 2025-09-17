@@ -18,6 +18,8 @@ import { ApiModule } from './app/api/api.module';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpInterceptor } from './app/providers/http.interceptor';
 import { AppConfigService } from './app/services/app-config-service';
+import { isDevMode } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 
 const appConfigService = new AppConfigService();
 
@@ -48,5 +50,9 @@ bootstrapApplication(AppComponent, {
       })
     ),
     provideAuth(() => getAuth()),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 });

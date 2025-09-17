@@ -149,17 +149,4 @@ export class TeamsPage implements OnInit {
   addTeam() {
     this.router.navigate(['create-team'], { relativeTo: this.activatedRoute });
   }
-
-  getAthleteNames(athletes: apiAthleteOutputModel[]): string {
-    return athletes
-      .sort((a: apiAthleteOutputModel, b: apiAthleteOutputModel) => {
-        // Sort by sex descending (F before M), then first_name ascending
-        if (a.sex !== b.sex) {
-          return a.sex.localeCompare(b.sex); // F before M
-        }
-        return a.first_name.localeCompare(b.first_name);
-      })
-      .map((a) => `${a.first_name} ${a.last_name[0]}`)
-      .join(', ');
-  }
 }

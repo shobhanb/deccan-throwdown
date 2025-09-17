@@ -14,7 +14,7 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>Leaderboard</ion-card-title>
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
+      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
     </ion-card-header>
   </ion-card>
 
@@ -28,7 +28,7 @@
         [value]="selectedCategory()"
         (ionChange)="onClickChangeCategory($event)"
       >
-        @for (category of categories || []; track category) {
+        @for (category of categories() || []; track category) {
         <ion-select-option [value]="category">{{ category }}</ion-select-option>
         }
       </ion-select>
@@ -40,7 +40,7 @@
         [value]="selectedWod()"
         (ionChange)="onClickChangeWod($event)"
       >
-        @for (wod of wods || []; track wod.wodNumber) {
+        @for (wod of wods() || []; track wod.wodNumber) {
         <ion-select-option [value]="wod.wodNumber"
           >{{ wod.wodNumber + ': ' + wod.wodName }}</ion-select-option
         >
@@ -50,34 +50,25 @@
     </ion-item>
   </ion-list>
 
-  @if (selectedWod() === 0) {
-  <!-- Overall Ranks -->
   <ion-list [inset]="true">
     @for (team of filteredSortedTeamsData(); track $index) { @if (team.rank) {
     <ion-item>
       <div slot="start">{{ team.rank }}</div>
       <ion-label>
-        <h2>{{ team.team_name }}</h2>
-        <p>{{ getAthleteNames(team.athletes) }}</p>
+        <h2><strong>{{ team.team_name }}</strong></h2>
+        @for (athlete of team.athletes; track $index) {
+        <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
+        }
       </ion-label>
+      @if (selectedWod() === 0) {
+      <!-- Overall Ranks -->
       <ion-label slot="end" class="ion-text-end">
         @for (rank of getOverallScore(team); track $index) {
-        <h3>{{ rank || 'NA' }}</h3>
+        <p>{{ rank || 'NA' }}</p>
         }
-      </ion-label> </ion-item
-    >} }
-  </ion-list>
-  } @else {
-  <!-- WOD Ranks -->
-
-  <ion-list [inset]="true">
-    @for (team of filteredSortedTeamsData(); track $index) { @if (team.rank) {
-    <ion-item>
-      <div slot="start">{{ team.rank }}</div>
-      <ion-label>
-        <h2>{{ team.team_name }}</h2>
-        <p>{{ getAthleteNames(team.athletes) }}</p>
       </ion-label>
+      } @else {
+      <!-- WOD Ranks -->
       <ion-label slot="end" class="ion-text-end">
         @if (getWodScore(team)?.reps) {
         <h3>{{ 'Reps: ' + getWodScore(team)!.reps }}</h3>
@@ -91,10 +82,12 @@
           convertSecondsToMinunites(getWodScore(team)!.tiebreak_s) }}
         </h3>
         }
-      </ion-label> </ion-item
-    >} }
+      </ion-label>
+      }
+    </ion-item>
+    } }
   </ion-list>
-  } } @else {
+  } @else {
   <!-- Loading skeleton for leaderboard -->
 
   <!-- Loading skeleton for selectors -->

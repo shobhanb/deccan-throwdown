@@ -1,4 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  linkedSignal,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -33,7 +40,8 @@ import {
   womanOutline,
   personOutline,
 } from 'ionicons/icons';
-import { AppConfigService } from 'src/app/services/app-config-service';
+import { appConfig, defaultConfig } from 'src/app/config/config';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-teams',
@@ -68,13 +76,13 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 export class TeamsPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
-  private appConfigService = inject(AppConfigService);
+  private activatedRoute = inject(ActivatedRoute);
 
   dataLoaded = signal<boolean>(false);
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
 
-  eventShortName = this.appConfigService.eventShortName;
-  eventName = this.appConfigService.eventName;
+  eventShortName = linkedSignal(() => defaultConfig);
+  eventName = computed(() => appConfig[this.eventShortName()]?.eventName);
 
   teamsCategoriesData = computed(() => {
     const teams = this.teamsData().sort((a, b) =>
@@ -108,9 +116,14 @@ export class TeamsPage implements OnInit {
 
   getData() {
     this.dataLoaded.set(false);
+    const eventShortNameParam =
+      this.activatedRoute.snapshot.paramMap.get('eventShortName');
+    if (eventShortNameParam) {
+      this.eventShortName.set(eventShortNameParam);
+    }
     this.apiTeams
       .getTeamsTeamsGet({
-        event_short_name: this.eventShortName,
+        event_short_name: this.eventShortName(),
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {

@@ -37,7 +37,8 @@ import {
 } from 'src/app/api/models';
 import { apiTeamsService } from 'src/app/api/services';
 import { ToastService } from 'src/app/services/toast.service';
-import { AppConfigService } from 'src/app/services/app-config-service';
+import { appConfig, defaultConfig } from 'src/app/config/config';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-leaderboard',
@@ -70,17 +71,17 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 export class LeaderboardPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
-  private appConfigService = inject(AppConfigService);
+  private activatedRoute = inject(ActivatedRoute);
 
   dataLoaded = signal<boolean>(false);
 
-  eventShortName = this.appConfigService.eventShortName;
-  eventName = this.appConfigService.eventName;
-  wods = this.appConfigService.wods;
-  categories = this.appConfigService.categories;
+  eventShortName = linkedSignal(() => defaultConfig);
+  eventName = linkedSignal(() => appConfig[this.eventShortName()]?.eventName);
+  wods = linkedSignal(() => appConfig[this.eventShortName()]?.wods);
+  categories = linkedSignal(() => appConfig[this.eventShortName()]?.categories);
 
   selectedCategory = linkedSignal<string | null>(
-    () => this.categories?.[0] || null
+    () => this.categories()?.[0] || null
   );
   selectedWod = signal<number>(0);
 
@@ -118,19 +119,6 @@ export class LeaderboardPage implements OnInit {
         return aRank - bRank;
       });
   });
-
-  getAthleteNames(athletes: apiAthleteOutputModel[]): string {
-    return athletes
-      .sort((a: apiAthleteOutputModel, b: apiAthleteOutputModel) => {
-        // Sort by sex descending (F before M), then first_name ascending
-        if (a.sex !== b.sex) {
-          return a.sex.localeCompare(b.sex); // F before M
-        }
-        return a.first_name.localeCompare(b.first_name);
-      })
-      .map((a) => `${a.first_name} ${a.last_name[0]}`)
-      .join(', ');
-  }
 
   convertSecondsToMinunites(seconds: number | null | undefined): string {
     if (seconds == null || isNaN(seconds)) return '';
@@ -175,9 +163,15 @@ export class LeaderboardPage implements OnInit {
   getData() {
     this.dataLoaded.set(false);
 
+    const eventShortNameParam =
+      this.activatedRoute.snapshot.paramMap.get('eventShortName');
+    if (eventShortNameParam) {
+      this.eventShortName.set(eventShortNameParam);
+    }
+
     this.apiTeams
       .getTeamsTeamsGet({
-        event_short_name: this.eventShortName,
+        event_short_name: this.eventShortName(),
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {

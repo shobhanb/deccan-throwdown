@@ -51,27 +51,29 @@
             <ion-item>
               <ion-label>
                 <h2>{{ team.team_name }}</h2>
-                <p>{{ getAthleteNames(team.athletes) }}</p>
+                @for (athlete of team.athletes; track $index) {
+                <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
+                }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
-                @if (getScore(team.id).reps) {
-                <h3>{{ 'Reps: ' + getScore(team.id).reps }}</h3>
-                } @if (getScore(team.id).time_s) {
+                @if (getScore(team.id)?.reps) {
+                <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
+                } @if (getScore(team.id)?.time_s) {
                 <h3>
                   {{ 'Time: ' +
-                  convertSecondsToMinunites(getScore(team.id).time_s ?? 0) }}
+                  convertSecondsToMinunites(getScore(team.id)?.time_s ?? 0) }}
                 </h3>
-                } @if (getScore(team.id).tiebreak_s) {
+                } @if (getScore(team.id)?.tiebreak_s) {
                 <h3>
                   {{ 'Tiebreak: ' +
-                  convertSecondsToMinunites(getScore(team.id).tiebreak_s ?? 0)
+                  convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
                 }
               </ion-label>
               <ion-checkbox
                 slot="end"
-                [checked]="getScore(team.id).verified"
+                [checked]="getScore(team.id)?.verified"
                 (ionChange)="onVerificationCheckboxChange($event, team.id)"
               ></ion-checkbox>
             </ion-item>
@@ -79,20 +81,22 @@
             <ion-item [routerLink]="[team.id]" routerDirection="forward">
               <ion-label>
                 <h2>{{ team.team_name }}</h2>
-                <p>{{ getAthleteNames(team.athletes) }}</p>
+                @for (athlete of team.athletes; track $index) {
+                <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
+                }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
-                @if (getScore(team.id).reps) {
-                <h3>{{ 'Reps: ' + getScore(team.id).reps }}</h3>
-                } @if (getScore(team.id).time_s) {
+                @if (getScore(team.id)?.reps) {
+                <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
+                } @if (getScore(team.id)?.time_s) {
                 <h3>
                   {{ 'Time: ' +
-                  convertSecondsToMinunites(getScore(team.id).time_s ?? 0) }}
+                  convertSecondsToMinunites(getScore(team.id)?.time_s ?? 0) }}
                 </h3>
-                } @if (getScore(team.id).tiebreak_s) {
+                } @if (getScore(team.id)?.tiebreak_s) {
                 <h3>
                   {{ 'Tiebreak: ' +
-                  convertSecondsToMinunites(getScore(team.id).tiebreak_s ?? 0)
+                  convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
                 }

@@ -11,7 +11,16 @@ export const routes: Routes = [
       import('./leaderboard/leaderboard.page').then((m) => m.LeaderboardPage),
   },
   {
+    path: 'leaderboard/:eventShortName',
+    loadComponent: () =>
+      import('./leaderboard/leaderboard.page').then((m) => m.LeaderboardPage),
+  },
+  {
     path: 'teams',
+    loadComponent: () => import('./teams/teams.page').then((m) => m.TeamsPage),
+  },
+  {
+    path: 'teams/:eventShortName',
     loadComponent: () => import('./teams/teams.page').then((m) => m.TeamsPage),
   },
   {

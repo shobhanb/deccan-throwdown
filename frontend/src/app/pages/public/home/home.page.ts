@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -14,9 +14,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonCardContent,
   IonMenuButton,
-  IonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppInstallService } from 'src/app/services/app-install.service';
@@ -30,8 +28,6 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   styleUrls: ['./home.page.scss'],
   standalone: true,
   imports: [
-    IonText,
-    IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,

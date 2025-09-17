@@ -53,12 +53,22 @@ export const appConfig: { [key: string]: AppConfig } = {
     wods: [
       {
         wodNumber: 1,
-        wodName: 'WOD 1',
-        wodDescription: 'asdf',
+        wodName: 'Hagne ka time',
+        wodDescription: 'Hago',
       },
       {
         wodNumber: 2,
-        wodName: 'WOD 2',
+        wodName: 'Beer and Burpees',
+        wodDescription: 'Drink beer while doing burpees',
+      },
+      {
+        wodNumber: 3,
+        wodName: 'Ok lets WOD also',
+        wodDescription: 'asdf',
+      },
+      {
+        wodNumber: 4,
+        wodName: 'Soneka Time',
         wodDescription: 'asdf',
       },
     ],

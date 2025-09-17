@@ -179,28 +179,15 @@ export class CategoriesPage implements OnInit {
       });
   }
 
-  getScore(teamId: string): apiScoreOutputModel {
+  getScore(teamId: string): apiScoreOutputModel | null {
     const team = this.teamsData().find((team) => team.id === teamId);
     if (!team) {
-      return {} as apiScoreOutputModel;
+      return null;
     }
     const score = team.scores.find(
       (score) => score.wod_number === this.wodNumber()
     );
-    return score || ({} as apiScoreOutputModel);
-  }
-
-  getAthleteNames(athletes: apiAthleteOutputModel[]): string {
-    return athletes
-      .sort((a: apiAthleteOutputModel, b: apiAthleteOutputModel) => {
-        // Sort by sex descending (F before M), then first_name ascending
-        if (a.sex !== b.sex) {
-          return a.sex.localeCompare(b.sex); // F before M
-        }
-        return a.first_name.localeCompare(b.first_name);
-      })
-      .map((a) => `${a.first_name} ${a.last_name[0]}`)
-      .join(', ');
+    return score || null;
   }
 
   convertSecondsToMinunites(seconds: number): string {

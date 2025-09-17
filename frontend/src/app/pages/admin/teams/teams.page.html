@@ -30,7 +30,11 @@
     @for (team of category[1]; track team.id) {
     <ion-item [routerLink]="team.id" routerDirection="forward">
       <ion-label>{{ team.team_name }}</ion-label>
-      <ion-note>{{ getAthleteNames(team.athletes) }}</ion-note>
+      <ion-label>
+        @for (athlete of team.athletes; track $index) {
+        <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
+        }
+      </ion-label>
     </ion-item>
     }
   </ion-list>
