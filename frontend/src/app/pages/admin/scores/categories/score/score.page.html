@@ -24,6 +24,11 @@
         >{{ `WOD ${wod()?.wodNumber}: ${wod()?.wodName}` }}</ion-card-subtitle
       >
     </ion-card-header>
+    @if (isVerified()) {
+    <ion-card-content>
+      <ion-text>This score is verified. Editing is disabled.</ion-text>
+    </ion-card-content>
+    }
   </ion-card>
 
   <form [formGroup]="scoreForm" (ngSubmit)="submitScore()">
@@ -86,6 +91,7 @@
       </ion-item>
     </ion-list>
 
+    @if (!isVerified()) {
     <ion-button
       expand="block"
       class="ion-margin"
@@ -93,6 +99,7 @@
       [disabled]="!scoreFormValid()"
       >{{ isEditing() ? "Update Score" : "Submit Score" }}</ion-button
     >
+    }
 
     <ion-button
       expand="block"
@@ -105,7 +112,7 @@
     >
   </form>
 
-  @if (isEditing()) {
+  @if (isEditing() && !isVerified()) {
   <ion-button
     expand="block"
     class="ion-margin"

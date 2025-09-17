@@ -27,6 +27,8 @@ import {
   IonTextarea,
   IonSkeletonText,
   IonRouterLink,
+  IonCardContent,
+  IonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
@@ -45,6 +47,8 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   styleUrls: ['./score.page.scss'],
   standalone: true,
   imports: [
+    IonText,
+    IonCardContent,
     IonTextarea,
     IonInput,
     IonButton,
@@ -83,6 +87,7 @@ export class ScorePage implements OnInit {
   dataLoaded = signal<boolean>(false);
   scoreData = signal<apiScoreOutputModel | null>(null);
   isEditing = computed(() => !!this.scoreData());
+  isVerified = computed(() => this.scoreData()?.verified || false);
 
   eventShortName = this.appConfigService.eventShortName;
   eventName = this.appConfigService.eventName;
