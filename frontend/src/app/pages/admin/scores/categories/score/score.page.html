@@ -24,11 +24,13 @@
         >{{ `WOD ${wod()?.wodNumber}: ${wod()?.wodName}` }}</ion-card-subtitle
       >
     </ion-card-header>
-    @if (isVerified()) {
     <ion-card-content>
+      @if (isVerified()) {
       <ion-text>This score is verified. Editing is disabled.</ion-text>
+      } @else {
+      <ion-text>This score is not verified.</ion-text>
+      }
     </ion-card-content>
-    }
   </ion-card>
 
   <form [formGroup]="scoreForm" (ngSubmit)="submitScore()">

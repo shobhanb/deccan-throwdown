@@ -99,6 +99,8 @@
                   convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
+                } @if (getScore(team.id)?.verified) {
+                <p>Verified</p>
                 }
               </ion-label>
             </ion-item>
