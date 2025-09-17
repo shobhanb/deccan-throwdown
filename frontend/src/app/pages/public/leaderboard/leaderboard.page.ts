@@ -26,8 +26,6 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
-  IonText,
-  IonCardContent,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { addIcons } from 'ionicons';
@@ -47,8 +45,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./leaderboard.page.scss'],
   standalone: true,
   imports: [
-    IonCardContent,
-    IonText,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,
