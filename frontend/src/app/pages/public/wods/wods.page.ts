@@ -18,6 +18,7 @@ import {
   IonList,
   IonSkeletonText,
   IonCardContent,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { addIcons } from 'ionicons';
@@ -31,6 +32,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./wods.page.scss'],
   standalone: true,
   imports: [
+    IonButton,
     IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
@@ -60,6 +62,9 @@ export class WodsPage implements OnInit {
   eventShortName = linkedSignal(() => defaultConfig);
   eventName = linkedSignal(() => appConfig[this.eventShortName()]?.eventName);
   wods = linkedSignal(() => appConfig[this.eventShortName()]?.wods);
+  movementStandardsUrl = linkedSignal(
+    () => appConfig[this.eventShortName()]?.standardsUrl ?? ''
+  );
 
   constructor() {
     addIcons({ trophyOutline });

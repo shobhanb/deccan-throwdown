@@ -19,3 +19,15 @@
     text-align: center;
     margin-bottom: 1rem;
 }
+
+.active-link {
+    color: var(--ion-color-primary); 
+}
+
+.menu-section-title {
+    margin-left: 2rem;
+    margin-top: 2rem;
+    margin-bottom: -0.5rem;
+    text-transform: uppercase;
+    color: var(--ion-color-tertiary); 
+}

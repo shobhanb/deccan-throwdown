@@ -5,6 +5,7 @@ export interface AppConfig {
   categories: string[];
   athletesPerTeam: number;
   wods: WodConfig[];
+  standardsUrl?: string;
 }
 
 export interface WodConfig {
@@ -72,6 +73,7 @@ export const appConfig: { [key: string]: AppConfig } = {
         scoreTypes: ['Weight'],
       },
     ],
+    standardsUrl: 'assets/standards/dtpairs2025-standards.pdf',
   },
   dtteams2025: {
     eventName: 'Deccan Throwdown Teams 2025',
@@ -124,6 +126,7 @@ export const appConfig: { [key: string]: AppConfig } = {
         scoreTypes: ['Time', 'Tiebreak'],
       },
     ],
+    // standardsUrl: 'assets/standards/dtpairs2025-standards.pdf',
   },
 };
 
