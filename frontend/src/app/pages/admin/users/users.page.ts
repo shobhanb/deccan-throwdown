@@ -24,14 +24,14 @@ import {
   IonCardContent,
   IonText,
 } from '@ionic/angular/standalone';
-import { apiFireauthService } from 'src/app/api/services';
-import { apiFirebaseUserRecord } from 'src/app/api/models';
 import { AuthService } from 'src/app/services/auth.service';
 import { addIcons } from 'ionicons';
 import { ellipsisHorizontalOutline } from 'ionicons/icons';
 import { AlertService } from 'src/app/services/alert.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { apiAuthService } from 'src/app/api/services';
+import { apiUserRead } from 'src/app/api/models';
 
 @Component({
   selector: 'app-users',
@@ -65,7 +65,7 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   ],
 })
 export class UsersPage implements OnInit {
-  private apiFireAuth = inject(apiFireauthService);
+  private apiAuth = inject(apiAuthService);
   private alertService = inject(AlertService);
   private toastService = inject(ToastService);
   private actionSheetController = inject(ActionSheetController);
@@ -73,16 +73,14 @@ export class UsersPage implements OnInit {
 
   dataLoaded = signal<boolean>(false);
 
-  allUsers = signal<apiFirebaseUserRecord[]>([]);
+  allUsers = signal<apiUserRead[]>([]);
 
-  async presentActionSheet(user: apiFirebaseUserRecord) {
+  async presentActionSheet(user: apiUserRead) {
     const actionSheet = await this.actionSheetController.create({
-      header: user.display_name!,
+      header: user.name!,
       buttons: [
         {
-          text: user.custom_claims?.admin
-            ? 'Revoke Admin Rights'
-            : 'Make Admin',
+          text: user.is_superuser ? 'Revoke Admin Rights' : 'Make Admin',
           data: {
             action: 'admin',
           },
@@ -114,28 +112,26 @@ export class UsersPage implements OnInit {
     }
   }
 
-  async onClickAdmin(user: apiFirebaseUserRecord) {
-    const admin = user.custom_claims!.admin;
+  async onClickAdmin(user: apiUserRead) {
+    const admin = user.is_superuser;
     const alertText = admin
-      ? `Revoke admin rights for ${user.display_name}?`
-      : `Make ${user.display_name} admin?`;
+      ? `Revoke admin rights for ${user.name}?`
+      : `Make ${user.name} admin?`;
     const result = await this.alertService.showAlert(alertText);
 
     if (result.role === 'confirm') {
-      this.apiFireAuth
-        .updateUserAdminRightsFireauthChangeAdminUidPost({
-          uid: user.uid,
-          admin: !admin,
+      this.apiAuth
+        .usersPatchUserAuthIdPatch({
+          id: user.id,
+          body: { is_superuser: !admin },
         })
         .subscribe({
           next: () => {
             this.toastService.showSuccess(
-              `User ${user.display_name} is ${
-                admin ? 'no longer' : ''
-              } an admin`
+              `User ${user.name} is ${admin ? 'no longer' : ''} an admin`
             );
             const currentUser = this.authService.user();
-            if (currentUser && currentUser.uid === user.uid) {
+            if (currentUser && currentUser.id === user.id) {
               this.authService.logout();
             } else {
               this.getData();
@@ -148,34 +144,31 @@ export class UsersPage implements OnInit {
             );
           },
         });
+      return;
     }
   }
 
-  async onClickDelete(user: apiFirebaseUserRecord) {
-    const result = await this.alertService.showAlert(
-      `Delete ${user.display_name}?`
-    );
+  async onClickDelete(user: apiUserRead) {
+    const result = await this.alertService.showAlert(`Delete ${user.name}?`);
 
     if (result.role === 'confirm') {
-      this.apiFireAuth
-        .deleteUserFireauthUserUidDelete({ uid: user.uid })
-        .subscribe({
-          next: () => {
-            this.toastService.showSuccess(`User ${user.display_name} deleted`);
-            const currentUser = this.authService.user();
-            if (currentUser && currentUser.uid === user.uid) {
-              this.authService.logout();
-            } else {
-              this.getData();
-            }
-          },
-          error: (err: any) => {
-            console.error(err);
-            this.toastService.showError(
-              `Error deleting ${user.display_name}: ${err.message}`
-            );
-          },
-        });
+      this.apiAuth.usersDeleteUserAuthIdDelete({ id: user.id }).subscribe({
+        next: () => {
+          this.toastService.showSuccess(`User ${user.name} deleted`);
+          const currentUser = this.authService.user();
+          if (currentUser && currentUser.id === user.id) {
+            this.authService.logout();
+          } else {
+            this.getData();
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.toastService.showError(
+            `Error deleting ${user.name}: ${err.message}`
+          );
+        },
+      });
     }
   }
 
@@ -186,11 +179,11 @@ export class UsersPage implements OnInit {
   }
 
   private getData() {
-    this.apiFireAuth.getAllUsersFireauthAllGet().subscribe({
-      next: (data: apiFirebaseUserRecord[]) => {
+    this.apiAuth.getUsersAuthUsersGet().subscribe({
+      next: (data: apiUserRead[]) => {
         this.allUsers.set(
-          data.sort((a: apiFirebaseUserRecord, b: apiFirebaseUserRecord) => {
-            return a.display_name?.localeCompare(b.display_name!) || 0;
+          data.sort((a: apiUserRead, b: apiUserRead) => {
+            return a.name?.localeCompare(b.name!) || 0;
           })
         );
         this.dataLoaded.set(true);

@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.even_scoring_tables.constants import EVEN_SCORING_TABLES_ASSIGNMENT
+from app.even_scoring_tables.models import EvenScoringTable
 from app.teams.models import Team
 
 from .models import Score
@@ -7,23 +9,25 @@ from .models import Score
 
 async def update_ranks(
     async_session: AsyncSession,
-    wod_number: int,
     event_short_name: str,
+    wod_number: int,
 ) -> None:
-    await update_score_ranks(async_session, wod_number)
+    await update_score_ranks(async_session, event_short_name, wod_number)
     await update_overall_ranks(async_session, event_short_name)
 
 
 async def update_score_ranks(
     async_session: AsyncSession,
+    event_short_name: str,
     wod_number: int,
 ) -> None:
-    scores = await Score.find_all(
+    teams = await Team.find_all(
         async_session=async_session,
-        select_relationships=[Score.team],
-        wod_number=wod_number,
-        verified=True,
+        select_relationships=[Team.scores],
+        event_short_name=event_short_name,
     )
+
+    scores = [score for team in teams for score in team.scores if score.wod_number == wod_number and score.verified]
 
     # Group scores by team category
     scores_by_category = {}
@@ -62,6 +66,17 @@ async def update_score_ranks(
                 current_rank = i + 1
 
             score.wod_rank = current_rank
+            even_scoring_table_assignment = EVEN_SCORING_TABLES_ASSIGNMENT.get(event_short_name, {}).get(
+                score.team.category,
+            )
+            if even_scoring_table_assignment:
+                even_scoring_table = await EvenScoringTable.find_or_raise(
+                    async_session=async_session,
+                    num_athletes=even_scoring_table_assignment,
+                    rank=current_rank,
+                )
+                score.wod_points = even_scoring_table.points
+
             async_session.add(score)
             previous_score_key = score_key
 

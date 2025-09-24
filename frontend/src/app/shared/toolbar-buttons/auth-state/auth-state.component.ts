@@ -50,7 +50,7 @@ export class AuthStateComponent implements OnInit {
   isModalOpen = signal(false);
 
   openModal() {
-    this.authService.forceRefreshToken();
+    this.authService.getMyInfo();
     this.isModalOpen.set(true);
   }
 
@@ -59,7 +59,7 @@ export class AuthStateComponent implements OnInit {
   }
 
   async onClickRefresh() {
-    await this.authService.forceRefreshToken();
+    await this.authService.getMyInfo();
   }
 
   async onClickSignOut() {

@@ -27,8 +27,20 @@ class AdminUserSettings(CustomBaseSettings):
     admin_user_email: EmailStr = "me@example.com"
 
 
+class ResendSettings(CustomBaseSettings):
+    resend_api_key: str = "secret"
+    resend_from_email: EmailStr = "me@example.com"
+
+
+class UserAuthSettings(CustomBaseSettings):
+    reset_password_token_key: str = "secret"  # noqa: S105
+    verification_token_key: str = "secret"  # noqa: S105
+
+
 env_settings = EnvSettings()
 db_settings = DBSettings()
 url_settings = URLSettings()
 auth_settings = AuthSettings()
+resend_settings = ResendSettings()
 admin_user_settings = AdminUserSettings()
+user_auth_settings = UserAuthSettings()

@@ -12,8 +12,6 @@ import {
 } from '@ionic/angular/standalone';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, provideAuth } from '@angular/fire/auth';
 import { ApiModule } from './app/api/api.module';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpInterceptor } from './app/providers/http.interceptor';
@@ -38,18 +36,6 @@ bootstrapApplication(AppComponent, {
     ...(ApiModule.forRoot({ rootUrl: appConfigService.apiBaseUrl }).providers ??
       []),
     provideHttpClient(withInterceptors([httpInterceptor])),
-    provideFirebaseApp(() =>
-      initializeApp({
-        projectId: 'deccan-throwdown',
-        appId: '1:1049028653381:web:6c84ace588b23b4ecace2c',
-        storageBucket: 'deccan-throwdown.firebasestorage.app',
-        apiKey: 'AIzaSyAL9eMHBkuqs-1LgBwOc3835epOjAAG4D4',
-        authDomain: 'deccan-throwdown.firebaseapp.com',
-        messagingSenderId: '1049028653381',
-        measurementId: 'G-LGS3X9TW9T',
-      })
-    ),
-    provideAuth(() => getAuth()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

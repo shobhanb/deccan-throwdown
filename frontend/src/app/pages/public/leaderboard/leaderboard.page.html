@@ -66,6 +66,7 @@
         @for (rank of getOverallScore(team); track $index) {
         <p>{{ rank || 'NA' }}</p>
         }
+        <p>{{ getTotalScore(team) }}</p>
       </ion-label>
       } @else {
       <!-- WOD Ranks -->

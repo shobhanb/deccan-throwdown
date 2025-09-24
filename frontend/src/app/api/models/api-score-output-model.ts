@@ -11,5 +11,6 @@ export interface apiScoreOutputModel {
   time_s?: (number | null);
   verified: boolean;
   wod_number: number;
+  wod_points?: (number | null);
   wod_rank?: (number | null);
 }

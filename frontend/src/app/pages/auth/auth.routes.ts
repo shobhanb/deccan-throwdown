@@ -18,6 +18,18 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'verify-email',
+    loadComponent: () =>
+      import('./verify-email/verify-email.page').then((m) => m.VerifyEmailPage),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./reset-password/reset-password.page').then(
+        (m) => m.ResetPasswordPage
+      ),
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

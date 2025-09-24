@@ -81,7 +81,11 @@ async def update_score(
     await db_session.commit()
     await db_session.refresh(score)
 
-    await update_ranks(db_session, score.wod_number, score.team.event_short_name)
+    await update_ranks(
+        async_session=db_session,
+        event_short_name=score.team.event_short_name,
+        wod_number=score.wod_number,
+    )
 
     return score
 
@@ -104,7 +108,11 @@ async def update_score_verification(
     await db_session.commit()
     await db_session.refresh(score)
 
-    await update_ranks(db_session, score.wod_number, score.team.event_short_name)
+    await update_ranks(
+        async_session=db_session,
+        event_short_name=score.team.event_short_name,
+        wod_number=score.wod_number,
+    )
 
     return score
 
@@ -120,4 +128,17 @@ async def delete_score(
     score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
     await score.delete(async_session=db_session)
 
-    await update_ranks(db_session, score.wod_number, score.team.event_short_name)
+    await update_ranks(
+        async_session=db_session,
+        event_short_name=score.team.event_short_name,
+        wod_number=score.wod_number,
+    )
+
+
+@scores_router.put("/update-ranks", status_code=status.HTTP_200_OK)
+async def update_event_ranks(
+    db_session: db_dependency,
+    event_short_name: str,
+    wod_number: int,
+) -> None:
+    await update_ranks(async_session=db_session, event_short_name=event_short_name, wod_number=wod_number)

@@ -21,6 +21,7 @@ class Score(Base):
     score_detail: Mapped[str | None] = mapped_column(String, nullable=True)
     verified: Mapped[bool] = mapped_column(String, default=False)
     wod_rank: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    wod_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     team_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("team.id"))
     team: Mapped[Team] = relationship(back_populates="scores")

@@ -23,16 +23,16 @@
 
   @if (dataLoaded()) {
   <ion-list [inset]="true">
-    @for (user of allUsers(); track user.uid) {
+    @for (user of allUsers(); track user.id) {
     <ion-item>
       <ion-label>
-        <ion-label><strong> {{ user.display_name }}</strong></ion-label>
+        <ion-label><strong> {{ user.name }}</strong></ion-label>
         <ion-note>{{ user.email }}</ion-note>
       </ion-label>
 
-      @if (user.custom_claims?.admin) {
+      @if (user.is_superuser) {
       <ion-label slot="end">Admin</ion-label>
-      } @if (!user.email_verified) {
+      } @if (!user.is_verified) {
       <ion-label slot="end" color="medium">Not Verified</ion-label>
       }
       <ion-button slot="end" fill="clear" (click)="presentActionSheet(user)">

@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiosqlite>=0.21.0",
+    "fastapi-users[sqlalchemy]>=14.0.1",
     "fastapi[all]>=0.116.1",
     "firebase-admin>=7.1.0",
     "pydantic>=2.11.7",
+    "resend>=2.14.0",
     "sqlalchemy[asyncio]>=2.0.43",
 ]

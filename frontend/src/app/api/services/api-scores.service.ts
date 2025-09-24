@@ -18,6 +18,8 @@ import { DeleteScoreScoresScoreIdDelete$Params } from '../fn/scores/delete-score
 import { getScoresScoresGet } from '../fn/scores/get-scores-scores-get';
 import { GetScoresScoresGet$Params } from '../fn/scores/get-scores-scores-get';
 import { apiScoreOutputModel } from '../models/api-score-output-model';
+import { updateEventRanksScoresUpdateRanksPut } from '../fn/scores/update-event-ranks-scores-update-ranks-put';
+import { UpdateEventRanksScoresUpdateRanksPut$Params } from '../fn/scores/update-event-ranks-scores-update-ranks-put';
 import { updateScoreScoresScoreIdPatch } from '../fn/scores/update-score-scores-score-id-patch';
 import { UpdateScoreScoresScoreIdPatch$Params } from '../fn/scores/update-score-scores-score-id-patch';
 import { updateScoreVerificationScoresVerifyScoreIdPatch } from '../fn/scores/update-score-verification-scores-verify-score-id-patch';
@@ -191,6 +193,39 @@ export class apiScoresService extends BaseService {
   updateScoreVerificationScoresVerifyScoreIdPatch(params: UpdateScoreVerificationScoresVerifyScoreIdPatch$Params, context?: HttpContext): Observable<apiScoreOutputModel> {
     return this.updateScoreVerificationScoresVerifyScoreIdPatch$Response(params, context).pipe(
       map((r: StrictHttpResponse<apiScoreOutputModel>): apiScoreOutputModel => r.body)
+    );
+  }
+
+  /** Path part for operation `updateEventRanksScoresUpdateRanksPut()` */
+  static readonly UpdateEventRanksScoresUpdateRanksPutPath = '/scores/update-ranks';
+
+  /**
+   * Update Event Ranks.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateEventRanksScoresUpdateRanksPut()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateEventRanksScoresUpdateRanksPut$Response(params: UpdateEventRanksScoresUpdateRanksPut$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+    return updateEventRanksScoresUpdateRanksPut(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Update Event Ranks.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateEventRanksScoresUpdateRanksPut$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  updateEventRanksScoresUpdateRanksPut(params: UpdateEventRanksScoresUpdateRanksPut$Params, context?: HttpContext): Observable<any> {
+    return this.updateEventRanksScoresUpdateRanksPut$Response(params, context).pipe(
+      map((r: StrictHttpResponse<any>): any => r.body)
     );
   }
 

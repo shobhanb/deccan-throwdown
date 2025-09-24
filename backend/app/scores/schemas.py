@@ -20,6 +20,7 @@ class ScoreModel(ScoreBaseModel):
 class ScoreOutputModel(ScoreModel):
     verified: bool
     wod_rank: int | None = None
+    wod_points: int | None = None
 
 
 class ScoreCreateModel(ScoreBaseModel):

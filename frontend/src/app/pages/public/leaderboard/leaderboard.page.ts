@@ -138,8 +138,18 @@ export class LeaderboardPage implements OnInit {
     return verifiedScores
       .sort((a, b) => a.wod_number - b.wod_number) // Sort by WOD number
       .map(
-        (score) => `WOD ${score.wod_number} Rank: ${score.wod_rank ?? 'N/A'}`
+        (score) =>
+          `WOD ${score.wod_number} Rank: ${score.wod_rank ?? 'N/A'} Points: ${
+            score.wod_points ?? 'N/A'
+          }`
       );
+  }
+
+  getTotalScore(team: apiTeamsOutputDetailModel): string {
+    const totalPoints = team.scores
+      .filter((score) => score.verified && score.wod_points != null)
+      .reduce((sum, score) => sum + (score.wod_points || 0), 0);
+    return `Total Points: ${totalPoints}`;
   }
 
   getWodScore(team: apiTeamsOutputDetailModel): apiScoreOutputModel | null {
