@@ -15,16 +15,11 @@ class DBSettings(CustomBaseSettings):
 
 
 class URLSettings(CustomBaseSettings):
-    backend_url: str = "http://localhost:8000"
     frontend_url: str = "http://localhost:4200"
 
 
 class AuthSettings(CustomBaseSettings):
     admin_api_key: str = "secret"
-
-
-class AdminUserSettings(CustomBaseSettings):
-    admin_user_email: EmailStr = "me@example.com"
 
 
 class ResendSettings(CustomBaseSettings):
@@ -42,5 +37,4 @@ db_settings = DBSettings()
 url_settings = URLSettings()
 auth_settings = AuthSettings()
 resend_settings = ResendSettings()
-admin_user_settings = AdminUserSettings()
 user_auth_settings = UserAuthSettings()
