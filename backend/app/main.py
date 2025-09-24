@@ -19,7 +19,7 @@ from app.user_auth.views import auth_router
 
 log = logging.getLogger("uvicorn.error")
 
-RESET_DB = True
+RESET_DB = False
 RESET_AUTH_DB = False
 
 
@@ -31,12 +31,12 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
     # Run pre-load stuff
     if RESET_DB:
         async with session_manager.connect() as conn:
-            # await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
     if RESET_AUTH_DB:
         async with session_manager.connect() as conn:
-            # await conn.run_sync(AuthBase.metadata.drop_all)
+            await conn.run_sync(AuthBase.metadata.drop_all)
             await conn.run_sync(AuthBase.metadata.create_all)
 
     yield
