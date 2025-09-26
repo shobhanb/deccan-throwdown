@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Teams</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Previous Throwdown Images</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+
+  <!-- Responsive Image Grid -->
+  @if (!isLoading && !errorMessage) {
+  <ion-grid>
+    <ion-row>
+      @for (imageInfo of imageData; track $index; let i = $index) {
+      <ion-col
+        size="auto"
+        [sizeSm]="imageInfo.type === 'horizontal' ? 'auto' : 6"
+        [sizeMd]="imageInfo.type === 'horizontal' ? 'auto' : 4"
+        [sizeLg]="imageInfo.type === 'horizontal' ? 'auto' : 3"
+        class="image-col"
+      >
+        <ion-img [src]="imageInfo.path" class="gallery-image"> </ion-img>
+      </ion-col>
+      }
+    </ion-row>
+
+    <!-- Empty state message -->
+    @if (images.length === 0) {
+    <ion-row>
+      <ion-col size="12" class="ion-text-center ion-padding">
+        <ion-card>
+          <ion-card-content>
+            <p>Coming soon...</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    }
+  </ion-grid>
+  }
+</ion-content>

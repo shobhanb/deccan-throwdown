@@ -51,6 +51,19 @@
           </ion-menu-toggle>
         </ion-list>
 
+        <ion-list [inset]="true">
+          <ion-menu-toggle>
+            <ion-item
+              [routerLink]="['pics']"
+              routerLinkActive="active-link"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <ion-icon name="camera-outline" slot="start"></ion-icon>
+              <ion-label>Image Gallery</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
         @if (adminUser()) {
         <div class="menu-section-title admin-title">Teams Admin</div>
         <ion-list [inset]="true">

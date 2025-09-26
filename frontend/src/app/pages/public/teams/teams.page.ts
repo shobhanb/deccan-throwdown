@@ -28,9 +28,6 @@ import {
   IonAccordionGroup,
   IonAccordion,
   IonSkeletonText,
-  IonCardContent,
-  IonText,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiTeamsService } from 'src/app/api/services';
@@ -52,9 +49,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./teams.page.scss'],
   standalone: true,
   imports: [
-    IonButton,
-    IonText,
-    IonCardContent,
     IonAccordion,
     IonAccordionGroup,
     IonNote,

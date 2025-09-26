@@ -19,6 +19,7 @@ import {
   barbellOutline,
   barChartOutline,
   calculatorOutline,
+  cameraOutline,
   checkmarkCircleOutline,
   fingerPrintOutline,
   homeOutline,
@@ -66,6 +67,7 @@ export class MenuComponent implements OnInit {
       calculatorOutline,
       checkmarkCircleOutline,
       fingerPrintOutline,
+      cameraOutline,
     });
   }
 

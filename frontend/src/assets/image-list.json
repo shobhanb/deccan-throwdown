@@ -1,0 +1,313 @@
+{
+  "metadata": {
+    "generatedAt": "2025-09-26T19:08:07.565Z",
+    "totalImages": 26,
+    "totalSize": 36086315,
+    "totalSizeFormatted": "34.41 MB",
+    "directory": "src/assets/images",
+    "supportedExtensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".bmp",
+      ".svg"
+    ],
+    "stats": {
+      "byExtension": {
+        ".jpg": {
+          "count": 26,
+          "size": 36086315,
+          "sizeFormatted": "34.41 MB"
+        }
+      },
+      "byType": {
+        "square": {
+          "count": 19,
+          "size": 7631146,
+          "sizeFormatted": "7.28 MB"
+        },
+        "horizontal": {
+          "count": 7,
+          "size": 28455169,
+          "sizeFormatted": "27.14 MB"
+        }
+      },
+      "byFolder": {
+        "square": {
+          "count": 19,
+          "size": 7631146,
+          "sizeFormatted": "7.28 MB"
+        },
+        "horizontal": {
+          "count": 7,
+          "size": 28455169,
+          "sizeFormatted": "27.14 MB"
+        }
+      }
+    }
+  },
+  "images": [
+    {
+      "filename": "0d55ff47-cebe-4fc6-9fc0-3cb56e693046.jpg",
+      "path": "assets/images/square/0d55ff47-cebe-4fc6-9fc0-3cb56e693046.jpg",
+      "size": 224198,
+      "sizeFormatted": "218.94 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.486Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "165644d8-11e4-47c2-a73e-626d2ab73179.JPG",
+      "path": "assets/images/horizontal/165644d8-11e4-47c2-a73e-626d2ab73179.JPG",
+      "size": 129350,
+      "sizeFormatted": "126.32 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.464Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "1ad89391-817e-4625-a3a0-597ed967104a.jpg",
+      "path": "assets/images/square/1ad89391-817e-4625-a3a0-597ed967104a.jpg",
+      "size": 79307,
+      "sizeFormatted": "77.45 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.560Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "1b332e64-abee-42a4-bcef-7b97d2f32350.jpg",
+      "path": "assets/images/square/1b332e64-abee-42a4-bcef-7b97d2f32350.jpg",
+      "size": 1963458,
+      "sizeFormatted": "1.87 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.460Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "483dca47-8f3b-43dc-8a2a-7843515276f5.jpg",
+      "path": "assets/images/square/483dca47-8f3b-43dc-8a2a-7843515276f5.jpg",
+      "size": 231715,
+      "sizeFormatted": "226.28 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.467Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "4f8d9c6e-7fa4-4b9d-b67d-4063a1864969.JPG",
+      "path": "assets/images/horizontal/4f8d9c6e-7fa4-4b9d-b67d-4063a1864969.JPG",
+      "size": 245149,
+      "sizeFormatted": "239.4 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.499Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "8a7e62a8-e38b-4ea4-93bb-1c77abf03707.jpg",
+      "path": "assets/images/square/8a7e62a8-e38b-4ea4-93bb-1c77abf03707.jpg",
+      "size": 372941,
+      "sizeFormatted": "364.2 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.536Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "aaf36d45-88c8-4fdd-9537-5842c674fa55.jpg",
+      "path": "assets/images/square/aaf36d45-88c8-4fdd-9537-5842c674fa55.jpg",
+      "size": 157473,
+      "sizeFormatted": "153.78 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.526Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "aeecc682-be50-46aa-8db7-e662a69fd3ad.JPG",
+      "path": "assets/images/horizontal/aeecc682-be50-46aa-8db7-e662a69fd3ad.JPG",
+      "size": 1625756,
+      "sizeFormatted": "1.55 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.617Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "c7ddb02b-0795-4b24-955a-9db3554a98fd.JPG",
+      "path": "assets/images/horizontal/c7ddb02b-0795-4b24-955a-9db3554a98fd.JPG",
+      "size": 169865,
+      "sizeFormatted": "165.88 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.509Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "d6c8ce40-38f0-491c-b12e-e3b35418eca9.jpg",
+      "path": "assets/images/square/d6c8ce40-38f0-491c-b12e-e3b35418eca9.jpg",
+      "size": 222129,
+      "sizeFormatted": "216.92 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.513Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1923.jpg",
+      "path": "assets/images/square/IMG_1923.jpg",
+      "size": 225019,
+      "sizeFormatted": "219.75 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.607Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1924.jpg",
+      "path": "assets/images/square/IMG_1924.jpg",
+      "size": 199693,
+      "sizeFormatted": "195.01 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.594Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1925.jpg",
+      "path": "assets/images/square/IMG_1925.jpg",
+      "size": 183163,
+      "sizeFormatted": "178.87 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.599Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1926.jpg",
+      "path": "assets/images/square/IMG_1926.jpg",
+      "size": 303048,
+      "sizeFormatted": "295.95 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.613Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1927.jpg",
+      "path": "assets/images/square/IMG_1927.jpg",
+      "size": 187179,
+      "sizeFormatted": "182.79 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.491Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1928.jpg",
+      "path": "assets/images/square/IMG_1928.jpg",
+      "size": 349288,
+      "sizeFormatted": "341.1 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.495Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1943.JPG",
+      "path": "assets/images/horizontal/IMG_1943.JPG",
+      "size": 8893697,
+      "sizeFormatted": "8.48 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.576Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "IMG_1944.jpg",
+      "path": "assets/images/square/IMG_1944.jpg",
+      "size": 1601179,
+      "sizeFormatted": "1.53 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.583Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1945.JPG",
+      "path": "assets/images/horizontal/IMG_1945.JPG",
+      "size": 8776552,
+      "sizeFormatted": "8.37 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.551Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "IMG_1946.JPG",
+      "path": "assets/images/horizontal/IMG_1946.JPG",
+      "size": 8614800,
+      "sizeFormatted": "8.22 MB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.482Z",
+      "type": "horizontal",
+      "folder": "horizontal"
+    },
+    {
+      "filename": "IMG_1947.jpg",
+      "path": "assets/images/square/IMG_1947.jpg",
+      "size": 266389,
+      "sizeFormatted": "260.15 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.474Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1948.jpg",
+      "path": "assets/images/square/IMG_1948.jpg",
+      "size": 234388,
+      "sizeFormatted": "228.89 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.517Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1949.jpg",
+      "path": "assets/images/square/IMG_1949.jpg",
+      "size": 304884,
+      "sizeFormatted": "297.74 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.502Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1950.jpg",
+      "path": "assets/images/square/IMG_1950.jpg",
+      "size": 267447,
+      "sizeFormatted": "261.18 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.452Z",
+      "type": "square",
+      "folder": "square"
+    },
+    {
+      "filename": "IMG_1951.jpg",
+      "path": "assets/images/square/IMG_1951.jpg",
+      "size": 258248,
+      "sizeFormatted": "252.2 KB",
+      "extension": ".jpg",
+      "lastModified": "2025-09-26T18:50:49.447Z",
+      "type": "square",
+      "folder": "square"
+    }
+  ]
+}
