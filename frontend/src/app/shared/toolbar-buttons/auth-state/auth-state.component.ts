@@ -63,8 +63,8 @@ export class AuthStateComponent implements OnInit {
   }
 
   async onClickSignOut() {
-    await this.authService.logout();
     this.isModalOpen.set(false);
+    await this.authService.logout();
   }
 
   onClickCancel() {
