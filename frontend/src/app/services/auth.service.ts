@@ -91,7 +91,6 @@ export class AuthService {
     await signOut(this.auth)
       .then(() => {
         this.toastService.showSuccess('Logged out');
-        this.router.navigate(['/home']);
         this.userCustomClaims.set(null);
       })
       .catch((err: FirebaseError) => {

@@ -82,7 +82,7 @@ export const appConfig: { [key: string]: AppConfig } = {
     wods: [
       {
         wodNumber: 1,
-        wodName: 'Do you even squat?',
+        wodName: "Drop it like it's hot",
         wodSummary: 'Lots of Squats for time',
         wodDescription: [
           'For Time:',
@@ -95,7 +95,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       },
       {
         wodNumber: 2,
-        wodName: "Drop it like it's hot",
+        wodName: 'Beam me up, Scotty',
         wodSummary: 'Row, Pull-ups, Bike, Push-ups and rope climbs',
         wodDescription: [
           '15 minutes AMREPS',

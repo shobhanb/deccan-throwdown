@@ -16,6 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-state',
@@ -38,6 +39,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class AuthStateComponent implements OnInit {
   authService = inject(AuthService);
+  router = inject(Router);
 
   @ViewChild(IonModal) modal!: IonModal;
 
@@ -63,8 +65,15 @@ export class AuthStateComponent implements OnInit {
   }
 
   async onClickSignOut() {
+    // Close modal first
     this.isModalOpen.set(false);
-    await this.authService.logout();
+
+    // Wait for modal animation, then logout and navigate
+    setTimeout(async () => {
+      await this.authService.logout();
+      // Navigate after logout is complete
+      this.router.navigate(['/home']);
+    }, 350);
   }
 
   onClickCancel() {
