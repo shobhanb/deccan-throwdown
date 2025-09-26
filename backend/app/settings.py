@@ -22,19 +22,25 @@ class AuthSettings(CustomBaseSettings):
     admin_api_key: str = "secret"
 
 
+class AdminUserSettings(CustomBaseSettings):
+    admin_user_email: EmailStr = "me@example.com"
+
+
 class ResendSettings(CustomBaseSettings):
     resend_api_key: str = "secret"
     resend_from_email: EmailStr = "me@example.com"
 
 
-class UserAuthSettings(CustomBaseSettings):
-    reset_password_token_key: str = "secret"  # noqa: S105
-    verification_token_key: str = "secret"  # noqa: S105
+class RegistrationSettings(CustomBaseSettings):
+    registration_cc_list: list[EmailStr] = ["me@example.com"]
+    payment_link: str = "https://pay.example.com"
+    team_fee: int = 500
 
 
 env_settings = EnvSettings()
 db_settings = DBSettings()
 url_settings = URLSettings()
 auth_settings = AuthSettings()
+admin_user_settings = AdminUserSettings()
 resend_settings = ResendSettings()
-user_auth_settings = UserAuthSettings()
+registration_settings = RegistrationSettings()

@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, status
 
 from app.database.dependencies import db_dependency
+from app.firebase_auth.dependencies import admin_user_dependency
 
 from .models import Athlete
 from .schemas import AthleteCreateModel, AthleteOutputModel, AthleteUpdateModel
@@ -29,6 +30,7 @@ async def get_athlete(
 )
 async def create_athlete(
     db_session: db_dependency,
+    _: admin_user_dependency,
     athlete: AthleteCreateModel,
 ) -> Athlete:
     new_athlete = Athlete(
@@ -54,6 +56,7 @@ async def create_athlete(
 )
 async def update_athlete(
     db_session: db_dependency,
+    _: admin_user_dependency,
     athlete_id: UUID,
     update_data: AthleteUpdateModel,
 ) -> Athlete:
@@ -76,6 +79,7 @@ async def update_athlete(
 )
 async def delete_athlete(
     db_session: db_dependency,
+    _: admin_user_dependency,
     athlete_id: UUID,
 ) -> None:
     athlete = await Athlete.find_or_raise(

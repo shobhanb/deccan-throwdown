@@ -96,33 +96,36 @@ async def update_overall_ranks(async_session: AsyncSession, event_short_name: st
 
     # Rank teams within each category
     for category_teams in teams_by_category.values():
-        # Calculate total ranks for each team in this category
-        team_total_ranks = []
+        # Calculate total points for each team in this category
+        team_total_points = []
         for team in category_teams:
-            rank_score = 0
+            total_points = 0
             scores = await Score.find_all(
                 async_session=async_session,
                 team_id=team.id,
                 verified=True,
             )
             for score in scores:
-                if score.wod_rank is not None:
-                    rank_score += score.wod_rank
-            team_total_ranks.append((team, rank_score))
+                if score.wod_points is not None:
+                    total_points += score.wod_points
 
-        # Sort teams based on rank score (asc - lower total rank is better)
-        sorted_teams = sorted(team_total_ranks, key=lambda tr: tr[1])
+            # Set the overall_points on the team
+            team.overall_points = total_points
+            team_total_points.append((team, total_points))
+
+        # Sort teams based on total points (desc - higher points is better)
+        sorted_teams = sorted(team_total_points, key=lambda tr: tr[1], reverse=True)
 
         # Update overall ranks with tie handling within this category
         current_rank = 1
-        previous_rank_score = None
+        previous_points = None
 
-        for i, (team, rank_score) in enumerate(sorted_teams):
-            if previous_rank_score is not None and rank_score != previous_rank_score:
+        for i, (team, total_points) in enumerate(sorted_teams):
+            if previous_points is not None and total_points != previous_points:
                 current_rank = i + 1
 
             team.overall_rank = current_rank
             async_session.add(team)
-            previous_rank_score = rank_score
+            previous_points = total_points
 
     await async_session.commit()

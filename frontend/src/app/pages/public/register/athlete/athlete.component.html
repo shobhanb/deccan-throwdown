@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ formTitle }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="onCancel()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="athleteForm" (ngSubmit)="onSave()">
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          type="text"
+          label="First Name"
+          labelPlacement="stacked"
+          formControlName="first_name"
+          placeholder="Enter first name"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Last Name"
+          labelPlacement="stacked"
+          formControlName="last_name"
+          placeholder="Enter last name"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="email"
+          label="Email"
+          labelPlacement="stacked"
+          formControlName="email"
+          placeholder="Enter email address"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Gym"
+          labelPlacement="stacked"
+          formControlName="gym"
+          placeholder="Enter gym name"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="text"
+          label="City"
+          labelPlacement="stacked"
+          formControlName="city"
+          placeholder="Enter city"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      class="ion-margin"
+      type="submit"
+      [disabled]="!isFormValid()"
+    >
+      {{ athleteData ? "Update" : "Add" }} Athlete
+    </ion-button>
+  </form>
+</ion-content>

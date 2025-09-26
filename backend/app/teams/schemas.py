@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from app.athletes.schemas import AthleteOutputModel
+from app.athletes.schemas import AthleteOutputModel, AthleteRegistrationModel
 from app.schemas import CustomBaseModel
 from app.scores.schemas import ScoreOutputModel
 
@@ -45,3 +45,10 @@ class TeamsUpdateModel(CustomBaseModel):
 class TeamsOutputDetailModel(TeamsOutputModel):
     athletes: list[AthleteOutputModel]
     scores: list[ScoreOutputModel]
+
+
+class TeamRegistrationModel(CustomBaseModel):
+    team_name: str
+    category: str
+    athletes: list[AthleteRegistrationModel]
+    event_short_name: str

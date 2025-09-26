@@ -6,7 +6,7 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { apiAuthService } from './services/api-auth.service';
+import { apiFireauthService } from './services/api-fireauth.service';
 import { apiAthletesService } from './services/api-athletes.service';
 import { apiTeamsService } from './services/api-teams.service';
 import { apiScoresService } from './services/api-scores.service';
@@ -19,7 +19,7 @@ import { apiScoresService } from './services/api-scores.service';
   exports: [],
   declarations: [],
   providers: [
-    apiAuthService,
+    apiFireauthService,
     apiAthletesService,
     apiTeamsService,
     apiScoresService,

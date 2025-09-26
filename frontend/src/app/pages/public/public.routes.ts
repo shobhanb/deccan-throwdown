@@ -32,6 +32,11 @@ export const routes: Routes = [
     loadComponent: () => import('./wods/wods.page').then((m) => m.WodsPage),
   },
   {
+    path: 'register',
+    loadComponent: () =>
+      import('./register/register.page').then((m) => m.RegisterPage),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',

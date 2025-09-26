@@ -3,6 +3,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
+import firebase_admin
 import resend
 import uvicorn
 from fastapi import FastAPI
@@ -11,17 +12,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.athletes.views import athletes_router
 from app.database.base import Base
 from app.database.core import session_manager
+from app.firebase_auth.views import firebase_auth_router
 from app.scores.views import scores_router
 from app.settings import env_settings, resend_settings, url_settings
 from app.teams.views import teams_router
-from app.user_auth.models import AuthBase
-from app.user_auth.views import auth_router
 
 log = logging.getLogger("uvicorn.error")
 
 RESET_DB = False
-RESET_AUTH_DB = False
 
+cred = firebase_admin.credentials.Certificate("firebase_service_account_key.json")
+default_app = firebase_admin.initialize_app(credential=cred)
 
 resend.api_key = resend_settings.resend_api_key
 
@@ -33,11 +34,6 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
         async with session_manager.connect() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
-
-    if RESET_AUTH_DB:
-        async with session_manager.connect() as conn:
-            await conn.run_sync(AuthBase.metadata.drop_all)
-            await conn.run_sync(AuthBase.metadata.create_all)
 
     yield
 
@@ -51,7 +47,7 @@ if ENVIRONMENT not in DEV_ENVIRONMENTS:
 
 app = FastAPI(**app_configs)
 
-app.include_router(auth_router)
+app.include_router(firebase_auth_router)
 app.include_router(athletes_router)
 app.include_router(teams_router)
 app.include_router(scores_router)

@@ -25,12 +25,19 @@ import {
   IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToastService } from 'src/app/services/toast.service';
+import {
+  Auth,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  UserCredential,
+} from '@angular/fire/auth';
+import { FirebaseError } from '@angular/fire/app';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { Router, RouterLink } from '@angular/router';
+import { apiFireauthService } from 'src/app/api/services';
+import { apiCreateUser } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { LoadingService } from 'src/app/services/loading.service';
-import { apiAuthService } from 'src/app/api/services';
-import { apiUserCreate, apiUserRead } from 'src/app/api/models';
 
 @Component({
   selector: 'app-signup',
@@ -61,8 +68,9 @@ import { apiUserCreate, apiUserRead } from 'src/app/api/models';
   ],
 })
 export class SignupPage implements OnInit {
+  private fireAuth = inject(Auth);
   private toastService = inject(ToastService);
-  private apiAuth = inject(apiAuthService);
+  private apiAuth = inject(apiFireauthService);
   private appConfigService = inject(AppConfigService);
   private router = inject(Router);
   private loadingService = inject(LoadingService);
@@ -74,7 +82,7 @@ export class SignupPage implements OnInit {
   ngOnInit() {}
 
   signupForm = new FormGroup({
-    name: new FormControl('', {
+    display_name: new FormControl('', {
       validators: [Validators.required, Validators.minLength(2)],
     }),
     email: new FormControl('', {
@@ -94,14 +102,44 @@ export class SignupPage implements OnInit {
       return;
     }
 
-    const params = this.signupForm.value as apiUserCreate;
+    const params = this.signupForm.value as apiCreateUser;
 
     this.loadingService.showLoading('Signing up...');
-    this.apiAuth.registerRegisterAuthRegisterPost({ body: params }).subscribe({
-      next: (value: apiUserRead) => {
-        this.toastService.showSuccess('Check your email for verification link');
-        this.router.navigate(['/home'], { replaceUrl: true });
-        this.loadingService.dismissLoading();
+    this.apiAuth.createUserFireauthSignupPost({ body: params }).subscribe({
+      next: () => {
+        this.loadingService.showLoading('Signin in...');
+        const userCredential = signInWithEmailAndPassword(
+          this.fireAuth,
+          params.email,
+          params.password
+        )
+          .then((value: UserCredential) => {
+            this.loadingService.showLoading(
+              'Sending email for verification...'
+            );
+            sendEmailVerification(value.user)
+              .then(() => {
+                this.toastService.showSuccess(
+                  'Check your email for verification link'
+                );
+                this.router.navigate(['/home'], { replaceUrl: true });
+                this.loadingService.dismissLoading();
+              })
+              .catch((err: FirebaseError) => {
+                console.error('Error sending verification email: ', err);
+                this.toastService.showError(
+                  'Error sending verification email: ' + err.message
+                );
+                this.loadingService.dismissLoading();
+                this.router.navigate(['/home'], { replaceUrl: true });
+              });
+          })
+          .catch((err: FirebaseError) => {
+            console.error('Error logging in: ', err);
+            this.toastService.showError('Error logging in: ' + err.message);
+            this.loadingService.dismissLoading();
+            this.router.navigate(['/home'], { replaceUrl: true });
+          });
       },
       error: (err: any) => {
         console.error('Error signing up: ', err);

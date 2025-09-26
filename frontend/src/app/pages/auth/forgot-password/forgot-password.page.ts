@@ -1,11 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { FirebaseError } from '@angular/fire/app';
+import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonButton,
@@ -25,7 +27,7 @@ import {
   IonMenuButton,
 } from '@ionic/angular/standalone';
 import { AppConfigService } from 'src/app/services/app-config-service';
-import { AuthService } from 'src/app/services/auth.service';
+import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 
 @Component({
@@ -56,8 +58,10 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   ],
 })
 export class ForgotPasswordPage implements OnInit {
+  private toastService = inject(ToastService);
+  private fireAuth = inject(Auth);
+  private router = inject(Router);
   private appConfigService = inject(AppConfigService);
-  private authService = inject(AuthService);
 
   eventName = this.appConfigService.eventName;
 
@@ -73,7 +77,17 @@ export class ForgotPasswordPage implements OnInit {
 
   async onSubmit() {
     if (this.isEmailFormValid()) {
-      this.authService.sendForgotPasswordEmail(this.emailForm.value.email!);
+      sendPasswordResetEmail(this.fireAuth, this.emailForm.value.email!)
+        .then(() => {
+          this.toastService.showSuccess(
+            `Password reset link sent to ${this.emailForm.value.email}`
+          );
+          this.router.navigate(['/home'], { replaceUrl: true });
+        })
+        .catch((err: FirebaseError) => {
+          console.error(err);
+          this.toastService.showError(err.message);
+        });
     }
   }
 

@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Register</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Register for {{ eventName }}</ion-card-title>
+      <ion-card-subtitle>Team Registration</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text>Registration fees: Rs. 8000 per team</ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Team Name"
+          labelPlacement="stacked"
+          formControlName="team_name"
+          placeholder="Enter team name"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select
+          label="Category"
+          labelPlacement="stacked"
+          formControlName="category"
+          placeholder="Select category"
+          interface="popover"
+        >
+          @for (category of categories; track category) {
+          <ion-select-option [value]="category"
+            >{{ category }}</ion-select-option
+          >
+          }
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <div class="athletes-title">Athletes ({{ athletes().length }}/4)</div>
+    <ion-list [inset]="true">
+      @for (slot of athleteSlots; track $index) { @if (slot.athlete) {
+      <ion-item
+        (click)="openAthleteModal(slot.type, slot.index)"
+        [button]="true"
+      >
+        <ion-icon
+          [name]="slot.athlete.sex === 'M' ? 'man-outline' : 'woman-outline'"
+          slot="start"
+        ></ion-icon>
+        <ion-label>
+          {{ slot.athlete.first_name }} {{ slot.athlete.last_name }}
+          <p>{{ slot.athlete.email }}</p>
+        </ion-label>
+      </ion-item>
+      } @else {
+      <ion-item
+        (click)="openAthleteModal(slot.type, slot.index)"
+        [button]="true"
+      >
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        <ion-label>
+          Add {{ slot.type === 'F' ? 'Female' : 'Male' }} Athlete {{ slot.index
+          + 1 }}
+        </ion-label>
+      </ion-item>
+      } }
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      class="ion-margin"
+      type="submit"
+      [disabled]="!isFormValid()"
+    >
+      Register Team
+    </ion-button>
+  </form>
+</ion-content>

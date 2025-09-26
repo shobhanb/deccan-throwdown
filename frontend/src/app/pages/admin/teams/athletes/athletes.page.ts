@@ -195,6 +195,7 @@ export class AthletesPage implements OnInit {
           .createAthleteAthletesPost({
             body: {
               ...(this.athleteForm.value as apiAthleteCreateModel),
+              email: this.athleteForm.value.email?.trim() || null,
               team_id: this.teamId(),
             },
           })

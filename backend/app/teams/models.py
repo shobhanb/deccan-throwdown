@@ -19,6 +19,7 @@ class Team(Base):
     team_name: Mapped[str] = mapped_column(String)
     event_short_name: Mapped[str] = mapped_column(String)
     overall_rank: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    overall_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     paid: Mapped[bool] = mapped_column(Boolean, default=False)
     verified: Mapped[bool] = mapped_column(Boolean, default=False)

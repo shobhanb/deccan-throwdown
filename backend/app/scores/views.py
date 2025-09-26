@@ -4,6 +4,7 @@ from fastapi import APIRouter, status
 
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
+from app.firebase_auth.dependencies import admin_user_dependency
 
 from .models import Score
 from .schemas import ScoreCreateModel, ScoreOutputModel, ScoreUpdateModel
@@ -36,6 +37,7 @@ async def get_scores(
 )
 async def create_score(
     db_session: db_dependency,
+    _: admin_user_dependency,
     score: ScoreCreateModel,
 ) -> Score:
     score_exists = await Score.find(
@@ -67,6 +69,7 @@ async def create_score(
 )
 async def update_score(
     db_session: db_dependency,
+    _: admin_user_dependency,
     score_id: UUID,
     update_data: ScoreUpdateModel,
 ) -> Score:
@@ -97,6 +100,7 @@ async def update_score(
 )
 async def update_score_verification(
     db_session: db_dependency,
+    _: admin_user_dependency,
     score_id: UUID,
     verified: bool,  # noqa: FBT001
 ) -> Score:
@@ -123,6 +127,7 @@ async def update_score_verification(
 )
 async def delete_score(
     db_session: db_dependency,
+    _: admin_user_dependency,
     score_id: UUID,
 ) -> None:
     score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
@@ -138,6 +143,7 @@ async def delete_score(
 @scores_router.put("/update-ranks", status_code=status.HTTP_200_OK)
 async def update_event_ranks(
     db_session: db_dependency,
+    _: admin_user_dependency,
     event_short_name: str,
     wod_number: int,
 ) -> None:

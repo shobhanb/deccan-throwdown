@@ -1,13 +1,20 @@
+import logging
 from collections.abc import Sequence
 from uuid import UUID
 
-from fastapi import APIRouter, status
+import resend
+from fastapi import APIRouter, BackgroundTasks, status
 
+from app.athletes.models import Athlete
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
+from app.firebase_auth.dependencies import admin_user_dependency
+from app.settings import registration_settings, resend_settings
 
 from .models import Team
-from .schemas import TeamsCreateModel, TeamsOutputDetailModel, TeamsOutputModel, TeamsUpdateModel
+from .schemas import TeamRegistrationModel, TeamsCreateModel, TeamsOutputDetailModel, TeamsOutputModel, TeamsUpdateModel
+
+log = logging.getLogger("uvicorn.error")
 
 teams_router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -51,6 +58,7 @@ async def get_team_info(
 )
 async def create_team(
     db_session: db_dependency,
+    _: admin_user_dependency,
     team: TeamsCreateModel,
 ) -> Team:
     team_exists = await Team.find(
@@ -81,6 +89,7 @@ async def create_team(
 )
 async def update_team(
     db_session: db_dependency,
+    _: admin_user_dependency,
     team_id: UUID,
     update_data: TeamsUpdateModel,
 ) -> Team:
@@ -103,6 +112,7 @@ async def update_team(
 )
 async def delete_team(
     db_session: db_dependency,
+    _: admin_user_dependency,
     team_id: UUID,
 ) -> None:
     team = await Team.find_or_raise(
@@ -113,3 +123,77 @@ async def delete_team(
     if len(team.scores) > 0:
         raise conflict_exception(detail="Cannot delete team with associated scores.")
     await team.delete(async_session=db_session)
+
+
+@teams_router.post(
+    "/register",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def register_team(
+    db_session: db_dependency,
+    team: TeamRegistrationModel,
+    background_tasks: BackgroundTasks,
+) -> None:
+    if team.event_short_name != "dtteams2025":
+        raise conflict_exception(detail="Team registration is not open for this event.")
+
+    team_exists = await Team.find(
+        async_session=db_session,
+        team_name=team.team_name,
+        event_short_name=team.event_short_name,
+    )
+    if team_exists:
+        raise conflict_exception(detail="Team name already registered for this event.")
+
+    if len(team.athletes) != 4:  # noqa: PLR2004
+        raise conflict_exception(detail="A team must have exactly 4 athletes.")
+
+    new_team = Team(
+        category=team.category,
+        team_name=team.team_name,
+        paid=False,
+        verified=False,
+        event_short_name=team.event_short_name,
+    )
+    db_session.add(new_team)
+    await db_session.commit()
+    await db_session.refresh(new_team)
+
+    for athlete_data in team.athletes:
+        new_athlete = Athlete(**athlete_data.model_dump())
+        new_athlete.team_id = new_team.id
+        db_session.add(new_athlete)
+
+    await db_session.commit()
+
+    # Add background task for email
+    background_tasks.add_task(
+        send_registration_email,
+        team,
+    )
+
+
+def send_registration_email(team: TeamRegistrationModel) -> None:
+    athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
+    params: resend.Emails.SendParams = {
+        "from": resend_settings.resend_from_email,
+        "to": athlete_emails,
+        "cc": registration_settings.registration_cc_list,
+        "subject": f"DT - Team Registration - {team.team_name}",
+        "html": f"""
+        <h1>Deccan Throwdown Teams</h1>
+        <p>Thank you for registering for the Deccan Throwdown Teams event!</p>
+        <h2>{team.team_name}</h2>
+        <h3>Category: {team.category}</h3>
+        <ul>
+            {"".join(f"<li>{athlete.first_name} {athlete.last_name}</li>" for athlete in team.athletes)}
+        </ul>
+        <p>Registration fees are Rs. {registration_settings.team_fee} per team.</p>
+        <p>Here is the payment link: <a href="{registration_settings.payment_link}">Pay Now</a></p>
+        <p>Once payment is processed, we will confirm your participation in the Teams event</p>
+        <p>Reply-all to this email if you have any questions.</p>
+        <p>Train hard, stay humble,<br/>DT Team</p>
+        """,
+    }
+    email_id: resend.Emails.SendResponse = resend.Emails.send(params)
+    log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)

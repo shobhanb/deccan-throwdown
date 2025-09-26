@@ -19,6 +19,8 @@ import { getTeamInfoTeamsTeamIdGet } from '../fn/teams/get-team-info-teams-team-
 import { GetTeamInfoTeamsTeamIdGet$Params } from '../fn/teams/get-team-info-teams-team-id-get';
 import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
 import { GetTeamsTeamsGet$Params } from '../fn/teams/get-teams-teams-get';
+import { registerTeamTeamsRegisterPost } from '../fn/teams/register-team-teams-register-post';
+import { RegisterTeamTeamsRegisterPost$Params } from '../fn/teams/register-team-teams-register-post';
 import { apiTeamsOutputDetailModel } from '../models/api-teams-output-detail-model';
 import { apiTeamsOutputModel } from '../models/api-teams-output-model';
 import { updateTeamTeamsTeamIdPatch } from '../fn/teams/update-team-teams-team-id-patch';
@@ -192,6 +194,39 @@ export class apiTeamsService extends BaseService {
   updateTeamTeamsTeamIdPatch(params: UpdateTeamTeamsTeamIdPatch$Params, context?: HttpContext): Observable<apiTeamsOutputModel> {
     return this.updateTeamTeamsTeamIdPatch$Response(params, context).pipe(
       map((r: StrictHttpResponse<apiTeamsOutputModel>): apiTeamsOutputModel => r.body)
+    );
+  }
+
+  /** Path part for operation `registerTeamTeamsRegisterPost()` */
+  static readonly RegisterTeamTeamsRegisterPostPath = '/teams/register';
+
+  /**
+   * Register Team.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `registerTeamTeamsRegisterPost()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  registerTeamTeamsRegisterPost$Response(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+    return registerTeamTeamsRegisterPost(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Register Team.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `registerTeamTeamsRegisterPost$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  registerTeamTeamsRegisterPost(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<any> {
+    return this.registerTeamTeamsRegisterPost$Response(params, context).pipe(
+      map((r: StrictHttpResponse<any>): any => r.body)
     );
   }
 
