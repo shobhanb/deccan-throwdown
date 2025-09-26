@@ -31,6 +31,7 @@ import {
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AthleteComponent } from './athlete/athlete.component';
+import { SuccessComponent } from './success/success.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
 import { Router } from '@angular/router';
@@ -213,12 +214,16 @@ export class RegisterPage implements OnInit {
       this.apiTeams
         .registerTeamTeamsRegisterPost({ body: registrationData })
         .subscribe({
-          next: (response) => {
+          next: async (response) => {
             console.log('Team registered successfully:', response);
             this.toastService.showSuccess('Team registered successfully!');
-            this.router.navigate(['/register/registration-success'], {
-              replaceUrl: true,
+
+            // Show success modal
+            const modal = await this.modalController.create({
+              component: SuccessComponent,
             });
+
+            await modal.present();
           },
           error: (error) => {
             console.error('Error registering team:', error);
