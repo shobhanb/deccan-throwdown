@@ -48,8 +48,8 @@ export class SuccessComponent implements OnInit {
 
   ngOnInit() {}
 
-  async navigateToHome() {
+  async onClickClose() {
     await this.modalController.dismiss();
-    this.router.navigate(['/home'], { replaceUrl: true });
+    this.router.navigate(['/teams'], { replaceUrl: true });
   }
 }
