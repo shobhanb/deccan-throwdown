@@ -28,6 +28,10 @@ import {
   IonAccordionGroup,
   IonAccordion,
   IonSkeletonText,
+  IonCardContent,
+  IonText,
+  IonButton,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiTeamsService } from 'src/app/api/services';
@@ -41,7 +45,7 @@ import {
   personOutline,
 } from 'ionicons/icons';
 import { appConfig, defaultConfig } from 'src/app/config/config';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-teams',
@@ -49,6 +53,9 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./teams.page.scss'],
   standalone: true,
   imports: [
+    IonButton,
+    IonText,
+    IonCardContent,
     IonAccordion,
     IonAccordionGroup,
     IonNote,
@@ -71,6 +78,8 @@ import { ActivatedRoute } from '@angular/router';
     FormsModule,
     ToolbarButtonsComponent,
     IonMenuButton,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class TeamsPage implements OnInit {
