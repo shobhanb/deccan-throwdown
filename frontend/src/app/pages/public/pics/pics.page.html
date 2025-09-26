@@ -7,17 +7,9 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Previous Throwdown Images</ion-card-title>
-    </ion-card-header>
-  </ion-card>
-
-  <!-- Responsive Image Grid -->
-  @if (!isLoading && !errorMessage) {
   <ion-grid>
     <ion-row>
-      @for (imageInfo of imageData; track $index; let i = $index) {
+      @for (imageInfo of imageData(); track $index; let i = $index) {
       <ion-col
         size="auto"
         [sizeSm]="imageInfo.type === 'horizontal' ? 'auto' : 6"
@@ -30,8 +22,7 @@
       }
     </ion-row>
 
-    <!-- Empty state message -->
-    @if (images.length === 0) {
+    @if (imageData().length === 0) {
     <ion-row>
       <ion-col size="12" class="ion-text-center ion-padding">
         <ion-card>
@@ -43,5 +34,4 @@
     </ion-row>
     }
   </ion-grid>
-  }
 </ion-content>

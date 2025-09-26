@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -68,10 +68,8 @@ interface ImageListData {
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
 
-  images: string[] = [];
-  imageData: ImageData[] = [];
-  isLoading = true;
-  errorMessage = '';
+  // images: string[] = [];
+  imageData = signal<ImageData[]>([]);
 
   constructor() {}
 
@@ -93,39 +91,19 @@ export class PicsPage implements OnInit {
 
   async loadImages() {
     try {
-      this.isLoading = true;
-      this.errorMessage = '';
-
       // Load the generated image list JSON file
       this.http.get<ImageListData>('assets/image-list.json').subscribe({
         next: (data) => {
           // Randomize the order of images
           const shuffledImages = this.shuffleArray(data.images);
-          this.imageData = shuffledImages;
-          this.images = shuffledImages.map((img) => img.path);
-          this.isLoading = false;
-          console.log(
-            `Loaded ${data.metadata.totalImages} images in random order (${data.metadata.totalSizeFormatted})`
-          );
+          this.imageData.set(shuffledImages);
         },
         error: (error) => {
           console.error('Error loading image list:', error);
-          this.errorMessage =
-            'Failed to load image gallery. Please try again later.';
-          this.isLoading = false;
         },
       });
     } catch (error) {
       console.error('Error in loadImages:', error);
-      this.errorMessage = 'Failed to load image gallery.';
-      this.isLoading = false;
     }
-  }
-
-  // Method to handle image loading errors
-  onImageError(event: any, imagePath: string) {
-    console.warn(`Failed to load image: ${imagePath}`);
-    // Optionally hide the image or show a placeholder
-    event.target.style.display = 'none';
   }
 }
