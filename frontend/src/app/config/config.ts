@@ -95,7 +95,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       },
       {
         wodNumber: 2,
-        wodName: 'Beam me up Scotty',
+        wodName: "Drop it like it's hot",
         wodSummary: 'Row, Pull-ups, Bike, Push-ups and rope climbs',
         wodDescription: [
           '15 minutes AMREPS',
