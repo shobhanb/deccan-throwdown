@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Registration Success</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        Registration Successful!
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Thank you for registering your team for the competition!</p>
+      <p>
+        We will contact you soon with further details about payment and
+        verification.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" class="ion-margin" (click)="navigateToHome()">
+    OK
+  </ion-button>
+</ion-content>

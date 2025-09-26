@@ -32,6 +32,8 @@ import {
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AthleteComponent } from './athlete/athlete.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { ToastService } from 'src/app/services/toast.service';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
 import { apiTeamsService } from 'src/app/api/services';
@@ -80,6 +82,8 @@ export class RegisterPage implements OnInit {
   private modalController = inject(ModalController);
   private appConfigService = inject(AppConfigService);
   private apiTeams = inject(apiTeamsService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
 
   categories = this.appConfigService.categories;
   eventName = this.appConfigService.eventName;
@@ -211,14 +215,17 @@ export class RegisterPage implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Team registered successfully:', response);
-            // TODO: Show success message and navigate to confirmation page
-            // this.toastService.showSuccess('Team registered successfully!');
-            // this.router.navigate(['/registration-success']);
+            this.toastService.showSuccess('Team registered successfully!');
+            this.router.navigate(['/register/registration-success'], {
+              replaceUrl: true,
+            });
           },
           error: (error) => {
             console.error('Error registering team:', error);
-            // TODO: Show error message to user
-            // this.toastService.showError('Failed to register team: ' + error.statusText);
+            this.toastService.showError(
+              'Failed to register team: ' +
+                (error.statusText || 'Unknown error')
+            );
           },
         });
     }
