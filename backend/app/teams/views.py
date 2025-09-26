@@ -171,6 +171,7 @@ async def register_team(
         send_registration_email,
         team,
     )
+    log.info("Registered new team: %s", team.team_name)
 
 
 def send_registration_email(team: TeamRegistrationModel) -> None:

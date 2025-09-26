@@ -38,15 +38,7 @@ import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
 import { apiTeamsService } from 'src/app/api/services';
-
-interface AthleteData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  gym: string;
-  city: string;
-  sex: 'M' | 'F';
-}
+import { apiAthleteRegistrationModel } from 'src/app/api/models';
 
 @Component({
   selector: 'app-register',
@@ -89,7 +81,7 @@ export class RegisterPage implements OnInit {
   categories = this.appConfigService.categories;
   eventName = this.appConfigService.eventName;
 
-  athletes = signal<AthleteData[]>([]);
+  athletes = signal<apiAthleteRegistrationModel[]>([]);
 
   teamForm = new FormGroup({
     team_name: new FormControl('', [
@@ -105,18 +97,18 @@ export class RegisterPage implements OnInit {
 
   ngOnInit() {}
 
-  get femaleAthletes(): AthleteData[] {
+  get femaleAthletes(): apiAthleteRegistrationModel[] {
     return this.athletes().filter((athlete) => athlete.sex === 'F');
   }
 
-  get maleAthletes(): AthleteData[] {
+  get maleAthletes(): apiAthleteRegistrationModel[] {
     return this.athletes().filter((athlete) => athlete.sex === 'M');
   }
 
   get athleteSlots(): {
     type: 'F' | 'M';
     index: number;
-    athlete?: AthleteData;
+    athlete?: apiAthleteRegistrationModel;
   }[] {
     const slots = [];
 
@@ -165,7 +157,7 @@ export class RegisterPage implements OnInit {
   }
 
   private updateAthlete(
-    athleteData: AthleteData,
+    athleteData: apiAthleteRegistrationModel,
     sex: 'M' | 'F',
     athleteIndex?: number
   ) {
@@ -204,6 +196,7 @@ export class RegisterPage implements OnInit {
           last_name: athlete.last_name.trim(),
           sex: athlete.sex,
           email: athlete.email?.trim() || null,
+          phone_number: athlete.phone_number?.trim() || null,
           gym: athlete.gym?.trim() || null,
           city: athlete.city?.trim() || null,
         })),

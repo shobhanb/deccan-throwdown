@@ -86,6 +86,8 @@
       ></ion-icon>
       <ion-label
         >{{ athletes()[item].first_name + ' ' + athletes()[item].last_name }}
+        <p>{{ athletes()[item].email }}</p>
+        <p>{{ athletes()[item].phone_number }}</p>
       </ion-label>
     </ion-item>
     } @else {

@@ -16,17 +16,11 @@ import {
   IonList,
   IonItem,
   IonInput,
+  IonSelect,
+  IonSelectOption,
   ModalController,
 } from '@ionic/angular/standalone';
-
-interface AthleteData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  gym: string;
-  city: string;
-  sex: 'M' | 'F';
-}
+import { apiAthleteRegistrationModel } from 'src/app/api/models';
 
 @Component({
   selector: 'app-athlete',
@@ -34,6 +28,8 @@ interface AthleteData {
   styleUrls: ['./athlete.component.scss'],
   standalone: true,
   imports: [
+    IonSelectOption,
+    IonSelect,
     IonInput,
     IonItem,
     IonList,
@@ -51,13 +47,17 @@ export class AthleteComponent implements OnInit {
   private modalController = inject(ModalController);
 
   @Input() sex: 'M' | 'F' = 'F';
-  @Input() athleteData: AthleteData | null = null;
+  @Input() athleteData: apiAthleteRegistrationModel | null = null;
 
   athleteForm = new FormGroup({
     first_name: new FormControl('', [Validators.required]),
     last_name: new FormControl('', [Validators.required]),
     sex: new FormControl<'M' | 'F'>('F', [Validators.required]),
     email: new FormControl('', [Validators.email, Validators.required]),
+    phone_number: new FormControl('', [
+      Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
+    ]),
+    gym_selection: new FormControl(''),
     gym: new FormControl(''),
     city: new FormControl(''),
   });
@@ -69,7 +69,45 @@ export class AthleteComponent implements OnInit {
     // If editing an existing athlete, populate the form
     if (this.athleteData) {
       this.athleteForm.patchValue(this.athleteData);
+
+      // Set gym selection based on existing gym value
+      if (this.athleteData.gym === 'CFMF') {
+        this.athleteForm.patchValue({ gym_selection: 'CFMF' });
+      } else if (this.athleteData.gym) {
+        this.athleteForm.patchValue({
+          gym_selection: 'Other',
+        });
+      }
     }
+
+    // Listen to gym selection changes
+    this.athleteForm.get('gym_selection')?.valueChanges.subscribe((value) => {
+      this.onGymSelectionChange(value);
+    });
+  }
+
+  onGymSelectionChange(selection: string | null) {
+    if (selection === 'CFMF') {
+      this.athleteForm.patchValue({
+        gym: 'CFMF',
+      });
+    } else if (selection === 'Other') {
+      this.athleteForm.patchValue({ gym: '' });
+    } else {
+      this.athleteForm.patchValue({
+        gym: '',
+      });
+    }
+  }
+
+  onGymChange(value: string | null) {
+    if (this.athleteForm.get('gym_selection')?.value === 'Other') {
+      this.athleteForm.patchValue({ gym: value || '' });
+    }
+  }
+
+  get showOtherGymInput(): boolean {
+    return this.athleteForm.get('gym_selection')?.value === 'Other';
   }
 
   get formTitle(): string {
@@ -84,10 +122,10 @@ export class AthleteComponent implements OnInit {
 
   onSave() {
     if (this.isFormValid()) {
-      const athleteData: AthleteData = {
+      const athleteData: apiAthleteRegistrationModel = {
         ...this.athleteForm.value,
         sex: this.sex, // Ensure sex matches the modal type
-      } as AthleteData;
+      } as apiAthleteRegistrationModel;
 
       this.modalController.dismiss(athleteData);
     }

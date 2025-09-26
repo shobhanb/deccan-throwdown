@@ -39,13 +39,38 @@
       </ion-item>
       <ion-item>
         <ion-input
-          type="text"
+          type="tel"
+          label="Phone Number"
+          labelPlacement="stacked"
+          formControlName="phone_number"
+          placeholder="Enter phone number"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select
           label="Gym"
+          labelPlacement="stacked"
+          formControlName="gym_selection"
+          placeholder="Select gym"
+          interface="popover"
+        >
+          <ion-select-option value="CFMF"
+            >Crossfit Monkey Flag</ion-select-option
+          >
+          <ion-select-option value="Other">Other</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (showOtherGymInput) {
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Other Gym Name"
           labelPlacement="stacked"
           formControlName="gym"
           placeholder="Enter gym name"
         ></ion-input>
       </ion-item>
+      }
       <ion-item>
         <ion-input
           type="text"

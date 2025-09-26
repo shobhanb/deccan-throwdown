@@ -9,6 +9,7 @@ export interface apiAthleteOutputModel {
   gym?: (string | null);
   id: string;
   last_name: string;
+  phone_number?: (string | null);
   sex: 'M' | 'F';
   team_id: string;
   waiver?: boolean;

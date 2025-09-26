@@ -10,6 +10,7 @@ class AthleteBaseModel(CustomBaseModel):
     first_name: str
     last_name: str
     email: EmailStr | None = None
+    phone_number: str | None = None
     sex: Literal["M", "F"]
     waiver: bool = False
     gym: str | None = None
@@ -33,6 +34,7 @@ class AthleteUpdateModel(CustomBaseModel):
     first_name: str | None = None
     last_name: str | None = None
     email: EmailStr | None = None
+    phone_number: str | None = None
     sex: Literal["M", "F"] | None = None
     waiver: bool | None = None
     gym: str | None = None

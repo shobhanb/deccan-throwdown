@@ -86,6 +86,9 @@ export class AthletesPage implements OnInit {
     last_name: new FormControl('', [Validators.required]),
     sex: new FormControl('', [Validators.required, Validators.pattern('M|F')]),
     email: new FormControl('', [Validators.email]),
+    phone_number: new FormControl('', [
+      Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
+    ]),
     waiver: new FormControl(false, [Validators.required]),
     gym: new FormControl(''),
     city: new FormControl(''),
@@ -127,6 +130,7 @@ export class AthletesPage implements OnInit {
               first_name: data.first_name,
               last_name: data.last_name,
               email: data.email,
+              phone_number: data.phone_number,
               sex: data.sex,
               waiver: data.waiver,
               gym: data.gym,
@@ -196,6 +200,7 @@ export class AthletesPage implements OnInit {
             body: {
               ...(this.athleteForm.value as apiAthleteCreateModel),
               email: this.athleteForm.value.email?.trim() || null,
+              phone_number: this.athleteForm.value.phone_number?.trim() || null,
               team_id: this.teamId(),
             },
           })

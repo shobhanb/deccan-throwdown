@@ -17,6 +17,8 @@ class Athlete(Base):
     last_name: Mapped[str] = mapped_column(String)
     sex: Mapped[str] = mapped_column(String)
     email: Mapped[str | None] = mapped_column(String, nullable=True)
+    phone_number: Mapped[str | None] = mapped_column(String, nullable=True)
+
     waiver: Mapped[bool] = mapped_column(Boolean, default=False)
     gym: Mapped[str | None] = mapped_column(String, nullable=True)
     city: Mapped[str | None] = mapped_column(String, nullable=True)
