@@ -20,5 +20,17 @@
       "type": "image/jpeg",
       "purpose": "maskable any"
     }
-  ]
+  ],
+  "theme_color": "#696969",
+  "background_color": "#696969",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "fullscreen",
+    "browser",
+    "window-controls-overlay"
+  ],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
 }
