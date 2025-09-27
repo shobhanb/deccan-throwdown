@@ -23,6 +23,8 @@
       <ion-card-subtitle>Edit Score</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
+      <p>{{ getAthleteNames(teamData()) }}</p>
+      <br />
       <ion-text>
         <strong>
           {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading

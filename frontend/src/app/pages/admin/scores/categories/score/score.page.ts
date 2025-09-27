@@ -267,4 +267,12 @@ export class ScorePage implements OnInit {
         });
     }
   }
+
+  getAthleteNames(team: apiTeamsOutputDetailModel | null): string {
+    if (!team) return '';
+
+    return team.athletes
+      .map((a) => `${a.first_name} ${a.last_name[0]}`)
+      .join(', ');
+  }
 }
