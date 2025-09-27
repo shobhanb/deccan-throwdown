@@ -1,4 +1,7 @@
+import base64
+import json
 import logging
+import urllib.parse as urlparse
 from collections.abc import Sequence
 from uuid import UUID
 
@@ -6,6 +9,7 @@ import resend
 from fastapi import APIRouter, BackgroundTasks, status
 
 from app.athletes.models import Athlete
+from app.athletes.schemas import AthleteRegistrationModel
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
@@ -176,6 +180,28 @@ async def register_team(
 
 def send_registration_email(team: TeamRegistrationModel) -> None:
     athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
+
+    payment_url_params = {
+        "email": team.athletes[0].email,
+        "phone": team.athletes[0].phone_number,
+        "team_name": team.team_name,
+    }
+    url_parts = list(urlparse.urlparse(registration_settings.payment_link))
+    query = dict(urlparse.parse_qsl(url_parts[4]))
+    query.update(payment_url_params)
+    url_parts[4] = urlparse.urlencode(query)
+    email_payment_link = urlparse.urlunparse(url_parts)
+
+    athletes_needing_waiver = [athlete for athlete in team.athletes if athlete.gym and athlete.gym != "CFMF"]
+    waiver_section = ""
+    if len(athletes_needing_waiver) > 0:
+        waiver_section = f"""
+        <p>Waiver needed for Non-CFMF athletes:</p>
+        <ul>
+            {"".join(f'<li><a href="{get_waiver_link(athlete, team.team_name)}">{athlete.first_name} {athlete.last_name}</a></li>' for athlete in athletes_needing_waiver)}
+        </ul>
+    """
+
     params: resend.Emails.SendParams = {
         "from": resend_settings.resend_from_email,
         "to": athlete_emails,
@@ -184,17 +210,32 @@ def send_registration_email(team: TeamRegistrationModel) -> None:
         "html": f"""
         <h1>Deccan Throwdown Teams</h1>
         <p>Thank you for registering for the Deccan Throwdown Teams event!</p>
-        <h2>{team.team_name}</h2>
+        <h2>Team: {team.team_name}</h2>
         <h3>Category: {team.category}</h3>
         <ul>
-            {"".join(f"<li>{athlete.first_name} {athlete.last_name}</li>" for athlete in team.athletes)}
+            {"".join(f"<li>{athlete.first_name} {athlete.last_name}{f' ({athlete.phone_number})' if athlete.phone_number else ''}</li>" for athlete in team.athletes)}
         </ul>
         <p>Registration fees are Rs. {registration_settings.team_fee} per team.</p>
-        <p>Here is the payment link: <a href="{registration_settings.payment_link}">Pay Now</a></p>
+        <p>Here is the payment link: <a href="{email_payment_link}">Pay Now</a></p>
         <p>Once payment is processed, we will confirm your participation in the Teams event</p>
+        {waiver_section}
         <p>Reply-all to this email if you have any questions.</p>
         <p>Train hard, stay humble,<br/>DT Team</p>
         """,
     }
     email_id: resend.Emails.SendResponse = resend.Emails.send(params)
     log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
+
+
+def get_waiver_link(athlete: AthleteRegistrationModel, team_name: str) -> str:
+    if athlete.gym == "CFMF":
+        return ""
+
+    waiver_params = {
+        "name": athlete.first_name + " " + athlete.last_name,
+        "email": athlete.email,
+        "team": team_name,
+    }
+    base64_result = base64.b64encode(json.dumps(waiver_params).encode("utf-8")).decode("utf-8")
+
+    return f"{registration_settings.waiver_link}{base64_result}"

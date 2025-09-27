@@ -34,6 +34,7 @@ class ResendSettings(CustomBaseSettings):
 class RegistrationSettings(CustomBaseSettings):
     registration_cc_list: list[EmailStr] = ["me@example.com"]
     payment_link: str = "https://pay.example.com"
+    waiver_link: str = "https://waiver.example.com"
     team_fee: int = 500
 
 
