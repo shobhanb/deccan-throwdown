@@ -57,8 +57,8 @@ export class AthleteComponent implements OnInit {
     phone_number: new FormControl('', [
       Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
     ]),
-    gym_selection: new FormControl(''),
-    gym: new FormControl(''),
+    gym_selection: new FormControl('', { validators: [Validators.required] }),
+    gym: new FormControl('', { validators: [Validators.required] }),
     city: new FormControl(''),
   });
 
