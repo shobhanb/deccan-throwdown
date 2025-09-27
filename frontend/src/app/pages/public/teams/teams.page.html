@@ -30,6 +30,9 @@
       <ion-accordion>
         <ion-item slot="header">
           <ion-label>{{ team.team_name }}</ion-label>
+          @if (!team.verified ) {
+          <ion-note>Pending Verification</ion-note>
+          }
         </ion-item>
         <div class="ion-padding-vertical" slot="content">
           <ion-list>

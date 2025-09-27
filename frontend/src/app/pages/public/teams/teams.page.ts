@@ -127,17 +127,15 @@ export class TeamsPage implements OnInit {
       })
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
-          const sortedAthletes = data
-            .filter((value) => value.verified)
-            .map((team) => ({
-              ...team,
-              athletes: team.athletes.sort((a, b) => {
-                if (a.sex != b.sex) {
-                  return a.sex.localeCompare(b.sex);
-                }
-                return a.first_name.localeCompare(b.first_name);
-              }),
-            }));
+          const sortedAthletes = data.map((team) => ({
+            ...team,
+            athletes: team.athletes.sort((a, b) => {
+              if (a.sex != b.sex) {
+                return a.sex.localeCompare(b.sex);
+              }
+              return a.first_name.localeCompare(b.first_name);
+            }),
+          }));
           this.teamsData.set(sortedAthletes);
         },
         error: (error) => {
