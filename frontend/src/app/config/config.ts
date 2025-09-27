@@ -77,7 +77,7 @@ export const appConfig: { [key: string]: AppConfig } = {
   },
   dtteams2025: {
     eventName: 'Deccan Throwdown Teams 2025',
-    categories: ['Beginner', 'Intermediate', 'Advanced'],
+    categories: ['Beginner', 'Intermediate', 'Open'],
     athletesPerTeam: 4,
     wods: [
       {
