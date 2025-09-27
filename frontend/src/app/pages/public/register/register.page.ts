@@ -28,13 +28,14 @@ import {
   ModalController,
   IonCardContent,
   IonText,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AthleteComponent } from './athlete/athlete.component';
 import { SuccessComponent } from './success/success.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
 import { apiTeamsService } from 'src/app/api/services';
@@ -69,6 +70,8 @@ import { apiAthleteRegistrationModel } from 'src/app/api/models';
     FormsModule,
     ReactiveFormsModule,
     ToolbarButtonsComponent,
+    RouterLink,
+    IonRouterLink,
   ],
 })
 export class RegisterPage implements OnInit {
@@ -76,7 +79,6 @@ export class RegisterPage implements OnInit {
   private appConfigService = inject(AppConfigService);
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
-  private router = inject(Router);
 
   categories = this.appConfigService.categories;
   eventName = this.appConfigService.eventName;
