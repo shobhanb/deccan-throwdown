@@ -59,7 +59,6 @@ export class AthleteComponent implements OnInit {
     ]),
     gym_selection: new FormControl('', { validators: [Validators.required] }),
     gym: new FormControl('', { validators: [Validators.required] }),
-    city: new FormControl(''),
   });
 
   ngOnInit() {

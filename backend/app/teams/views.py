@@ -246,7 +246,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <ul>
             {
             "".join(
-                f'<li><a href="{athlete.waiver_link}">{athlete.athlete_name}</a></li>'
+                f'<li>{athlete.athlete_name}<a href="{athlete.waiver_link}" target="_blank">Waiver Link</a></li>'
                 for athlete in registration_response.waiver_links
             )
         }
@@ -267,7 +267,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
             {"".join(f"<li>{athlete.first_name} {athlete.last_name}{f' ({athlete.phone_number})' if athlete.phone_number else ''}</li>" for athlete in team.athletes)}
         </ul>
         <p>Registration fees are Rs. {registration_settings.team_fee} per team.</p>
-        <p>Here is the payment link if you haven't paid already: <a href="{email_payment_link}">Pay Now</a></p>
+        <p>Here is the payment link if you haven't paid already: <a href="{email_payment_link}" target="_blank">Pay Now</a></p>
         <p>Once payment is processed, we will confirm your participation in the Teams event</p>
         {waiver_section}
         <p>Reply-all to this email if you have any questions.</p>
