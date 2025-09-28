@@ -134,7 +134,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 2,
         wodName: 'Beam me up, Scotty',
-        wodSummary: 'Row, Pull-ups, Bike, Push-ups and rope climbs',
+        wodSummary: 'AMREPS: Row, Pull-ups, Bike, Push-ups and rope climbs',
         categoryWodDescription: {
           Open: [
             'In 15 Minutes, complete as many Repetitions as possible of: ',
