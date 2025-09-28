@@ -34,7 +34,7 @@
               [routerLink]="['leaderboard']"
               routerLinkActive="active-link"
               [routerLinkActiveOptions]="{ exact: true }"
-              [disabled]="true"
+              [disabled]="!isLeaderboardEnabled()"
             >
               <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
               <ion-label>Leaderboard</ion-label>

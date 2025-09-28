@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   IonHeader,
@@ -55,6 +55,8 @@ export class MenuComponent implements OnInit {
 
   adminUser = this.authService.adminUser;
 
+  isLeaderboardEnabled = signal(this.checkLeaderboardEnabled());
+
   eventShortName = this.appConfigService.eventShortName;
   eventName = this.appConfigService.eventName;
 
@@ -72,4 +74,11 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  private checkLeaderboardEnabled(): boolean {
+    // Enable leaderboard on or after October 30, 2025
+    const targetDate = new Date('2025-10-30T00:00:00');
+    const currentDate = new Date();
+    return currentDate >= targetDate;
+  }
 }
