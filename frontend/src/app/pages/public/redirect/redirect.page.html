@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Redirect</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (showInvalidUrl) {
+  <div class="error-container">
+    <h2>Invalid URL</h2>
+    <p>The provided link is not valid.</p>
+    @if (redirectUrl) {
+    <p><small>{{ redirectUrl }}</small></p>
+    }
+    <p>Redirecting to home in 3 seconds...</p>
+  </div>
+  }
+</ion-content>

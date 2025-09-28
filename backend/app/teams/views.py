@@ -197,6 +197,10 @@ async def register_team(
     return registration_response
 
 
+def add_domain_redirect(link: str) -> str:
+    return f"{registration_settings.domain_redirect_url}{link}"
+
+
 def get_payment_link(team: TeamRegistrationModel) -> str:
     payment_url_params = {
         "email": team.athletes[0].email,
@@ -207,14 +211,15 @@ def get_payment_link(team: TeamRegistrationModel) -> str:
     query = dict(urlparse.parse_qsl(url_parts[4]))
     query.update(payment_url_params)
     url_parts[4] = urlparse.urlencode(query)
-    return urlparse.urlunparse(url_parts)
+    payment_link = urlparse.urlunparse(url_parts)
+    return add_domain_redirect(payment_link)
 
 
 def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | None:
     waiver_links = []
     for athlete in team.athletes:
         if athlete.gym and athlete.gym != "CFMF":
-            waiver_link = get_waiver_link(athlete, team.team_name)
+            waiver_link = add_domain_redirect(get_waiver_link(athlete, team.team_name))
             waiver_links.append(
                 WaiverLinkModel(athlete_name=f"{athlete.first_name} {athlete.last_name}", waiver_link=waiver_link),
             )
