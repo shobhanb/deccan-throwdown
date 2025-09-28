@@ -52,3 +52,13 @@ class TeamRegistrationModel(CustomBaseModel):
     category: str
     athletes: list[AthleteRegistrationModel]
     event_short_name: str
+
+
+class WaiverLinkModel(CustomBaseModel):
+    athlete_name: str
+    waiver_link: str
+
+
+class TeamRegistrationResponseModel(CustomBaseModel):
+    payment_link: str
+    waiver_links: list[WaiverLinkModel] | None = None

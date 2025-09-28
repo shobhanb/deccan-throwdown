@@ -9,12 +9,13 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { apiTeamRegistrationModel } from '../../models/api-team-registration-model';
+import { apiTeamRegistrationResponseModel } from '../../models/api-team-registration-response-model';
 
 export interface RegisterTeamTeamsRegisterPost$Params {
       body: apiTeamRegistrationModel
 }
 
-export function registerTeamTeamsRegisterPost(http: HttpClient, rootUrl: string, params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function registerTeamTeamsRegisterPost(http: HttpClient, rootUrl: string, params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiTeamRegistrationResponseModel>> {
   const rb = new RequestBuilder(rootUrl, registerTeamTeamsRegisterPost.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -25,7 +26,7 @@ export function registerTeamTeamsRegisterPost(http: HttpClient, rootUrl: string,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return r as StrictHttpResponse<apiTeamRegistrationResponseModel>;
     })
   );
 }

@@ -21,6 +21,7 @@ import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
 import { GetTeamsTeamsGet$Params } from '../fn/teams/get-teams-teams-get';
 import { registerTeamTeamsRegisterPost } from '../fn/teams/register-team-teams-register-post';
 import { RegisterTeamTeamsRegisterPost$Params } from '../fn/teams/register-team-teams-register-post';
+import { apiTeamRegistrationResponseModel } from '../models/api-team-registration-response-model';
 import { apiTeamsOutputDetailModel } from '../models/api-teams-output-detail-model';
 import { apiTeamsOutputModel } from '../models/api-teams-output-model';
 import { updateTeamTeamsTeamIdPatch } from '../fn/teams/update-team-teams-team-id-patch';
@@ -210,7 +211,7 @@ export class apiTeamsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerTeamTeamsRegisterPost$Response(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  registerTeamTeamsRegisterPost$Response(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<StrictHttpResponse<apiTeamRegistrationResponseModel>> {
     return registerTeamTeamsRegisterPost(this.http, this.rootUrl, params, context);
   }
 
@@ -224,9 +225,9 @@ export class apiTeamsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerTeamTeamsRegisterPost(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<any> {
+  registerTeamTeamsRegisterPost(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Observable<apiTeamRegistrationResponseModel> {
     return this.registerTeamTeamsRegisterPost$Response(params, context).pipe(
-      map((r: StrictHttpResponse<any>): any => r.body)
+      map((r: StrictHttpResponse<apiTeamRegistrationResponseModel>): apiTeamRegistrationResponseModel => r.body)
     );
   }
 

@@ -16,7 +16,15 @@ from app.firebase_auth.dependencies import admin_user_dependency
 from app.settings import registration_settings, resend_settings
 
 from .models import Team
-from .schemas import TeamRegistrationModel, TeamsCreateModel, TeamsOutputDetailModel, TeamsOutputModel, TeamsUpdateModel
+from .schemas import (
+    TeamRegistrationModel,
+    TeamRegistrationResponseModel,
+    TeamsCreateModel,
+    TeamsOutputDetailModel,
+    TeamsOutputModel,
+    TeamsUpdateModel,
+    WaiverLinkModel,
+)
 
 log = logging.getLogger("uvicorn.error")
 
@@ -137,7 +145,7 @@ async def register_team(
     db_session: db_dependency,
     team: TeamRegistrationModel,
     background_tasks: BackgroundTasks,
-) -> None:
+) -> TeamRegistrationResponseModel:
     if team.event_short_name != "dtteams2025":
         raise conflict_exception(detail="Team registration is not open for this event.")
 
@@ -170,17 +178,26 @@ async def register_team(
 
     await db_session.commit()
 
+    payment_link = get_payment_link(team)
+    waiver_links = get_waiver_links(team)
+
+    registration_response = TeamRegistrationResponseModel(
+        payment_link=payment_link,
+        waiver_links=waiver_links,
+    )
+
     # Add background task for email
     background_tasks.add_task(
         send_registration_email,
+        registration_response,
         team,
     )
     log.info("Registered new team: %s", team.team_name)
 
+    return registration_response
 
-def send_registration_email(team: TeamRegistrationModel) -> None:
-    athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
 
+def get_payment_link(team: TeamRegistrationModel) -> str:
     payment_url_params = {
         "email": team.athletes[0].email,
         "phone": team.athletes[0].phone_number,
@@ -190,15 +207,49 @@ def send_registration_email(team: TeamRegistrationModel) -> None:
     query = dict(urlparse.parse_qsl(url_parts[4]))
     query.update(payment_url_params)
     url_parts[4] = urlparse.urlencode(query)
-    email_payment_link = urlparse.urlunparse(url_parts)
+    return urlparse.urlunparse(url_parts)
 
-    athletes_needing_waiver = [athlete for athlete in team.athletes if athlete.gym and athlete.gym != "CFMF"]
+
+def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | None:
+    waiver_links = []
+    for athlete in team.athletes:
+        if athlete.gym and athlete.gym != "CFMF":
+            waiver_link = get_waiver_link(athlete, team.team_name)
+            waiver_links.append(
+                WaiverLinkModel(athlete_name=f"{athlete.first_name} {athlete.last_name}", waiver_link=waiver_link),
+            )
+    return waiver_links if waiver_links else None
+
+
+def get_waiver_link(athlete: AthleteRegistrationModel, team_name: str) -> str:
+    if athlete.gym == "CFMF":
+        return ""
+
+    waiver_params = {
+        "name": athlete.first_name + " " + athlete.last_name,
+        "email": athlete.email,
+        "team": team_name,
+    }
+    waiver_params_base64 = base64.b64encode(json.dumps(waiver_params).encode("utf-8")).decode("utf-8")
+
+    return f"{registration_settings.waiver_link}{waiver_params_base64}"
+
+
+def send_registration_email(registration_response: TeamRegistrationResponseModel, team: TeamRegistrationModel) -> None:
+    athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
+    email_payment_link = registration_response.payment_link
+
     waiver_section = ""
-    if len(athletes_needing_waiver) > 0:
+    if registration_response.waiver_links and len(registration_response.waiver_links) > 0:
         waiver_section = f"""
-        <p>Waiver needed for Non-CFMF athletes:</p>
+        <p>Please fill out the waiver forms (for Non-CFMF athletes), if not already filled:</p>
         <ul>
-            {"".join(f'<li><a href="{get_waiver_link(athlete, team.team_name)}">{athlete.first_name} {athlete.last_name}</a></li>' for athlete in athletes_needing_waiver)}
+            {
+            "".join(
+                f'<li><a href="{athlete.waiver_link}">{athlete.athlete_name}</a></li>'
+                for athlete in registration_response.waiver_links
+            )
+        }
         </ul>
     """
 
@@ -216,7 +267,7 @@ def send_registration_email(team: TeamRegistrationModel) -> None:
             {"".join(f"<li>{athlete.first_name} {athlete.last_name}{f' ({athlete.phone_number})' if athlete.phone_number else ''}</li>" for athlete in team.athletes)}
         </ul>
         <p>Registration fees are Rs. {registration_settings.team_fee} per team.</p>
-        <p>Here is the payment link: <a href="{email_payment_link}">Pay Now</a></p>
+        <p>Here is the payment link if you haven't paid already: <a href="{email_payment_link}">Pay Now</a></p>
         <p>Once payment is processed, we will confirm your participation in the Teams event</p>
         {waiver_section}
         <p>Reply-all to this email if you have any questions.</p>
@@ -225,17 +276,3 @@ def send_registration_email(team: TeamRegistrationModel) -> None:
     }
     email_id: resend.Emails.SendResponse = resend.Emails.send(params)
     log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
-
-
-def get_waiver_link(athlete: AthleteRegistrationModel, team_name: str) -> str:
-    if athlete.gym == "CFMF":
-        return ""
-
-    waiver_params = {
-        "name": athlete.first_name + " " + athlete.last_name,
-        "email": athlete.email,
-        "team": team_name,
-    }
-    base64_result = base64.b64encode(json.dumps(waiver_params).encode("utf-8")).decode("utf-8")
-
-    return f"{registration_settings.waiver_link}{base64_result}"

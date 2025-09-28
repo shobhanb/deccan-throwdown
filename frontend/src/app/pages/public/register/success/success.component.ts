@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent,
@@ -17,6 +17,7 @@ import {
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline } from 'ionicons/icons';
+import { apiTeamRegistrationResponseModel } from 'src/app/api/models';
 
 @Component({
   selector: 'app-success',
@@ -42,11 +43,17 @@ export class SuccessComponent implements OnInit {
   private modalController = inject(ModalController);
   private router = inject(Router);
 
+  @Input() responseData: apiTeamRegistrationResponseModel | null = null;
+
   constructor() {
     addIcons({ checkmarkCircleOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.responseData) {
+      console.log('Registration Successful:', this.responseData);
+    }
+  }
 
   async onClickClose() {
     await this.modalController.dismiss();

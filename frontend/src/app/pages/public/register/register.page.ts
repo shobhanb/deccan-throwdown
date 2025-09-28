@@ -39,7 +39,10 @@ import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
 import { apiTeamsService } from 'src/app/api/services';
-import { apiAthleteRegistrationModel } from 'src/app/api/models';
+import {
+  apiAthleteRegistrationModel,
+  apiTeamRegistrationResponseModel,
+} from 'src/app/api/models';
 
 @Component({
   selector: 'app-register',
@@ -209,13 +212,16 @@ export class RegisterPage implements OnInit {
       this.apiTeams
         .registerTeamTeamsRegisterPost({ body: registrationData })
         .subscribe({
-          next: async (response) => {
+          next: async (response: apiTeamRegistrationResponseModel) => {
             console.log('Team registered successfully:', response);
             this.toastService.showSuccess('Team registered successfully!');
 
             // Show success modal
             const modal = await this.modalController.create({
               component: SuccessComponent,
+              componentProps: {
+                responseData: response,
+              },
             });
 
             await modal.present();

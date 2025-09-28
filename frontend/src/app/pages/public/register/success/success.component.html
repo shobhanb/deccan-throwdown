@@ -17,9 +17,28 @@
     </ion-card-header>
     <ion-card-content>
       <p>Thank you for registering your team for the competition!</p>
+      <br />
       <p>
-        We will contact you soon with further details about payment and
-        verification.
+        Here is the payment link:
+        <a [href]="responseData?.payment_link" target="_blank">Pay Now</a>
+      </p>
+      @if (responseData?.waiver_links) {
+      <br />
+      <p>Please fill out the waiver forms (Non CFMF athletes)</p>
+      <ul>
+        @for (waiverLink of responseData?.waiver_links; track $index) {
+        <li>
+          {{ waiverLink?.athlete_name }}
+          <a [href]="waiverLink?.waiver_link" target="_blank">Waiver Link</a>
+        </li>
+        }
+      </ul>
+      }
+      <p>You will soon get an email with the same information as well.</p>
+      <br />
+      <p>
+        Once payment is processed, we will confirm your participation in the
+        Teams event
       </p>
     </ion-card-content>
   </ion-card>
