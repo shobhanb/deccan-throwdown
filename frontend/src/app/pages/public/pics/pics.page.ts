@@ -107,20 +107,14 @@ export class PicsPage implements OnInit {
   }
 
   // Open image in full-size modal
-  async openImageModal(index: number) {
-    const images = this.imageData();
-    const selectedImage = images[index];
+  async openImageModal(imagePath: string) {
+    const modal = await this.modalController.create({
+      component: ImageModalComponent,
+      componentProps: {
+        imagePath: imagePath,
+      },
+    });
 
-    if (selectedImage) {
-      const modal = await this.modalController.create({
-        component: ImageModalComponent,
-        componentProps: {
-          imageSrc: selectedImage.path,
-          imageAlt: selectedImage.filename,
-        },
-      });
-
-      await modal.present();
-    }
+    await modal.present();
   }
 }

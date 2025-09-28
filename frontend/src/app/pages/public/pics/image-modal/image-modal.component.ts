@@ -30,8 +30,7 @@ import { close } from 'ionicons/icons';
   ],
 })
 export class ImageModalComponent implements OnInit {
-  @Input() imageSrc!: string;
-  @Input() imageAlt?: string;
+  @Input() imagePath: string = '';
 
   private modalController = inject(ModalController);
 
