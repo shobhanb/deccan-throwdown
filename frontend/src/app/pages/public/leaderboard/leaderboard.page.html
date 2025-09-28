@@ -27,6 +27,7 @@
         labelPlacement="floating"
         [value]="selectedWod()"
         (ionChange)="onClickChangeWod($event)"
+        interface="popover"
       >
         @for (wod of wods() || []; track wod.wodNumber) {
         <ion-select-option [value]="wod.wodNumber"
@@ -42,6 +43,7 @@
         labelPlacement="floating"
         [value]="selectedCategory()"
         (ionChange)="onClickChangeCategory($event)"
+        interface="popover"
       >
         @for (category of categories() || []; track category) {
         <ion-select-option [value]="category">{{ category }}</ion-select-option>
