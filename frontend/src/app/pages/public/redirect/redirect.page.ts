@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -24,7 +24,6 @@ import {
   ],
 })
 export class RedirectPage implements OnInit {
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   showInvalidUrl = false;
@@ -33,16 +32,23 @@ export class RedirectPage implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    // Get the 'link' query parameter
-    this.route.queryParams.subscribe((params) => {
-      const linkParam = params['link'];
+    // Get the full query string and extract everything after 'link='
+    const fullUrl = window.location.href;
+    const linkIndex = fullUrl.indexOf('link=');
 
-      if (linkParam && this.isValidUrl(linkParam)) {
+    if (linkIndex !== -1) {
+      // Extract everything after 'link=' and decode it
+      const encodedLink = fullUrl.substring(linkIndex + 5);
+      const decodedLink = decodeURIComponent(encodedLink);
+
+      console.log('Extracted link:', decodedLink); // Debug log
+
+      if (decodedLink && this.isValidUrl(decodedLink)) {
         // Valid URL - redirect immediately
-        window.location.href = linkParam;
+        window.location.href = decodedLink;
       } else {
-        // Invalid or missing URL - show error message
-        this.redirectUrl = linkParam || '';
+        // Invalid URL - show error message
+        this.redirectUrl = decodedLink || '';
         this.showInvalidUrl = true;
 
         // Navigate to home after 3 seconds
@@ -50,7 +56,15 @@ export class RedirectPage implements OnInit {
           this.router.navigate(['/home']);
         }, 3000);
       }
-    });
+    } else {
+      // No link parameter found - show error
+      this.showInvalidUrl = true;
+
+      // Navigate to home after 3 seconds
+      setTimeout(() => {
+        this.router.navigate(['/home']);
+      }, 3000);
+    }
   }
 
   private isValidUrl(url: string): boolean {

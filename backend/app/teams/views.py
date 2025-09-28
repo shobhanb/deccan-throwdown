@@ -3,6 +3,7 @@ import json
 import logging
 import urllib.parse as urlparse
 from collections.abc import Sequence
+from urllib.parse import quote
 from uuid import UUID
 
 import resend
@@ -198,7 +199,8 @@ async def register_team(
 
 
 def add_domain_redirect(link: str) -> str:
-    return f"{registration_settings.domain_redirect_url}{link}"
+    encoded_target = quote(link, safe="")
+    return f"{registration_settings.domain_redirect_url}?link={encoded_target}"
 
 
 def get_payment_link(team: TeamRegistrationModel) -> str:
@@ -279,5 +281,5 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <p>Train hard, stay humble,<br/>DT Team</p>
         """,
     }
-    email_id: resend.Emails.SendResponse = resend.Emails.send(params)
-    log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
+    # email_id: resend.Emails.SendResponse = resend.Emails.send(params)
+    # log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
