@@ -55,6 +55,7 @@ export class AthleteComponent implements OnInit {
     sex: new FormControl<'M' | 'F'>('F', [Validators.required]),
     email: new FormControl('', [Validators.email, Validators.required]),
     phone_number: new FormControl('', [
+      Validators.required,
       Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
     ]),
     gym_selection: new FormControl('', { validators: [Validators.required] }),
