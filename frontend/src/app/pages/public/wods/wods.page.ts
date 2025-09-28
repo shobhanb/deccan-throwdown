@@ -1,4 +1,11 @@
-import { Component, inject, linkedSignal, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  linkedSignal,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -19,11 +26,14 @@ import {
   IonSkeletonText,
   IonCardContent,
   IonButton,
+  IonText,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { addIcons } from 'ionicons';
 import { trophyOutline } from 'ionicons/icons';
-import { appConfig, defaultConfig } from 'src/app/config/config';
+import { appConfig, defaultConfig, WodConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -32,6 +42,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./wods.page.scss'],
   standalone: true,
   imports: [
+    IonText,
     IonButton,
     IonCardContent,
     IonCardSubtitle,
@@ -52,6 +63,8 @@ import { ActivatedRoute } from '@angular/router';
     FormsModule,
     IonMenuButton,
     ToolbarButtonsComponent,
+    IonSelect,
+    IonSelectOption,
   ],
 })
 export class WodsPage implements OnInit {
@@ -64,6 +77,15 @@ export class WodsPage implements OnInit {
   wods = linkedSignal(() => appConfig[this.eventShortName()]?.wods);
   movementStandardsUrl = linkedSignal(
     () => appConfig[this.eventShortName()]?.standardsUrl ?? ''
+  );
+  useCategoryWodDescription = linkedSignal(() =>
+    appConfig[this.eventShortName()]?.wods?.some(
+      (wod) => wod.categoryWodDescription
+    )
+  );
+  categories = linkedSignal(() => appConfig[this.eventShortName()]?.categories);
+  selectedCategory = linkedSignal<string | null>(
+    () => this.categories()?.[0] || null
   );
 
   constructor() {
@@ -89,5 +111,20 @@ export class WodsPage implements OnInit {
     if (eventShortNameParam) {
       this.eventShortName.set(eventShortNameParam);
     }
+  }
+
+  onClickChangeCategory(event: CustomEvent) {
+    this.selectedCategory.set(event.detail.value);
+  }
+
+  getWodDescription(wod: WodConfig): string[] {
+    if (this.useCategoryWodDescription() && this.selectedCategory()) {
+      return (
+        wod.categoryWodDescription?.[this.selectedCategory()!] ??
+        wod.wodDescription ??
+        []
+      );
+    }
+    return wod.wodDescription ?? [];
   }
 }

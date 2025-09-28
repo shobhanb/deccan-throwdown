@@ -15,15 +15,37 @@
     <ion-card-header>
       <ion-card-title>WODs</ion-card-title>
       <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
+      <ion-text>{{ useCategoryWodDescription() }}</ion-text>
     </ion-card-header>
     @if (movementStandardsUrl()) {
     <ion-button fill="clear" [href]="movementStandardsUrl()" target="_blank"
       >Movement Standards PDF</ion-button
     >
+    } @else {
+    <ion-card-content>
+      <ion-text>Movement standards coming soon!</ion-text>
+    </ion-card-content>
     }
   </ion-card>
 
-  @if (dataLoaded()) { @for (wod of wods(); track wod.wodNumber) {
+  @if (useCategoryWodDescription()) {
+
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-select
+        label="Select Category"
+        labelPlacement="floating"
+        [value]="selectedCategory()"
+        (ionChange)="onClickChangeCategory($event)"
+        interface="popover"
+      >
+        @for (category of categories() || []; track category) {
+        <ion-select-option [value]="category">{{ category }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  } @if (dataLoaded()) { @for (wod of wods(); track wod.wodNumber) {
   <ion-card>
     <ion-card-header>
       <ion-card-title>{{ wod.wodName }}</ion-card-title>
@@ -31,9 +53,8 @@
     </ion-card-header>
     <ion-card-content>
       <div>
-        <div class="wod-score-type">{{ 'Scoring: ' + wod.scoreTypes }}</div>
         <div class="wod-summary">{{ wod.wodSummary }}</div>
-        @for (line of wod.wodDescription; track $index) {
+        @for (line of getWodDescription(wod); track $index) {
         <div class="wod-description-line">{{ line }}</div>
         }
       </div>
