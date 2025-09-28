@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { HttpClient } from '@angular/common/http';
 import {
   IonContent,
@@ -14,8 +15,10 @@ import {
   IonRow,
   IonCol,
   IonImg,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { ImageModalComponent } from './image-modal/image-modal.component';
 
 interface ImageData {
   filename: string;
@@ -63,8 +66,8 @@ interface ImageListData {
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
+  private modalController = inject(ModalController);
 
-  // images: string[] = [];
   imageData = signal<ImageData[]>([]);
 
   constructor() {}
@@ -100,6 +103,24 @@ export class PicsPage implements OnInit {
       });
     } catch (error) {
       console.error('Error in loadImages:', error);
+    }
+  }
+
+  // Open image in full-size modal
+  async openImageModal(index: number) {
+    const images = this.imageData();
+    const selectedImage = images[index];
+
+    if (selectedImage) {
+      const modal = await this.modalController.create({
+        component: ImageModalComponent,
+        componentProps: {
+          imageSrc: selectedImage.path,
+          imageAlt: selectedImage.filename,
+        },
+      });
+
+      await modal.present();
     }
   }
 }

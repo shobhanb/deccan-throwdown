@@ -17,7 +17,12 @@
         [sizeLg]="imageInfo.type === 'horizontal' ? 'auto' : 3"
         class="image-col"
       >
-        <ion-img [src]="imageInfo.path" class="gallery-image"> </ion-img>
+        <ion-img
+          [src]="imageInfo.path"
+          class="gallery-image"
+          (click)="openImageModal(i)"
+        >
+        </ion-img>
       </ion-col>
       }
     </ion-row>
