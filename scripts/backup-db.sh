@@ -1,5 +1,5 @@
 #!/bin/bash
-cp /root/deccan_throwdown/database.db /root/backups/database-backup-`date +%F-%T`.db
+cp /root/deccan-throwdown/backend/database.db /root/backups/database-backup-`date +%F-%T`.db
 
 # =============================================================================
 # CRONTAB SETUP FOR DAILY BACKUPS
