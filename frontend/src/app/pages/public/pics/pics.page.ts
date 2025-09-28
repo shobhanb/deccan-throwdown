@@ -15,10 +15,8 @@ import {
   IonRow,
   IonCol,
   IonImg,
-  ModalController,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
-import { ImageModalComponent } from './image-modal/image-modal.component';
 
 interface ImageData {
   filename: string;
@@ -66,7 +64,6 @@ interface ImageListData {
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
-  private modalController = inject(ModalController);
 
   imageData = signal<ImageData[]>([]);
 
@@ -104,17 +101,5 @@ export class PicsPage implements OnInit {
     } catch (error) {
       console.error('Error in loadImages:', error);
     }
-  }
-
-  // Open image in full-size modal
-  async openImageModal(imagePath: string) {
-    const modal = await this.modalController.create({
-      component: ImageModalComponent,
-      componentProps: {
-        imagePath: imagePath,
-      },
-    });
-
-    await modal.present();
   }
 }
