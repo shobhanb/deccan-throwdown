@@ -71,6 +71,7 @@ export class WodsPage implements OnInit {
   movementStandardsUrl = linkedSignal(
     () => appConfig[this.eventShortName()]?.standardsUrl ?? ''
   );
+  wodsUrl = linkedSignal(() => appConfig[this.eventShortName()]?.wodsUrl ?? '');
   useCategoryWodDescription = linkedSignal(() =>
     appConfig[this.eventShortName()]?.wods?.some(
       (wod) => wod.categoryWodDescription

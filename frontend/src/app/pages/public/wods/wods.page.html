@@ -16,14 +16,14 @@
       <ion-card-title>WODs</ion-card-title>
       <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
     </ion-card-header>
-    @if (movementStandardsUrl()) {
+    @if (wodsUrl()) {
+    <ion-button fill="clear" [href]="wodsUrl()" target="_blank"
+      >WODs PDF</ion-button
+    >
+    } @if (movementStandardsUrl()) {
     <ion-button fill="clear" [href]="movementStandardsUrl()" target="_blank"
       >Movement Standards PDF</ion-button
     >
-    } @else {
-    <ion-card-content>
-      <ion-text>Movement standards coming soon!</ion-text>
-    </ion-card-content>
     }
   </ion-card>
 
