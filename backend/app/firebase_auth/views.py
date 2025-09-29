@@ -52,8 +52,8 @@ async def update_user_admin_rights(
     uid: str,
     admin: bool,  # noqa: FBT001
 ) -> None:
-    claims = FirebaseCustomClaims(admin=True) if admin else None
-    fireauth.set_custom_user_claims(uid=uid, custom_claims=claims)
+    claims = FirebaseCustomClaims(admin=admin)
+    fireauth.set_custom_user_claims(uid=uid, custom_claims=claims.model_dump_json())
 
 
 @firebase_auth_router.get("/user/{uid}", status_code=status.HTTP_200_OK, response_model=FirebaseUserRecord)

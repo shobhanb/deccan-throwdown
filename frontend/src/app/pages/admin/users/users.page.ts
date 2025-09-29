@@ -115,7 +115,7 @@ export class UsersPage implements OnInit {
   }
 
   async onClickAdmin(user: apiFirebaseUserRecord) {
-    const admin = user.custom_claims!.admin;
+    const admin = user.custom_claims?.admin || false;
     const alertText = admin
       ? `Revoke admin rights for ${user.display_name}?`
       : `Make ${user.display_name} admin?`;
@@ -194,6 +194,7 @@ export class UsersPage implements OnInit {
           })
         );
         this.dataLoaded.set(true);
+        console.log(this.allUsers());
       },
       error: (err: any) => {
         console.error(err);
