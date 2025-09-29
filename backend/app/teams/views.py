@@ -253,12 +253,18 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <ul>
             {
             "".join(
-                f'<li>{athlete.athlete_name}<a href="{athlete.waiver_link}" target="_blank">Waiver Link</a></li>'
+                f'<li>{athlete.athlete_name}<a href="{athlete.waiver_link}" target="_blank">( Waiver Link )</a></li>'
                 for athlete in registration_response.waiver_links
             )
         }
         </ul>
     """
+
+    team_fees = (
+        registration_settings.early_bird_team_fee
+        if registration_settings.use_early_bird_fee
+        else registration_settings.team_fee
+    )
 
     params: resend.Emails.SendParams = {
         "from": resend_settings.resend_from_email,
@@ -273,7 +279,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <ul>
             {"".join(f"<li>{athlete.first_name} {athlete.last_name}{f' ({athlete.phone_number})' if athlete.phone_number else ''}</li>" for athlete in team.athletes)}
         </ul>
-        <p>Registration fees are Rs. {registration_settings.team_fee} per team.</p>
+        <p>Registration fees are Rs. {team_fees} per team.</p>
         <p>Here is the payment link if you haven't paid already: <a href="{email_payment_link}" target="_blank">Pay Now</a></p>
         <p>Once payment is processed, we will confirm your participation in the Teams event</p>
         {waiver_section}
@@ -281,5 +287,5 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <p>Train hard, stay humble,<br/>DT Team</p>
         """,
     }
-    # email_id: resend.Emails.SendResponse = resend.Emails.send(params)
-    # log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
+    email_id: resend.Emails.SendResponse = resend.Emails.send(params)
+    log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
