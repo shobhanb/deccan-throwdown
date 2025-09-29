@@ -19,7 +19,6 @@ import {
   IonSkeletonText,
   IonCardContent,
   IonButton,
-  IonText,
   IonSelect,
   IonSelectOption,
 } from '@ionic/angular/standalone';
@@ -35,7 +34,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./wods.page.scss'],
   standalone: true,
   imports: [
-    IonText,
     IonButton,
     IonCardContent,
     IonCardSubtitle,

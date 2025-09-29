@@ -253,7 +253,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <ul>
             {
             "".join(
-                f'<li>{athlete.athlete_name}<a href="{athlete.waiver_link}" target="_blank">( Waiver Link )</a></li>'
+                f'<li>{athlete.athlete_name} <a href="{athlete.waiver_link}" target="_blank">Waiver Link</a></li>'
                 for athlete in registration_response.waiver_links
             )
         }
