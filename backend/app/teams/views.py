@@ -270,6 +270,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         "from": resend_settings.resend_from_email,
         "to": athlete_emails,
         "cc": registration_settings.registration_cc_list,
+        "reply_to": registration_settings.registration_cc_list,
         "subject": f"DT - Team Registration - {team.team_name}",
         "html": f"""
         <h1>Deccan Throwdown Teams</h1>
@@ -285,7 +286,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         {waiver_section}
         <p>Reply-all to this email if you have any questions.</p>
         <p>Train hard, stay humble,<br/>DT Team</p>
-        """,
+        """,  # noqa: E501
     }
     email_id: resend.Emails.SendResponse = resend.Emails.send(params)
     log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
