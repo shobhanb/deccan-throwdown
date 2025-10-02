@@ -15,6 +15,9 @@ import {
   IonRow,
   IonCol,
   IonImg,
+  IonRefresher,
+  IonRefresherContent,
+  IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 
@@ -46,6 +49,9 @@ interface ImageListData {
   styleUrls: ['./pics.page.scss'],
   standalone: true,
   imports: [
+    IonSkeletonText,
+    IonRefresherContent,
+    IonRefresher,
     IonImg,
     IonRow,
     IonGrid,
@@ -75,6 +81,11 @@ export class PicsPage implements OnInit {
     this.loadImages();
   }
 
+  handleRefresh(event: CustomEvent) {
+    this.loadImages();
+    (event.target as HTMLIonRefresherElement).complete();
+  }
+
   // Helper method to shuffle array using Fisher-Yates algorithm
   private shuffleArray<T>(array: T[]): T[] {
     const shuffled = [...array]; // Create a copy to avoid mutating original
@@ -86,6 +97,11 @@ export class PicsPage implements OnInit {
   }
 
   async loadImages() {
+    if (this.imageData().length > 0) {
+      // Images already loaded, just shuffle
+      this.imageData.set(this.shuffleArray(this.imageData()));
+      return;
+    }
     try {
       // Load the generated image list JSON file
       this.http.get<ImageListData>('assets/image-list.json').subscribe({

@@ -7,6 +7,10 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-grid>
     <ion-row>
       @for (imageInfo of imageData(); track $index; let i = $index) {
@@ -26,13 +30,16 @@
 
     @if (imageData().length === 0) {
     <ion-row>
-      <ion-col size="12" class="ion-text-center ion-padding">
-        <ion-card>
-          <ion-card-content>
-            <p>Coming soon...</p>
-          </ion-card-content>
-        </ion-card>
+      @for (skeleton of [1,2,3,4,5,6,7,8]; track skeleton) {
+      <ion-col size="12" sizeSm="6" sizeMd="4" sizeLg="3">
+        <div class="skeleton-image-container">
+          <ion-skeleton-text
+            [animated]="true"
+            style="width: 100%; height: 200px; border-radius: 8px"
+          ></ion-skeleton-text>
+        </div>
       </ion-col>
+      }
     </ion-row>
     }
   </ion-grid>
