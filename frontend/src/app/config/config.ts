@@ -92,7 +92,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '30 Overhead Squats @ weight 1',
             '20 Overhead Squats @ weight 2',
             '10 Overhead Squats @ weight 3',
-            '♀ 25,35,45 kg & ♂ 40,50,60 kg',
+            '♀ 25/35/45 kg & ♂ 40/50/60 kg',
             'Time Cap: 5 mins',
             '',
             'Score is Time taken by both pairs to complete the workout OR Total Repetitions completed for both pairs at time cap',
@@ -107,7 +107,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '30 Overhead Squats @ weight 1',
             '20 Overhead Squats @ weight 2',
             '10 Overhead Squats @ weight 3',
-            '♀ 20,25,30 kg & ♂ 30,40,50 kg',
+            '♀ 20/25/30 kg & ♂ 30/40/50 kg',
             'Time Cap: 5 mins',
             '',
             'Score is Time taken by both pairs to complete the workout OR Total Repetitions completed for both pairs at time cap',
@@ -122,7 +122,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '30 Front Squats @ weight 1',
             '20 Front Squats @ weight 2',
             '10 Front Squats @ weight 3',
-            '♀ 15,20,25 kg & ♂ 20,30,40 kg',
+            '♀ 15/20/25 kg & ♂ 20/30/40 kg',
             'Time Cap: 5 mins',
             '',
             'Score is Time taken by both pairs to complete the workout OR Total Repetitions completed for both pairs at time cap',
@@ -265,7 +265,7 @@ export const appConfig: { [key: string]: AppConfig } = {
         categoryWodDescription: {
           Open: [
             'As a Team complete the following For Time: ',
-            '9-7-5',
+            '12-9-6',
             'Wall-Walks ',
             'Box Jump Overs @ ♀ 20" / ♂ 24”',
             '(All teammates complete each repetition consecutively)',
@@ -280,7 +280,7 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
           Intermediate: [
             'As a Team complete the following For Time: ',
-            '9-7-5',
+            '12-9-6',
             'Partial Wall-Walks ',
             'Box Jump Overs @ ♀ 20" / ♂ 20”',
             '(All teammates complete each repetition consecutively)',
@@ -295,7 +295,7 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
           Beginner: [
             'As a Team complete the following For Time: ',
-            '9-7-5',
+            '12-9-6',
             '10ft Bear Crawls (10ft = 1 rep)',
             'Box Step Overs @ ♀ 20" / ♂ 20”',
             '(All teammates complete each repetition consecutively)',
