@@ -309,7 +309,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '* ALL teammates MUST complete each repetition of the Box Step Over one after the other for a repetition to count (9 each , then 7 each and then 5 each )',
           ],
         },
-        scoreTypes: ['Time'],
+        scoreTypes: ['Time', 'Reps'],
       },
     ],
     wodsUrl: 'assets/standards/dtteams2025-wods.pdf',
