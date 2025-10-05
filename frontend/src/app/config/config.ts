@@ -201,7 +201,7 @@ export const appConfig: { [key: string]: AppConfig } = {
         categoryWodDescription: {
           Open: [
             'For Time:',
-            "In a F/M Pair, 80 Synchro Single Arm Dumbbell Devil's Press @ ♀ 15 kg / ♂ 20 kg",
+            "As a F/M Pair, 80 Synchro Single Arm Dumbbell Devil's Press @ ♀ 15 kg / ♂ 20 kg",
             'Buy-In:',
             'Every 3:00, including 0:00',
             'Athlete 1, Athlete 2 - 14 Alternating Shuttle Runs (1 Shuttle Run = 25ft out and back)',
@@ -219,7 +219,7 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
           Intermediate: [
             'For Time:',
-            "In a F/M Pair, 80 Synchro Single Arm Dumbbell Devil's Press @ ♀ 10 kg / ♂ 15 kg",
+            "As a F/M Pair, 80 Synchro Single Arm Dumbbell Devil's Press @ ♀ 10 kg / ♂ 15 kg",
             'Buy-In:',
             'Every 3:00, including 0:00',
             'Athlete 1, Athlete 2 - 10 Alternating Shuttle Runs (1 Shuttle Run = 25ft out and back)',
@@ -238,7 +238,7 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
           Beginner: [
             'For Time:',
-            "In a F/M Pair, 60 Synchro Single Arm Dumbbell Devil's Press @ ♀ 7.5 kg / ♂ 10 kg",
+            "As a F/M Pair, 60 Synchro Single Arm Dumbbell Devil's Press @ ♀ 7.5 kg / ♂ 10 kg",
             'Buy-In:',
             'Every 3:00, including 0:00',
             'Athlete 1, Athlete 2 - 8 Alternating Shuttle Runs (1 Shuttle Run = 25ft out and back)',
