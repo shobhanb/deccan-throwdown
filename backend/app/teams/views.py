@@ -287,7 +287,7 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         <p>Train hard, stay humble,<br/>DT Team</p>
         <br/>
         <br/>
-        <p>{athlete_emails}</p>
+        <p>{"; ".join(athlete_emails)}</p>
         <br/>
         """,  # noqa: E501
     }
