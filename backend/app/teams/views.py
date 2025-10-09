@@ -49,6 +49,41 @@ async def get_teams(
 
 
 @teams_router.get(
+    "/waiver-links",
+    status_code=status.HTTP_200_OK,
+)
+async def get_team_waiver_links(
+    async_session: db_dependency,
+    team_name: str,
+    event_short_name: str,
+) -> list[WaiverLinkModel] | None:
+    team = await Team.find_or_raise(
+        async_session=async_session,
+        select_relationships=[Team.athletes],
+        team_name=team_name,
+        event_short_name=event_short_name,
+    )
+    team_registration = TeamRegistrationModel(
+        team_name=team.team_name,
+        category=team.category,
+        athletes=[
+            AthleteRegistrationModel(
+                first_name=athlete.first_name,
+                last_name=athlete.last_name,
+                email=athlete.email,
+                phone_number=athlete.phone_number,
+                gym=athlete.gym,
+                sex=athlete.sex if athlete.sex in ("M", "F") else "M",
+            )
+            for athlete in team.athletes
+        ],
+        event_short_name=team.event_short_name,
+    )
+
+    return get_waiver_links(team_registration)
+
+
+@teams_router.get(
     "/{team_id}",
     status_code=status.HTTP_200_OK,
     response_model=TeamsOutputDetailModel,
