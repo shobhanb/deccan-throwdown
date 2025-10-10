@@ -9,6 +9,7 @@ from uuid import UUID
 import resend
 from fastapi import APIRouter, BackgroundTasks, status
 
+from app.apikey_auth.dependencies import api_key_admin_dependency
 from app.athletes.models import Athlete
 from app.athletes.schemas import AthleteRegistrationModel
 from app.database.dependencies import db_dependency
@@ -48,12 +49,35 @@ async def get_teams(
     )
 
 
+@teams_router.get("/emails", status_code=status.HTTP_200_OK)
+async def get_team_emails(
+    db_session: db_dependency,
+    _: api_key_admin_dependency,
+    event_short_name: str,
+) -> str:
+    teams = await Team.find_all(
+        async_session=db_session,
+        select_relationships=[Team.athletes],
+        event_short_name=event_short_name,
+    )
+    athletes = [team.athletes for team in teams if team.athletes]
+    return " ; ".join(
+        {
+            f"{athlete.first_name} {athlete.last_name} <{athlete.email}>"
+            for sublist in athletes
+            for athlete in sublist
+            if athlete.email
+        },
+    )
+
+
 @teams_router.get(
     "/waiver-links",
     status_code=status.HTTP_200_OK,
 )
 async def get_team_waiver_links(
     async_session: db_dependency,
+    _: api_key_admin_dependency,
     team_name: str,
     event_short_name: str,
 ) -> list[WaiverLinkModel] | None:
