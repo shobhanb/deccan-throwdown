@@ -276,7 +276,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '',
             '* ONLY ONE teammate works at one time on the Wall Walks and the Cleans, i.e. ONLY ONE barbell MUST be in play',
             '* The repetitions may be split between Male and Female teammates. There is no minimum work requirement for any one teammate on the wall walks or the cleans',
-            '* ALL teammates MUST complete each repetition of the Box Jump Over one after the other for a repetition to count (9 each , then 7 each and then 5 each )',
+            '* ALL teammates MUST complete each repetition of the Box Jump Over one after the other for a repetition to count (12 each , then 9 each and then 6 each)',
           ],
           Intermediate: [
             'As a Team complete the following For Time: ',
@@ -291,7 +291,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '',
             '* ONLY ONE teammate works at one time on the Wall Walks and the Cleans, i.e. ONLY ONE barbell MUST be in play',
             '* The repetitions may be split between Male and Female teammates. There is no minimum work requirement for any one teammate on the wall walks or the cleans',
-            '* ALL teammates MUST complete each repetition of the Box Jump Over one after the other for a repetition to count (9 each , then 7 each and then 5 each )',
+            '* ALL teammates MUST complete each repetition of the Box Jump Over one after the other for a repetition to count (12 each , then 9 each and then 6 each)',
           ],
           Beginner: [
             'As a Team complete the following For Time: ',
@@ -306,7 +306,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             '',
             '* ONLY ONE teammate works at one time on the Bear Crawls and the Cleans, i.e. ONLY ONE barbell MUST be in play',
             '* The repetitions may be split between Male and Female teammates. There is no minimum work requirement for any one teammate on the bear crawls or the cleans',
-            '* ALL teammates MUST complete each repetition of the Box Step Over one after the other for a repetition to count (9 each , then 7 each and then 5 each )',
+            '* ALL teammates MUST complete each repetition of the Box Step Over one after the other for a repetition to count (12 each , then 9 each and then 6 each)',
           ],
         },
         scoreTypes: ['Time', 'Reps'],
