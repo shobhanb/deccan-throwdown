@@ -60,14 +60,9 @@ async def get_team_emails(
         select_relationships=[Team.athletes],
         event_short_name=event_short_name,
     )
-    athletes = [team.athletes for team in teams if team.athletes]
+    athletes = [athlete for team in teams if team.athletes for athlete in team.athletes]
     return " ; ".join(
-        {
-            f"{athlete.first_name} {athlete.last_name} <{athlete.email}>"
-            for sublist in athletes
-            for athlete in sublist
-            if athlete.email
-        },
+        {f"{athlete.first_name} {athlete.last_name} <{athlete.email}>" for athlete in athletes if athlete.email},
     )
 
 
