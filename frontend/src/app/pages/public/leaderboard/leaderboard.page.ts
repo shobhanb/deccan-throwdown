@@ -138,7 +138,10 @@ export class LeaderboardPage implements OnInit {
     return verifiedScores
       .sort((a, b) => a.wod_number - b.wod_number) // Sort by WOD number
       .map(
-        (score) => `WOD ${score.wod_number} Rank: ${score.wod_rank ?? 'N/A'}`
+        (score) =>
+          `WOD ${score.wod_number} Rank: ${score.wod_rank ?? 'N/A'} (${
+            score.wod_points
+          })`
       );
   }
 
