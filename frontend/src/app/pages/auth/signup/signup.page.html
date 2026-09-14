@@ -1,22 +1,14 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Sign Up</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="auth-content">
+<ion-content class="auth-content" [fullscreen]="true">
   <div class="auth-container">
-    <img src="icons/logo_192.jpg" alt="Deccan Throwdown" class="auth-logo" />
-    <h1 class="auth-title">Admin Signup</h1>
+    <img src="assets/brand/logo-badge.svg" alt="Deccan Throwdown" class="auth-logo auth-logo-badge" />
+    <h1 class="auth-title text-display">Admin Signup</h1>
     <p class="auth-subtitle">Deccan Throwdown</p>
     <p class="auth-description">
       Talk to your event organizer before signing up as admin
     </p>
 
     <form (submit)="onSubmitSignupForm(); $event.preventDefault()">
-      <ion-list [inset]="true" class="card-elevated">
+      <ion-list [inset]="true" class="card-elevated auth-form-card">
         <ion-item>
           <ion-input
             type="text"
@@ -52,6 +44,7 @@
 
       <ion-button
         expand="block"
+        color="secondary"
         type="submit"
         [disabled]="!isSignupFormValid()"
         >Sign Up</ion-button
@@ -60,6 +53,7 @@
       <ion-button
         expand="block"
         fill="outline"
+        class="auth-cancel-button"
         type="button"
         [routerLink]="['/home']"
         routerDirection="root"

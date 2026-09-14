@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IonToast } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast.service';
 
@@ -9,8 +9,10 @@ import { ToastService } from 'src/app/services/toast.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonToast],
 })
-export class ToastComponent implements OnInit {
+export class ToastComponent {
   toastService = inject(ToastService);
+
+  toastCssClass = computed(() => `dt-toast dt-toast-${this.toastService.color()}`);
 
   toastButtons = [
     {
@@ -18,8 +20,4 @@ export class ToastComponent implements OnInit {
       role: 'cancel',
     },
   ];
-
-  constructor() {}
-
-  ngOnInit() {}
 }

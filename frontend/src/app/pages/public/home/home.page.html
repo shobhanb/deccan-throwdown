@@ -1,12 +1,6 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Home</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-toolbar title="Home"></app-page-toolbar>
 
-<ion-content>
+<ion-content class="page-with-tabs">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -18,7 +12,7 @@
       <strong>Install this app</strong>
       <p>Add to your home screen for quick access</p>
     </div>
-    <ion-button size="small" (click)="appInstallService.showInstallModal()">
+    <ion-button size="small" color="secondary" (click)="appInstallService.showInstallModal()">
       Install
     </ion-button>
     <ion-button fill="clear" size="small" (click)="appInstallService.dontShowAgain()">
@@ -27,43 +21,49 @@
   </div>
   }
 
-  <section class="hero card-elevated">
-    <ion-chip color="medium">Teams Event</ion-chip>
-    <h1 class="hero-title">{{ eventName }}</h1>
+  <section class="dt-hero">
+    <img
+      src="assets/brand/fortress-mark.svg"
+      alt=""
+      class="dt-hero-watermark"
+      aria-hidden="true"
+    />
+    <img src="icons/logo_192.jpg" alt="" class="hero-logo" />
+    <h1 class="hero-title text-display">{{ eventName }}</h1>
     <p class="hero-tagline">{{ tagline }}</p>
     @switch (registrationStatus) {
       @case ('open') {
-        <ion-chip color="success">Registration Open</ion-chip>
+        <span class="dt-pill hero-chip">Registration Open</span>
       }
       @case ('coming-soon') {
-        <ion-chip color="medium">Registration Coming Soon</ion-chip>
+        <span class="dt-pill hero-chip">Registration Coming Soon</span>
       }
       @default {
-        <ion-chip color="warning">Registrations Closed</ion-chip>
+        <span class="dt-pill hero-chip">Registrations Closed</span>
       }
     }
-    <p class="hero-date">Event: {{ eventDates }}</p>
+    <p class="hero-date">{{ eventDates }}</p>
   </section>
 
   <div class="action-grid">
-    <a class="action-tile card-elevated" routerLink="/wods">
-      <ion-icon name="barbell-outline"></ion-icon>
+    <a class="action-tile" routerLink="/wods">
+      <div class="action-icon-wrap"><ion-icon name="barbell-outline"></ion-icon></div>
       <span>WODs</span>
     </a>
-    <a class="action-tile card-elevated" routerLink="/teams">
-      <ion-icon name="people-outline"></ion-icon>
+    <a class="action-tile" routerLink="/teams">
+      <div class="action-icon-wrap"><ion-icon name="people-outline"></ion-icon></div>
       <span>Teams</span>
     </a>
     <a
-      class="action-tile card-elevated"
+      class="action-tile"
       routerLink="/leaderboard"
       [class.action-tile-disabled]="!leaderboardEnabled"
     >
-      <ion-icon name="trophy-outline"></ion-icon>
+      <div class="action-icon-wrap"><ion-icon name="trophy-outline"></ion-icon></div>
       <span>Leaderboard</span>
     </a>
-    <a class="action-tile card-elevated" routerLink="/pics">
-      <ion-icon name="camera-outline"></ion-icon>
+    <a class="action-tile" routerLink="/pics">
+      <div class="action-icon-wrap"><ion-icon name="camera-outline"></ion-icon></div>
       <span>Gallery</span>
     </a>
   </div>
@@ -71,18 +71,14 @@
   @if (registrationOpen) {
   <ion-list [inset]="true" class="card-elevated links-list">
     <ion-item routerLink="/register" detail>
-      <ion-icon name="create-outline" slot="start"></ion-icon>
+      <ion-icon name="create-outline" slot="start" color="secondary"></ion-icon>
       <ion-label>Register Your Team</ion-label>
     </ion-item>
   </ion-list>
   }
 
   <ion-list [inset]="true" class="card-elevated links-list">
-    <ion-item
-      href="https://www.instagram.com/deccanthrowdown"
-      target="_blank"
-      detail
-    >
+    <ion-item href="https://www.instagram.com/deccanthrowdown" target="_blank" detail>
       <ion-icon name="logo-instagram" slot="start"></ion-icon>
       <ion-label>Follow us on Instagram</ion-label>
     </ion-item>

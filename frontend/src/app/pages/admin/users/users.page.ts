@@ -11,17 +11,10 @@ import {
   IonLabel,
   IonItem,
   IonSkeletonText,
-  IonNote,
   IonIcon,
   IonButton,
   ActionSheetController,
   IonMenuButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
 } from '@ionic/angular';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiFirebaseUserRecord } from 'src/app/api/models';
@@ -31,6 +24,7 @@ import { ellipsisHorizontalOutline } from 'ionicons/icons';
 import { AlertService } from 'src/app/services/alert.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 
 @Component({
   selector: 'app-users',
@@ -39,15 +33,9 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    AdminPageHeaderComponent,
     IonButton,
     IonIcon,
-    IonNote,
     IonSkeletonText,
     IonItem,
     IonLabel,

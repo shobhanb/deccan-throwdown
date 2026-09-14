@@ -1,9 +1,8 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -12,7 +11,7 @@ import {
   IonMenu,
   IonButton,
   IonRouterLink,
-  IonMenuToggle,
+  MenuController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -41,23 +40,23 @@ import { AuthService } from 'src/app/services/auth.service';
     IonItem,
     IonList,
     IonContent,
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonMenu,
     RouterLink,
     IonRouterLink,
     RouterLinkActive,
-    IonMenuToggle,
   ],
 })
 export class MenuComponent {
   private appConfigService = inject(AppConfigService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private menuController = inject(MenuController);
 
   adminUser = this.authService.adminUser;
 
   eventName = this.appConfigService.eventName;
+  eventDates = this.appConfigService.eventDates;
+  registrationStatus = this.appConfigService.registrationStatus;
   archiveEvents = this.appConfigService.archiveEvents;
   registrationOpen =
     this.appConfigService.registrationStatus === 'open';
@@ -75,5 +74,14 @@ export class MenuComponent {
       cameraOutline,
       createOutline,
     });
+
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => {
+        void this.menuController.close('main-menu');
+      });
   }
 }

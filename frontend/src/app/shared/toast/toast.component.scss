@@ -1,0 +1,23 @@
+:host ::ng-deep .dt-toast-success {
+  --background: var(--dt-brand-gold);
+  --color: var(--dt-brand-navy);
+  --button-color: var(--dt-brand-navy);
+}
+
+:host ::ng-deep .dt-toast-primary {
+  --background: var(--dt-brand-navy);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}
+
+:host ::ng-deep .dt-toast-warning {
+  --background: var(--dt-brand-steel);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}
+
+:host ::ng-deep .dt-toast-danger {
+  --background: var(--ion-color-danger);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}

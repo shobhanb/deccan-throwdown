@@ -1,20 +1,15 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonButton,
   IonRefresher,
   IonRefresherContent,
   IonIcon,
-  IonMenuButton,
-  IonChip,
   IonList,
   IonItem,
   IonLabel,
 } from '@ionic/angular';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { AppInstallService } from 'src/app/services/app-install.service';
 import { addIcons } from 'ionicons';
 import {
@@ -37,20 +32,15 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageToolbarComponent,
     IonLabel,
     IonItem,
     IonList,
-    IonChip,
     IonIcon,
     IonRefresherContent,
     IonRefresher,
     IonButton,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    ToolbarButtonsComponent,
-    IonMenuButton,
     RouterLink,
   ],
 })

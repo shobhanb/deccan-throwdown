@@ -1,0 +1,28 @@
+@if (showTabBar()) {
+<ion-tab-bar class="dt-tab-bar" slot="bottom">
+  <ion-tab-button tab="home" routerLink="/home" routerLinkActive="tab-selected">
+    <ion-icon name="home-outline"></ion-icon>
+    <ion-label>Home</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="wods" routerLink="/wods" routerLinkActive="tab-selected">
+    <ion-icon name="barbell-outline"></ion-icon>
+    <ion-label>WODs</ion-label>
+  </ion-tab-button>
+  <ion-tab-button
+    tab="leaderboard"
+    routerLink="/leaderboard"
+    routerLinkActive="tab-selected"
+  >
+    <ion-icon name="bar-chart-outline"></ion-icon>
+    <ion-label>Scores</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="teams" routerLink="/teams" routerLinkActive="tab-selected">
+    <ion-icon name="people-outline"></ion-icon>
+    <ion-label>Teams</ion-label>
+  </ion-tab-button>
+  <ion-tab-button tab="more" (click)="openMenu()">
+    <ion-icon name="menu-outline"></ion-icon>
+    <ion-label>More</ion-label>
+  </ion-tab-button>
+</ion-tab-bar>
+}

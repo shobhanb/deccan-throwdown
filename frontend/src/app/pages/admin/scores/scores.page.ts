@@ -8,12 +8,6 @@ import {
   IonMenuButton,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonList,
   IonItem,
   IonLabel,
@@ -21,6 +15,7 @@ import {
   IonRouterLink,
 } from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AppConfigService } from 'src/app/services/app-config-service';
 
@@ -34,12 +29,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonLabel,
     IonItem,
     IonList,
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    AdminPageHeaderComponent,
     IonRefresherContent,
     IonRefresher,
     IonContent,

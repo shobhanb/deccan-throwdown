@@ -9,15 +9,10 @@ import {
   IonInput,
   IonItem,
   IonList,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonRouterLink,
-  IonMenuButton,
 } from '@ionic/angular';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ForgotPasswordFormModel } from 'src/app/shared/models/form-models';
 
 @Component({
@@ -27,19 +22,14 @@ import { ForgotPasswordFormModel } from 'src/app/shared/models/form-models';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonList,
     IonItem,
     IonButton,
     IonInput,
     IonContent,
     FormField,
-    ToolbarButtonsComponent,
     RouterLink,
     IonRouterLink,
-    IonMenuButton,
   ],
 })
 export class ForgotPasswordPage {

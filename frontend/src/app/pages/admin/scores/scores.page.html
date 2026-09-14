@@ -11,24 +11,16 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title
-        >{{ verificationMode() ? 'Score Verification' : 'Score Keeping'
-        }}</ion-card-title
-      >
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text>Select WOD</ion-text>
-    </ion-card-content>
-  </ion-card>
+  <app-admin-page-header
+    [title]="verificationMode() ? 'Score Verification' : 'Score Keeping'"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
 
   @if (dataLoaded()) {
-  <ion-list inset="true">
+  <ion-list inset="true" class="dt-admin-list">
     @for (wod of wods; track wod.wodNumber) {
-    <ion-item [routerLink]="[wod.wodNumber]" routerDirection="forward">
-      <div slot="start">{{ wod.wodNumber }}</div>
+    <ion-item [routerLink]="[wod.wodNumber]" routerDirection="forward" class="admin-data-row">
+      <div slot="start" class="admin-row-badge">{{ wod.wodNumber }}</div>
       <ion-label>
         <h2>{{ wod.wodName }}</h2>
         <p>{{ wod.wodSummary }}</p>
@@ -37,22 +29,13 @@
     }
   </ion-list>
   } @else {
-  <!-- Loading skeleton -->
-  <ion-list inset="true">
+  <ion-list inset="true" class="dt-admin-list">
     @for (item of [1, 2, 3, 4, 5]; track $index) {
     <ion-item>
-      <div slot="start">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 20px; height: 20px; border-radius: 4px"
-        ></ion-skeleton-text>
-      </div>
-      <ion-label>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 80%; height: 16px"
-        ></ion-skeleton-text>
-      </ion-label>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
     </ion-item>
     }
   </ion-list>

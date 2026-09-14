@@ -2,7 +2,8 @@ import {
   Component,
   effect,
   inject,
-  input,
+  Input,
+  OnInit,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -53,11 +54,11 @@ import { AthleteFormModel } from 'src/app/shared/models/form-models';
     FormField,
   ],
 })
-export class AthleteComponent {
+export class AthleteComponent implements OnInit {
   private modalController = inject(ModalController);
 
-  sex = input<'M' | 'F'>('F');
-  athleteData = input<apiAthleteRegistrationModel | null>(null);
+  @Input() sex: 'M' | 'F' = 'F';
+  @Input() athleteData: apiAthleteRegistrationModel | null = null;
 
   athleteModel = signal<AthleteFormModel>({
     first_name: '',
@@ -101,23 +102,23 @@ export class AthleteComponent {
       }
     });
 
-    effect(() => {
-      const sex = this.sex();
-      const data = this.athleteData();
-      this.athleteModel.set({
-        first_name: data?.first_name ?? '',
-        last_name: data?.last_name ?? '',
-        sex,
-        email: data?.email ?? '',
-        phone_number: data?.phone_number ?? '',
-        gym_selection:
-          data?.gym === 'CFMF'
-            ? 'CFMF'
-            : data?.gym
-              ? 'Other'
-              : '',
-        gym: data?.gym ?? '',
-      });
+  }
+
+  ngOnInit() {
+    this.applyAthleteData();
+  }
+
+  private applyAthleteData() {
+    const data = this.athleteData;
+    this.athleteModel.set({
+      first_name: data?.first_name ?? '',
+      last_name: data?.last_name ?? '',
+      sex: this.sex,
+      email: data?.email ?? '',
+      phone_number: data?.phone_number ?? '',
+      gym_selection:
+        data?.gym === 'CFMF' ? 'CFMF' : data?.gym ? 'Other' : '',
+      gym: data?.gym ?? '',
     });
   }
 
@@ -126,8 +127,8 @@ export class AthleteComponent {
   }
 
   get formTitle(): string {
-    const gender = this.sex() === 'F' ? 'Female' : 'Male';
-    const action = this.athleteData() ? 'Edit' : 'Add';
+    const gender = this.sex === 'F' ? 'Female' : 'Male';
+    const action = this.athleteData ? 'Edit' : 'Add';
     return `${action} ${gender} Athlete`;
   }
 
@@ -142,7 +143,7 @@ export class AthleteComponent {
 
     const athleteData: apiAthleteRegistrationModel = {
       ...this.athleteModel(),
-      sex: this.sex(),
+      sex: this.sex,
     };
 
     this.modalController.dismiss(athleteData);

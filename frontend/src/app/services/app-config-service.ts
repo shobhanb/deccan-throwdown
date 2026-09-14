@@ -17,12 +17,20 @@ export class AppConfigService {
   private _apiBaseUrl: string;
 
   constructor() {
-    const subdomain = window.location.hostname.split('.')[0];
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
     this._config = appConfig[defaultConfig];
     this._eventShortName = defaultConfig;
 
-    if (subdomain === 'localhost' || subdomain === '127') {
-      this._apiBaseUrl = `http://localhost:8000`;
+    const isLocalDev =
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      subdomain === '127' ||
+      hostname.endsWith('.local');
+
+    if (isLocalDev) {
+      // Use same-origin relative URLs; ionic serve proxies to localhost:8000 (see proxy.conf.json).
+      this._apiBaseUrl = 'http://localhost:8000';
     } else {
       this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;
     }

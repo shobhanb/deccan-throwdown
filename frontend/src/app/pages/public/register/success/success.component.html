@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Registration Success</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="onClickClose()">Close</ion-button>
@@ -7,43 +7,38 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-        Registration Successful!
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Thank you for registering your team for the competition!</p>
-      <br />
-      <p>
-        Here is the payment link:
-        <a [href]="responseData()?.payment_link" target="_blank">Pay Now</a>
-      </p>
-      @if (responseData()?.waiver_links) {
-      <br />
-      <p>Please fill out the waiver forms (Non CFMF athletes)</p>
-      <ul>
-        @for (waiverLink of responseData()?.waiver_links; track $index) {
-        <li>
-          {{ waiverLink?.athlete_name }}
-          <a [href]="waiverLink?.waiver_link" target="_blank">Waiver Link</a>
-        </li>
-        }
-      </ul>
-      }
-      <p>You will soon get an email with the same information as well.</p>
-      <br />
-      <p>
-        Once payment is processed, we will confirm your participation in the
-        Teams event
-      </p>
-    </ion-card-content>
-  </ion-card>
+<ion-content class="success-content">
+  <div class="success-hero">
+    <img src="assets/brand/fortress-mark.svg" alt="" class="success-watermark" />
+    <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+    <h2 class="text-display">You're In!</h2>
+    <p>Thank you for registering your team for the competition!</p>
+  </div>
 
-  <ion-button expand="block" class="ion-margin" (click)="onClickClose()">
-    OK
+  <div class="success-details card-elevated">
+    <p>
+      <strong>Payment link:</strong>
+      <a [href]="responseData?.payment_link" target="_blank" rel="noopener">Pay Now</a>
+    </p>
+    @if (responseData?.waiver_links) {
+    <p><strong>Waiver forms</strong> (Non CFMF athletes)</p>
+    <ul>
+      @for (waiverLink of responseData?.waiver_links; track $index) {
+      <li>
+        {{ waiverLink?.athlete_name }}
+        <a [href]="waiverLink?.waiver_link" target="_blank" rel="noopener">Waiver Link</a>
+      </li>
+      }
+    </ul>
+    }
+    <p>You will soon get an email with the same information as well.</p>
+    <p>
+      Once payment is processed, we will confirm your participation in the
+      Teams event.
+    </p>
+  </div>
+
+  <ion-button expand="block" color="secondary" class="ion-margin" (click)="onClickClose()">
+    Done
   </ion-button>
 </ion-content>

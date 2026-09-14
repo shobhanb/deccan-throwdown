@@ -8,20 +8,34 @@
   padding-bottom: var(--dt-space-sm);
 }
 
+.dt-category-section {
+  border-left: 4px solid var(--dt-brand-navy);
+  padding-left: var(--dt-space-md);
+  margin-left: var(--dt-space-md);
+}
+
 .team-header-badges {
   display: flex;
   align-items: center;
   gap: var(--dt-space-xs);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.athlete-count-badge {
+.team-roster-list {
+  margin-bottom: var(--dt-space-md);
+}
+
+.athlete-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dt-brand-navy);
+  color: #ffffff;
   font-size: 0.75rem;
-  min-width: auto;
-  height: 24px;
-}
-
-.verification-chip {
-  margin: 0;
-  height: 24px;
-  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }

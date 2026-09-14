@@ -1,24 +1,27 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
-
-
 import { HttpClient } from '@angular/common/http';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonMenuButton,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonImg,
   IonRefresher,
   IonRefresherContent,
   IonSkeletonText,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  chevronForwardOutline,
+  closeOutline,
+} from 'ionicons/icons';
 
 interface ImageData {
   filename: string;
@@ -49,30 +52,32 @@ interface ImageListData {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageToolbarComponent,
     PageHeaderComponent,
     EmptyStateComponent,
     IonSkeletonText,
     IonRefresherContent,
     IonRefresher,
-    IonImg,
-    IonRow,
-    IonGrid,
-    IonCol,
     IonContent,
+    IonModal,
     IonHeader,
-    IonTitle,
     IonToolbar,
-    IonMenuButton,
-    ToolbarButtonsComponent
-],
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
 
   imageData = signal<ImageData[]>([]);
   dataLoaded = signal(false);
+  selectedImageIndex = signal<number | null>(null);
 
-  constructor() {}
+  constructor() {
+    addIcons({ closeOutline, chevronBackOutline, chevronForwardOutline });
+  }
 
   ngOnInit() {}
 
@@ -85,9 +90,30 @@ export class PicsPage implements OnInit {
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  // Helper method to shuffle array using Fisher-Yates algorithm
+  openLightbox(index: number) {
+    this.selectedImageIndex.set(index);
+  }
+
+  closeLightbox() {
+    this.selectedImageIndex.set(null);
+  }
+
+  prevImage() {
+    const current = this.selectedImageIndex();
+    if (current !== null && current > 0) {
+      this.selectedImageIndex.set(current - 1);
+    }
+  }
+
+  nextImage() {
+    const current = this.selectedImageIndex();
+    if (current !== null && current < this.imageData().length - 1) {
+      this.selectedImageIndex.set(current + 1);
+    }
+  }
+
   private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array]; // Create a copy to avoid mutating original
+    const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];

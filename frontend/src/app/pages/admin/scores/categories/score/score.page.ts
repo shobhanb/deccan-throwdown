@@ -21,20 +21,15 @@ import {
   IonBackButton,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonList,
   IonItem,
   IonButton,
   IonInput,
   IonSkeletonText,
   IonRouterLink,
-  IonCardContent,
-  IonText,
 } from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
@@ -54,16 +49,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
+    AdminPageHeaderComponent,
     IonInput,
     IonButton,
     IonItem,
     IonList,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonRefresherContent,
     IonRefresher,
     IonBackButton,

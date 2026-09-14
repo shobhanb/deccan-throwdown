@@ -1,13 +1,9 @@
-import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonButton,
   IonIcon,
   IonButtons,
@@ -28,10 +24,6 @@ import { apiTeamRegistrationResponseModel } from 'src/app/api/models';
     IonButtons,
     IonIcon,
     IonButton,
-    IonCardContent,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonContent,
     IonHeader,
     IonTitle,
@@ -42,7 +34,7 @@ export class SuccessComponent {
   private modalController = inject(ModalController);
   private router = inject(Router);
 
-  responseData = input<apiTeamRegistrationResponseModel | null>(null);
+  @Input() responseData: apiTeamRegistrationResponseModel | null = null;
 
   constructor() {
     addIcons({ checkmarkCircleOutline });

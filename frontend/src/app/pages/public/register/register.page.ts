@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   signal,
@@ -13,10 +14,8 @@ import {
 } from '@angular/forms/signals';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonFooter,
+  IonToolbar,
   IonList,
   IonItem,
   IonInput,
@@ -24,12 +23,11 @@ import {
   IonSelectOption,
   IonButton,
   IonIcon,
-  IonMenuButton,
   ModalController,
   IonRouterLink,
 } from '@ionic/angular';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { AthleteComponent } from './athlete/athlete.component';
 import { SuccessComponent } from './success/success.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -63,6 +61,7 @@ import { DecimalPipe } from '@angular/common';
     PageHeaderComponent,
     EmptyStateComponent,
     IonFooter,
+    IonToolbar,
     IonIcon,
     IonButton,
     IonSelectOption,
@@ -71,12 +70,8 @@ import { DecimalPipe } from '@angular/common';
     IonItem,
     IonList,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonMenuButton,
+    PageToolbarComponent,
     FormField,
-    ToolbarButtonsComponent,
     RouterLink,
     IonRouterLink,
   ],
@@ -94,6 +89,12 @@ export class RegisterPage {
   registrationOpen = this.appConfigService.registrationStatus === 'open';
 
   athletes = signal<apiAthleteRegistrationModel[]>([]);
+
+  registrationStep = computed(() => {
+    if (this.isFormValid()) return 3;
+    if (this.teamForm().valid()) return 2;
+    return 1;
+  });
 
   teamModel = signal<TeamFormModel>({
     team_name: '',

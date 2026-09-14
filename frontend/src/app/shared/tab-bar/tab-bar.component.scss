@@ -1,0 +1,18 @@
+:host {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: block;
+}
+
+ion-tab-bar {
+  width: 100%;
+}
+
+@media (min-width: 769px) {
+  :host {
+    display: none;
+  }
+}

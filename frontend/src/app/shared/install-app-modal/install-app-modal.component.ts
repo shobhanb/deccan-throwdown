@@ -1,4 +1,4 @@
-import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import {
   ModalController,
   IonHeader,
@@ -43,7 +43,8 @@ import {
 export class InstallAppModalComponent {
   private modalController = inject(ModalController);
 
-  platformType = input<'ios' | 'android'>('ios');
+  /** Plain @Input — Ionic modal componentProps overwrite signal inputs. */
+  @Input() platformType: 'ios' | 'android' = 'ios';
 
   constructor() {
     addIcons({

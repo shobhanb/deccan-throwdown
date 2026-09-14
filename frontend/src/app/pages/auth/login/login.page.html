@@ -1,20 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Login</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="auth-content">
+<ion-content class="auth-content" [fullscreen]="true">
   <div class="auth-container">
-    <img src="icons/logo_192.jpg" alt="Deccan Throwdown" class="auth-logo" />
-    <h1 class="auth-title">Login</h1>
+    <img src="assets/brand/logo-badge.svg" alt="Deccan Throwdown" class="auth-logo auth-logo-badge" />
+    <h1 class="auth-title text-display">Login</h1>
     <p class="auth-subtitle">{{ eventName }}</p>
     <p class="auth-description">Login as an admin user</p>
 
     <form (submit)="onClickLogin(); $event.preventDefault()">
-      <ion-list [inset]="true" class="card-elevated">
+      <ion-list [inset]="true" class="card-elevated auth-form-card">
         <ion-item>
           <ion-input
             type="email"
@@ -50,14 +42,16 @@
 
       <ion-button
         expand="block"
+        color="secondary"
         type="submit"
         [disabled]="!isLoginFormValid()"
-        >Login</ion-button
+        >Sign In</ion-button
       >
       <ion-button
         expand="block"
         type="button"
         fill="outline"
+        class="auth-cancel-button"
         [routerLink]="['/home']"
         routerDirection="root"
         [replaceUrl]="true"

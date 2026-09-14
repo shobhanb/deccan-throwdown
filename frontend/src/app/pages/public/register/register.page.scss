@@ -1,3 +1,72 @@
+.register-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  padding: var(--dt-space-md);
+  background: var(--dt-surface);
+  border-radius: var(--ion-border-radius);
+  box-shadow: var(--dt-card-shadow);
+}
+
+.register-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.45;
+
+  &.active {
+    opacity: 1;
+  }
+
+  &.complete .step-number {
+    background: var(--dt-brand-gold);
+    color: var(--dt-brand-navy);
+  }
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--dt-brand-navy);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.step-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--ion-color-step-200, #d1d1d6);
+  margin: 0 var(--dt-space-xs);
+  margin-bottom: 18px;
+  max-width: 48px;
+
+  &.complete {
+    background: var(--dt-brand-gold);
+  }
+}
+
+.pricing-icon-img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
 .pricing-card {
   display: flex;
   align-items: flex-start;

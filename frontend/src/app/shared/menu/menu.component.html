@@ -1,9 +1,4 @@
 <ion-menu contentId="main-content" menuId="main-menu" [swipeGesture]="false">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menu</ion-title>
-    </ion-toolbar>
-  </ion-header>
   <ion-content>
     <div class="menu-full">
       <div class="menu-items">
@@ -13,119 +8,128 @@
             alt="Deccan Throwdown"
             class="menu-logo"
           />
-          <div class="menu-event-name">{{ eventName }}</div>
+          <div class="menu-event-name text-display">{{ eventName }}</div>
+          <div class="menu-event-dates">{{ eventDates }}</div>
+          @switch (registrationStatus) {
+            @case ('open') {
+              <span class="dt-pill menu-status-open">Registration Open</span>
+            }
+            @case ('coming-soon') {
+              <span class="dt-pill">Coming Soon</span>
+            }
+          }
         </div>
 
         <div class="menu-section-title">Current Event</div>
         <ion-list [inset]="true">
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['home']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="home-outline" slot="start"></ion-icon>
-              <ion-label>Home</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['teams']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="people-outline" slot="start"></ion-icon>
-              <ion-label>Teams & Athletes</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['leaderboard']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-              [disabled]="!leaderboardEnabled"
-            >
-              <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
-              <ion-label>Leaderboard</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['wods']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="barbell-outline" slot="start"></ion-icon>
-              <ion-label>WODs</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['pics']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="camera-outline" slot="start"></ion-icon>
-              <ion-label>Image Gallery</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/home']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="home-outline" slot="start"></ion-icon>
+            <ion-label>Home</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/teams']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Teams & Athletes</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/leaderboard']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [disabled]="!leaderboardEnabled"
+          >
+            <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+            <ion-label>Leaderboard</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/wods']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="barbell-outline" slot="start"></ion-icon>
+            <ion-label>WODs</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/pics']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="camera-outline" slot="start"></ion-icon>
+            <ion-label>Image Gallery</ion-label>
+          </ion-item>
           @if (registrationOpen) {
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['register']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="create-outline" slot="start"></ion-icon>
-              <ion-label>Register</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/register']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            <ion-label>Register</ion-label>
+          </ion-item>
           }
         </ion-list>
 
         @if (adminUser()) {
         <div class="menu-section-title admin-title">Admin</div>
         <ion-list [inset]="true">
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['admin', 'teams']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="people-outline" slot="start"></ion-icon>
-              <ion-label>Teams & Athletes</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['admin', 'scores']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="calculator-outline" slot="start"></ion-icon>
-              <ion-label>Score Entry</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['admin', 'scores', 'verify']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-              <ion-label>Score Verification</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['admin', 'users']"
-              routerLinkActive="menu-active-item"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              <ion-icon name="finger-print-outline" slot="start"></ion-icon>
-              <ion-label>User Management</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'teams']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Teams & Athletes</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'scores']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="calculator-outline" slot="start"></ion-icon>
+            <ion-label>Score Entry</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'scores', 'verify']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            <ion-label>Score Verification</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'users']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="finger-print-outline" slot="start"></ion-icon>
+            <ion-label>User Management</ion-label>
+          </ion-item>
         </ion-list>
         }
 
@@ -134,49 +138,47 @@
         @for (event of archiveEvents; track event.shortName) {
         <div class="menu-archive-event">{{ event.eventName }}</div>
         <ion-list [inset]="true" class="menu-archive-list">
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['teams', event.shortName]"
-              routerLinkActive="menu-active-item"
-            >
-              <ion-icon name="people-outline" slot="start"></ion-icon>
-              <ion-label>Teams & Athletes</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['leaderboard', event.shortName]"
-              routerLinkActive="menu-active-item"
-            >
-              <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
-              <ion-label>Leaderboard</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item
-              [routerLink]="['wods', event.shortName]"
-              routerLinkActive="menu-active-item"
-            >
-              <ion-icon name="barbell-outline" slot="start"></ion-icon>
-              <ion-label>WODs</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/teams', event.shortName]"
+            routerLinkActive="menu-active-item"
+          >
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Teams & Athletes</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/leaderboard', event.shortName]"
+            routerLinkActive="menu-active-item"
+          >
+            <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+            <ion-label>Leaderboard</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/wods', event.shortName]"
+            routerLinkActive="menu-active-item"
+          >
+            <ion-icon name="barbell-outline" slot="start"></ion-icon>
+            <ion-label>WODs</ion-label>
+          </ion-item>
         </ion-list>
         }
       </div>
       <div class="menu-signin">
         @if (!adminUser()) {
-        <ion-menu-toggle>
-          <ion-button
-            expand="block"
-            color="medium"
-            fill="outline"
-            class="ion-margin"
-            [routerLink]="['auth', 'login']"
-          >
-            Admin Sign In
-          </ion-button>
-        </ion-menu-toggle>
+        <ion-button
+          expand="block"
+          color="medium"
+          fill="outline"
+          class="ion-margin"
+          [routerLink]="['/auth', 'login']"
+        >
+          Admin Sign In
+        </ion-button>
         }
         <div class="menu-copyright">© 2026 Deccan Throwdown</div>
       </div>

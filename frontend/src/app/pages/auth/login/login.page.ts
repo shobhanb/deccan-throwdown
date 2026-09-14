@@ -8,10 +8,6 @@ import {
   IonItem,
   IonList,
   IonRouterLink,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonMenuButton,
 } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -22,7 +18,6 @@ import {
 import { LoadingService } from 'src/app/services/loading.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { FirebaseError } from '@angular/fire/app';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { LoginFormModel } from 'src/app/shared/models/form-models';
 
@@ -33,9 +28,6 @@ import { LoginFormModel } from 'src/app/shared/models/form-models';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonList,
     IonItem,
     IonInput,
@@ -45,8 +37,6 @@ import { LoginFormModel } from 'src/app/shared/models/form-models';
     FormField,
     IonRouterLink,
     RouterLink,
-    ToolbarButtonsComponent,
-    IonMenuButton,
   ],
 })
 export class LoginPage {

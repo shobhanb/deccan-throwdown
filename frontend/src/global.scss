@@ -191,6 +191,22 @@ ion-item {
   object-fit: cover;
 }
 
+.auth-logo-badge {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.auth-form-card {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.auth-cancel-button {
+  --color: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.55);
+}
+
 .auth-title {
   text-align: center;
   margin: 0;
@@ -221,4 +237,261 @@ ion-item {
 .auth-link-button {
   align-self: flex-start;
   margin: 0;
+}
+
+.text-display {
+  font-family: var(--dt-font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dt-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--dt-badge-background);
+  color: var(--dt-badge-color);
+}
+
+.dt-pill-gold {
+  background: var(--dt-brand-gold);
+  color: var(--dt-brand-navy);
+}
+
+.dt-pill-warning {
+  background: rgba(229, 163, 25, 0.2);
+  color: var(--dt-brand-gold);
+}
+
+.dt-admin-list {
+  margin-bottom: var(--dt-space-md);
+}
+
+.admin-data-row h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.admin-row-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--dt-brand-navy);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.admin-wod-info {
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  padding: var(--dt-space-md);
+  background: var(--dt-surface);
+  border-radius: var(--ion-border-radius);
+  box-shadow: var(--dt-card-shadow);
+  font-size: 0.9rem;
+
+  .wod-score-type,
+  .wod-summary {
+    margin-top: var(--dt-space-xs);
+    color: var(--ion-color-medium);
+  }
+}
+
+.admin-hint {
+  margin: var(--dt-space-sm) 0 0;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+
+  &.verified {
+    color: var(--dt-brand-gold);
+    font-weight: 600;
+  }
+}
+
+.admin-section-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dt-space-xs);
+}
+
+.admin-athletes-col p {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.admin-score-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--ion-background-color);
+}
+
+.score-entry-list ion-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.dt-hero {
+  position: relative;
+  margin: var(--dt-space-md);
+  padding: var(--dt-space-xl) var(--dt-space-lg);
+  border-radius: var(--ion-border-radius);
+  background: var(--dt-gradient-hero);
+  color: #ffffff;
+  overflow: hidden;
+
+  .page-title,
+  .hero-title,
+  h1 {
+    color: #ffffff;
+    font-family: var(--dt-font-display);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .page-subtitle,
+  .hero-tagline,
+  .hero-date {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.dt-hero-watermark {
+  position: absolute;
+  right: -20px;
+  bottom: -10px;
+  width: 140px;
+  height: auto;
+  color: #ffffff;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.dt-card-workout {
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
+  border-left: 4px solid var(--dt-brand-gold);
+  background: var(--dt-surface);
+}
+
+.dt-card-scoreboard {
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
+  background: var(--dt-surface);
+}
+
+.dt-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(var(--dt-brand-gold-rgb), 0.2);
+  color: var(--dt-brand-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dt-brand-gold);
+    animation: dt-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes dt-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.dt-category-open {
+  border-left-color: var(--dt-category-open) !important;
+}
+
+.dt-category-intermediate {
+  border-left-color: var(--dt-category-intermediate) !important;
+}
+
+.dt-category-beginner {
+  border-left-color: var(--dt-category-beginner) !important;
+}
+
+.dt-tab-bar {
+  --background: var(--ion-tab-bar-background);
+  border-top: 1px solid var(--ion-color-step-150, #e5e5ea);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  ion-tab-button {
+    --color: var(--dt-brand-silver);
+    --color-selected: var(--dt-brand-gold);
+  }
+}
+
+.dt-admin-banner {
+  background: var(--dt-brand-navy);
+  color: #ffffff;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px var(--dt-space-md);
+}
+
+.dt-admin-banner-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+@media (min-width: 769px) {
+  .dt-admin-banner-fixed {
+    left: var(--dt-sidebar-width);
+  }
+}
+
+ion-refresher-content {
+  --color: var(--dt-brand-navy);
+}
+
+ion-skeleton-text {
+  --background: linear-gradient(
+    90deg,
+    var(--dt-badge-background) 0%,
+    var(--dt-brand-steel) 50%,
+    var(--dt-badge-background) 100%
+  );
+  opacity: 0.25;
+}
+
+.page-with-tabs ion-content {
+  --padding-bottom: calc(var(--dt-tab-bar-height) + env(safe-area-inset-bottom));
+}
+
+.auth-content {
+  --background: transparent;
+  background: var(--dt-gradient-hero);
 }

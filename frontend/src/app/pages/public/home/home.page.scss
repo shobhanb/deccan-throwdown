@@ -5,6 +5,8 @@
   margin: var(--dt-space-md);
   padding: var(--dt-space-md);
   background: var(--dt-surface);
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
 }
 
 .install-icon {
@@ -24,29 +26,33 @@
   }
 }
 
-.hero {
-  margin: var(--dt-space-md);
-  padding: var(--dt-space-lg);
-  background: var(--dt-surface);
+.hero-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: var(--dt-space-sm);
 }
 
 .hero-title {
-  margin: var(--dt-space-sm) 0;
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
 }
 
 .hero-tagline {
-  margin: 0 0 var(--dt-space-md);
-  color: var(--ion-color-medium);
+  margin: var(--dt-space-sm) 0 var(--dt-space-md);
   line-height: 1.5;
+}
+
+.hero-chip {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
 .hero-date {
   margin: var(--dt-space-sm) 0 0;
   font-size: 0.9rem;
-  color: var(--ion-color-medium);
 }
 
 .action-grid {
@@ -64,24 +70,36 @@
   gap: var(--dt-space-sm);
   padding: var(--dt-space-lg) var(--dt-space-md);
   background: var(--dt-surface);
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
   text-decoration: none;
   color: var(--ion-text-color);
-  min-height: 100px;
+  min-height: 110px;
   transition: transform 0.15s ease;
-
-  ion-icon {
-    font-size: 2rem;
-    color: var(--ion-color-primary);
-  }
-
-  span {
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
 
   &:active {
     transform: scale(0.98);
   }
+}
+
+.action-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--dt-brand-navy);
+  color: #ffffff;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.action-tile span {
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .action-tile-disabled {
@@ -94,12 +112,8 @@
 }
 
 @media (min-width: 769px) {
-  .hero {
-    padding: var(--dt-space-xl);
-  }
-
   .hero-title {
-    font-size: 2.25rem;
+    font-size: 2.75rem;
   }
 
   .action-grid {
@@ -107,9 +121,5 @@
     max-width: 900px;
     margin: 0 auto;
     padding-bottom: var(--dt-space-lg);
-  }
-
-  .action-tile {
-    min-height: 120px;
   }
 }

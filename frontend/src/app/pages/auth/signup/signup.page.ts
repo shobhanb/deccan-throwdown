@@ -7,10 +7,6 @@ import {
   IonInput,
   IonInputPasswordToggle,
   IonButton,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonMenuButton,
   IonRouterLink,
 } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast.service';
@@ -21,7 +17,6 @@ import {
   UserCredential,
 } from '@angular/fire/auth';
 import { FirebaseError } from '@angular/fire/app';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { Router, RouterLink } from '@angular/router';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiCreateUser } from 'src/app/api/models';
@@ -36,9 +31,6 @@ import { SignupFormModel } from 'src/app/shared/models/form-models';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonButton,
     IonList,
     IonItem,
@@ -46,8 +38,6 @@ import { SignupFormModel } from 'src/app/shared/models/form-models';
     IonInputPasswordToggle,
     IonInput,
     FormField,
-    ToolbarButtonsComponent,
-    IonMenuButton,
     RouterLink,
     IonRouterLink,
   ],

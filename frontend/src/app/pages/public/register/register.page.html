@@ -1,10 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Register</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-toolbar title="Register"></app-page-toolbar>
 
 <ion-content>
   <app-page-header
@@ -18,9 +12,26 @@
     message="Team registration is not open yet. Check back soon!"
   ></app-empty-state>
   } @else {
+  <div class="register-steps">
+    <div class="register-step" [class.active]="registrationStep() >= 1" [class.complete]="registrationStep() > 1">
+      <span class="step-number">1</span>
+      <span class="step-label">Team</span>
+    </div>
+    <div class="step-connector" [class.complete]="registrationStep() > 1"></div>
+    <div class="register-step" [class.active]="registrationStep() >= 2" [class.complete]="registrationStep() > 2">
+      <span class="step-number">2</span>
+      <span class="step-label">Athletes</span>
+    </div>
+    <div class="step-connector" [class.complete]="registrationStep() > 2"></div>
+    <div class="register-step" [class.active]="registrationStep() >= 3">
+      <span class="step-number">3</span>
+      <span class="step-label">Review</span>
+    </div>
+  </div>
+
   @if (registrationPricing) {
   <div class="pricing-card card-elevated">
-    <ion-icon name="cash-outline" class="pricing-icon"></ion-icon>
+    <img src="assets/brand/fortress-mark.svg" alt="" class="pricing-icon-img" />
     <div>
       <p>
         <strong>Rs {{ registrationPricing.standard | number }}</strong> per team
