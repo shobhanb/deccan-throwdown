@@ -1,37 +1,224 @@
 /*
  * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/palettes/dark.class.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Prevent Chrome Popover API from hiding Ionic select popovers on desktop */
+ion-popover ion-select-popover {
+  display: block;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-@import "@ionic/angular/css/palettes/dark.class.css"; 
-// @import '@ionic/angular/css/palettes/dark.system.css';
+ion-content {
+  --padding-bottom: env(safe-area-inset-bottom);
+}
+
+ion-toolbar {
+  padding-top: env(safe-area-inset-top);
+}
+
+ion-footer ion-toolbar {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+ion-toolbar {
+  --color: var(--ion-text-color);
+}
+
+ion-menu-button,
+ion-back-button,
+ion-toolbar ion-button {
+  --color: var(--dt-toolbar-icon-color);
+}
+
+ion-title {
+  color: var(--ion-text-color);
+}
+
+.page-content {
+  padding: var(--dt-space-md);
+}
+
+.page-header {
+  padding: var(--dt-space-md) var(--dt-space-md) var(--dt-space-sm);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ion-text-color);
+}
+
+.page-subtitle {
+  margin: var(--dt-space-xs) 0 0;
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+}
+
+.section-header,
+.section-title {
+  margin: var(--dt-space-lg) var(--dt-space-md) var(--dt-space-sm);
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--dt-badge-background);
+  color: var(--dt-badge-color);
+}
+
+ion-chip {
+  --background: var(--dt-badge-background);
+  --color: var(--dt-badge-color);
+}
+
+ion-chip[color='medium'] {
+  --background: var(--dt-badge-background);
+  --color: var(--dt-badge-color);
+}
+
+ion-chip[color='success'] {
+  --background: rgba(var(--ion-color-success-rgb), 0.2);
+  --color: var(--ion-color-success);
+}
+
+ion-chip[color='warning'] {
+  --background: rgba(var(--ion-color-warning-rgb), 0.2);
+  --color: var(--ion-color-warning);
+}
+
+:root .dark ion-chip[color='success'],
+.ion-palette-dark ion-chip[color='success'] {
+  --color: #30d158;
+}
+
+:root .dark ion-chip[color='warning'],
+.ion-palette-dark ion-chip[color='warning'] {
+  --color: #ffd60a;
+}
+
+.stat-badge.rank-gold {
+  background: #ffd60a;
+  color: #1c1c1e;
+}
+
+.stat-badge.rank-silver {
+  background: #c7c7cc;
+  color: #1c1c1e;
+}
+
+.stat-badge.rank-bronze {
+  background: #cd7f32;
+  color: #ffffff;
+}
+
+.card-elevated {
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
+}
+
+.score-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+ion-button {
+  min-height: 44px;
+}
+
+ion-item {
+  --min-height: 44px;
+}
+
+.menu-active-item {
+  --background: var(--ion-color-step-100, rgba(0, 0, 0, 0.06));
+  border-radius: 10px;
+}
+
+.auth-content {
+  --background: var(--ion-background-color);
+}
+
+.auth-container {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: var(--dt-space-xl) var(--dt-space-md);
+}
+
+@media (min-width: 769px) {
+  .page-header {
+    padding-left: var(--dt-space-lg);
+    padding-right: var(--dt-space-lg);
+  }
+
+  .section-header,
+  .section-title {
+    margin-left: var(--dt-space-lg);
+    margin-right: var(--dt-space-lg);
+  }
+}
+
+.auth-logo {
+  display: block;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto var(--dt-space-md);
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.auth-title {
+  text-align: center;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  text-align: center;
+  margin: var(--dt-space-xs) 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.auth-description {
+  text-align: center;
+  margin: var(--dt-space-sm) 0 var(--dt-space-lg);
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dt-space-sm);
+}
+
+.auth-link-button {
+  align-self: flex-start;
+  margin: 0;
+}

@@ -1,0 +1,27 @@
+.sticky-section-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--ion-background-color);
+  margin-top: 0;
+  padding-top: var(--dt-space-sm);
+  padding-bottom: var(--dt-space-sm);
+}
+
+.team-header-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--dt-space-xs);
+}
+
+.athlete-count-badge {
+  font-size: 0.75rem;
+  min-width: auto;
+  height: 24px;
+}
+
+.verification-chip {
+  margin: 0;
+  height: 24px;
+  font-size: 0.7rem;
+}

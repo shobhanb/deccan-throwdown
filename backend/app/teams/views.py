@@ -201,7 +201,7 @@ async def register_team(
     team: TeamRegistrationModel,
     background_tasks: BackgroundTasks,
 ) -> TeamRegistrationResponseModel:
-    if team.event_short_name != "dtteams2025":
+    if team.event_short_name != "dtteams2026":
         raise conflict_exception(detail="Team registration is not open for this event.")
 
     team_exists = await Team.find(

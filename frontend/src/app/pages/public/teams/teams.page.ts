@@ -5,9 +5,9 @@ import {
   linkedSignal,
   OnInit,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+
 import {
   IonContent,
   IonHeader,
@@ -15,21 +15,20 @@ import {
   IonToolbar,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonItem,
   IonIcon,
   IonList,
   IonLabel,
-  IonCardSubtitle,
   IonNote,
   IonMenuButton,
   IonAccordionGroup,
   IonAccordion,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
+  IonChip,
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
@@ -48,18 +47,18 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './teams.page.html',
   styleUrls: ['./teams.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
+    IonChip,
     IonAccordion,
     IonAccordionGroup,
     IonNote,
-    IonCardSubtitle,
     IonLabel,
     IonList,
     IonIcon,
     IonItem,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonRefresherContent,
     IonRefresher,
     IonContent,
@@ -67,8 +66,6 @@ import { ActivatedRoute } from '@angular/router';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
     IonMenuButton,
   ],

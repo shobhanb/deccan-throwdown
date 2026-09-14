@@ -1,6 +1,5 @@
-import { Component, inject, linkedSignal, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, linkedSignal, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -11,7 +10,6 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonLabel,
   IonItem,
   IonRefresherContent,
   IonRefresher,
@@ -19,12 +17,19 @@ import {
   IonSkeletonText,
   IonCardContent,
   IonButton,
+  IonButtons,
+  IonIcon,
   IonSelect,
   IonSelectOption,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { addIcons } from 'ionicons';
-import { trophyOutline } from 'ionicons/icons';
+import {
+  documentOutline,
+  documentTextOutline,
+  trophyOutline,
+} from 'ionicons/icons';
 import { appConfig, defaultConfig, WodConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 
@@ -33,14 +38,17 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './wods.page.html',
   styleUrls: ['./wods.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageHeaderComponent,
+    IonIcon,
+    IonButtons,
     IonButton,
     IonCardContent,
     IonCardSubtitle,
     IonCardTitle,
     IonCardHeader,
     IonCard,
-    IonLabel,
     IonItem,
     IonList,
     IonRefresherContent,
@@ -50,8 +58,6 @@ import { ActivatedRoute } from '@angular/router';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     IonMenuButton,
     ToolbarButtonsComponent,
     IonSelect,
@@ -81,7 +87,7 @@ export class WodsPage implements OnInit {
   );
 
   constructor() {
-    addIcons({ trophyOutline });
+    addIcons({ trophyOutline, documentOutline, documentTextOutline });
   }
 
   ngOnInit() {}
@@ -107,6 +113,18 @@ export class WodsPage implements OnInit {
 
   onClickChangeCategory(event: CustomEvent) {
     this.selectedCategory.set(event.detail.value);
+  }
+
+  getWodTypeChips(scoreTypes: WodConfig['scoreTypes']): string[] {
+    const labels: Record<string, string> = {
+      Reps: 'AMRAP',
+      Time: 'For Time',
+      Weight: 'Max Weight',
+      Tiebreak: 'Tiebreak',
+    };
+    return scoreTypes
+      .filter((type) => type !== 'Tiebreak')
+      .map((type) => labels[type] ?? type);
   }
 
   getWodDescription(wod: WodConfig): string[] {

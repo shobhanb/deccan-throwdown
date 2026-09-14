@@ -1,6 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -20,7 +19,7 @@ import {
   IonLabel,
   IonSkeletonText,
   IonRouterLink,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -30,6 +29,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   templateUrl: './scores.page.html',
   styleUrls: ['./scores.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonLabel,
     IonItem,
@@ -47,13 +47,11 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     IonMenuButton,
     ToolbarButtonsComponent,
     RouterLink,
-    IonRouterLink,
-  ],
+    IonRouterLink
+],
 })
 export class ScoresPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);

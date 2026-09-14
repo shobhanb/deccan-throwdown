@@ -16,14 +16,14 @@
   @if (dataLoaded()) { @if (isEditing()) {
   <div class="section-title">{{ editTeam()?.event_short_name }}</div>
   }
-  <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+  <form (submit)="onSubmit(); $event.preventDefault()">
     <ion-list [inset]="true">
       <ion-item>
         <ion-input
           type="text"
           label="Team Name"
           labelPlacement="stacked"
-          formControlName="team_name"
+          [formField]="teamForm.team_name"
           placeholder="Enter team name"
         ></ion-input>
       </ion-item>
@@ -31,7 +31,7 @@
         <ion-select
           label="Category"
           labelPlacement="stacked"
-          formControlName="category"
+          [formField]="teamForm.category"
           placeholder="Select category"
           interface="popover"
         >
@@ -43,10 +43,10 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-checkbox formControlName="paid">Payment Received</ion-checkbox>
+        <ion-checkbox [formField]="teamForm.paid">Payment Received</ion-checkbox>
       </ion-item>
       <ion-item>
-        <ion-checkbox formControlName="verified">Team Verified</ion-checkbox>
+        <ion-checkbox [formField]="teamForm.verified">Team Verified</ion-checkbox>
       </ion-item>
     </ion-list>
 

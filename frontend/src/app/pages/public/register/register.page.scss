@@ -1,8 +1,98 @@
-.athletes-title {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--ion-color-primary);
-  margin: 1rem 1rem 0.5rem 1rem;
-  padding-left: 0.5rem;
-  border-left: 3px solid var(--ion-color-primary);
+.pricing-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--dt-space-md);
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  padding: var(--dt-space-md);
+  background: var(--dt-surface);
+}
+
+.pricing-icon {
+  font-size: 1.5rem;
+  color: var(--ion-color-secondary);
+  flex-shrink: 0;
+}
+
+.pricing-note {
+  margin: var(--dt-space-xs) 0 0;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.athlete-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--dt-space-md);
+  padding: 0 var(--dt-space-md) calc(120px + env(safe-area-inset-bottom));
+}
+
+.athlete-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dt-space-sm);
+  padding: var(--dt-space-md);
+  min-height: 110px;
+  background: var(--dt-surface);
+  border: 2px dashed transparent;
+  border-radius: var(--ion-border-radius);
+  text-align: center;
+  cursor: pointer;
+  color: var(--ion-text-color);
+  font-family: inherit;
+
+  ion-icon {
+    font-size: 1.75rem;
+    color: var(--ion-color-primary);
+  }
+}
+
+.athlete-slot-empty {
+  border-color: var(--ion-color-step-200, #d1d1d6);
+}
+
+.athlete-slot-filled {
+  border-style: solid;
+  border-color: var(--ion-color-primary);
+}
+
+.athlete-slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+
+  span {
+    color: var(--ion-color-medium);
+    font-size: 0.75rem;
+  }
+}
+
+.athlete-slot-label {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.register-footer ion-toolbar {
+  padding: var(--dt-space-sm) var(--dt-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--dt-space-sm);
+}
+
+@media (min-width: 769px) {
+  .athlete-slots {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 960px;
+    margin: 0 auto;
+    padding-left: var(--dt-space-md);
+    padding-right: var(--dt-space-md);
+  }
+
+  .register-footer ion-toolbar {
+    flex-direction: row;
+    max-width: 480px;
+    margin: 0 auto;
+  }
 }

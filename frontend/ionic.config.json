@@ -1,7 +1,4 @@
 {
   "name": "Deccan Throwdown",
-  "integrations": {
-    "capacitor": {}
-  },
   "type": "angular-standalone"
 }

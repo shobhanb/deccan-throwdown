@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-menu-button slot="start" menu="main-menu"></ion-menu-button>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
     <ion-title>Home</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
   </ion-toolbar>
@@ -12,47 +12,79 @@
   </ion-refresher>
 
   @if (appInstallService.showInstallButton()) {
-  <div class="install-button-container">
-    <ion-button
-      expand="full"
-      color="medium"
-      (click)="appInstallService.showInstallModal()"
-      class="install-button"
-    >
-      <span class="install-button-text">Install this app on your device</span>
+  <div class="install-banner card-elevated">
+    <ion-icon name="download-outline" class="install-icon"></ion-icon>
+    <div class="install-text">
+      <strong>Install this app</strong>
+      <p>Add to your home screen for quick access</p>
+    </div>
+    <ion-button size="small" (click)="appInstallService.showInstallModal()">
+      Install
     </ion-button>
-    <ion-button color="medium" (click)="appInstallService.dontShowAgain()">
-      <ion-icon name="close-outline"></ion-icon>
+    <ion-button fill="clear" size="small" (click)="appInstallService.dontShowAgain()">
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
     </ion-button>
   </div>
   }
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Welcome!</ion-card-title>
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text
-        >This time, Deccan Throwdown is hosting Teams of 4 athletes (2 female, 2
-        male)</ion-text
-      >
-      <br />
-      <br />
-      <ion-text>Categories: Beginner, Intermediate, Open</ion-text>
-      <br />
-      <br />
-      <ion-text
-        >Registrations are now closed! Come visit us to cheer on Nov 1 & Nov 2,
-        2025</ion-text
-      >
-    </ion-card-content>
-    <ion-button fill="clear" routerLink="/wods">Teams WODs</ion-button>
-    <ion-button
-      fill="clear"
+
+  <section class="hero card-elevated">
+    <ion-chip color="medium">Teams Event</ion-chip>
+    <h1 class="hero-title">{{ eventName }}</h1>
+    <p class="hero-tagline">{{ tagline }}</p>
+    @switch (registrationStatus) {
+      @case ('open') {
+        <ion-chip color="success">Registration Open</ion-chip>
+      }
+      @case ('coming-soon') {
+        <ion-chip color="medium">Registration Coming Soon</ion-chip>
+      }
+      @default {
+        <ion-chip color="warning">Registrations Closed</ion-chip>
+      }
+    }
+    <p class="hero-date">Event: {{ eventDates }}</p>
+  </section>
+
+  <div class="action-grid">
+    <a class="action-tile card-elevated" routerLink="/wods">
+      <ion-icon name="barbell-outline"></ion-icon>
+      <span>WODs</span>
+    </a>
+    <a class="action-tile card-elevated" routerLink="/teams">
+      <ion-icon name="people-outline"></ion-icon>
+      <span>Teams</span>
+    </a>
+    <a
+      class="action-tile card-elevated"
+      routerLink="/leaderboard"
+      [class.action-tile-disabled]="!leaderboardEnabled"
+    >
+      <ion-icon name="trophy-outline"></ion-icon>
+      <span>Leaderboard</span>
+    </a>
+    <a class="action-tile card-elevated" routerLink="/pics">
+      <ion-icon name="camera-outline"></ion-icon>
+      <span>Gallery</span>
+    </a>
+  </div>
+
+  @if (registrationOpen) {
+  <ion-list [inset]="true" class="card-elevated links-list">
+    <ion-item routerLink="/register" detail>
+      <ion-icon name="create-outline" slot="start"></ion-icon>
+      <ion-label>Register Your Team</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <ion-list [inset]="true" class="card-elevated links-list">
+    <ion-item
       href="https://www.instagram.com/deccanthrowdown"
       target="_blank"
-      >Follow us on Instagram!</ion-button
+      detail
     >
-    <ion-button fill="clear" routerLink="/pics">Photo Gallery</ion-button>
-  </ion-card>
+      <ion-icon name="logo-instagram" slot="start"></ion-icon>
+      <ion-label>Follow us on Instagram</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

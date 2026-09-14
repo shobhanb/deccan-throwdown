@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 import { InstallAppModalComponent } from '../shared/install-app-modal/install-app-modal.component';
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',

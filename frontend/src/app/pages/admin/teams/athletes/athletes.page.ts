@@ -1,11 +1,18 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
 import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  email,
+  form,
+  FormField,
+  pattern,
+  required,
+  validate,
+} from '@angular/forms/signals';
 import {
   IonContent,
   IonHeader,
@@ -24,7 +31,7 @@ import {
   IonCheckbox,
   IonRouterLink,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { apiAthletesService } from 'src/app/api/services';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -35,12 +42,15 @@ import {
 } from 'src/app/api/models';
 import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { AdminAthleteFormModel } from 'src/app/shared/models/form-models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-athletes',
   templateUrl: './athletes.page.html',
   styleUrls: ['./athletes.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonCheckbox,
     IonButton,
@@ -55,8 +65,7 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    ReactiveFormsModule,
+    FormField,
     ToolbarButtonsComponent,
     IonInput,
     IonSelect,
@@ -65,14 +74,14 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonRouterLink,
   ],
 })
-export class AthletesPage implements OnInit {
+export class AthletesPage {
   private apiAthlete = inject(apiAthletesService);
   private activatedRoute = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private router = inject(Router);
-  private location = inject(Location);
   private alertService = inject(AlertService);
   private appConfigService = inject(AppConfigService);
+  private destroyRef = inject(DestroyRef);
 
   eventShortName = this.appConfigService.eventShortName;
 
@@ -81,22 +90,32 @@ export class AthletesPage implements OnInit {
   editAthlete = signal<apiAthleteOutputModel | null>(null);
   teamId = signal<string>('');
 
-  athleteForm = new FormGroup({
-    first_name: new FormControl('', [Validators.required]),
-    last_name: new FormControl('', [Validators.required]),
-    sex: new FormControl('', [Validators.required, Validators.pattern('M|F')]),
-    email: new FormControl('', [Validators.email]),
-    phone_number: new FormControl('', [
-      Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
-    ]),
-    waiver: new FormControl(false, [Validators.required]),
-    gym: new FormControl(''),
-    city: new FormControl(''),
+  athleteModel = signal<AdminAthleteFormModel>({
+    first_name: '',
+    last_name: '',
+    sex: '',
+    email: '',
+    phone_number: '',
+    waiver: false,
+    gym: '',
+    city: '',
   });
 
-  constructor() {}
-
-  ngOnInit() {}
+  athleteForm = form(this.athleteModel, (schemaPath) => {
+    required(schemaPath.first_name, { message: 'First name is required' });
+    required(schemaPath.last_name, { message: 'Last name is required' });
+    required(schemaPath.sex, { message: 'Sex is required' });
+    pattern(schemaPath.sex, /^M|F$/, { message: 'Sex must be M or F' });
+    email(schemaPath.email, { message: 'Enter a valid email address' });
+    pattern(schemaPath.phone_number, /^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
+      message: 'Enter a valid phone number',
+    });
+    validate(schemaPath.waiver, ({ value }) =>
+      value()
+        ? undefined
+        : { kind: 'required', message: 'Waiver must be accepted' }
+    );
+  });
 
   ionViewWillEnter() {
     this.getData();
@@ -113,28 +132,27 @@ export class AthletesPage implements OnInit {
     const athleteId = this.activatedRoute.snapshot.paramMap.get('athleteId');
 
     if (teamId) {
-      // Create Athlete
       this.isEditing.set(false);
       this.dataLoaded.set(true);
       this.teamId.set(teamId);
     } else if (athleteId) {
-      // Edit Athlete
       this.isEditing.set(true);
       this.dataLoaded.set(false);
       this.apiAthlete
         .getAthleteAthletesAthleteIdGet({ athlete_id: athleteId })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (data: apiAthleteOutputModel) => {
             this.editAthlete.set(data);
-            this.athleteForm.patchValue({
+            this.athleteModel.set({
               first_name: data.first_name,
               last_name: data.last_name,
-              email: data.email,
-              phone_number: data.phone_number,
+              email: data.email ?? '',
+              phone_number: data.phone_number ?? '',
               sex: data.sex,
-              waiver: data.waiver,
-              gym: data.gym,
-              city: data.city,
+              waiver: data.waiver ?? false,
+              gym: data.gym ?? '',
+              city: data.city ?? '',
             });
           },
           error: (error) => {
@@ -151,74 +169,75 @@ export class AthletesPage implements OnInit {
   }
 
   athleteFormValid() {
-    return this.athleteForm.valid && this.athleteForm.dirty;
+    return this.athleteForm().valid() && this.athleteForm().dirty();
   }
 
   onSubmit() {
-    if (this.athleteFormValid()) {
-      // Prepare form data with trimmed names
-      const formValue = this.athleteForm.value;
-      const trimmedData = {
-        ...formValue,
-        first_name: formValue.first_name?.trim(),
-        last_name: formValue.last_name?.trim(),
-      };
+    if (!this.athleteFormValid()) {
+      return;
+    }
 
-      if (this.isEditing()) {
-        // Update Athlete
-        this.apiAthlete
-          .updateAthleteAthletesAthleteIdPatch({
-            athlete_id: this.editAthlete()?.id!,
-            body: {
-              ...formValue,
-              sex:
-                formValue.sex === 'M' || formValue.sex === 'F'
-                  ? formValue.sex
-                  : undefined,
-              team_id: this.editAthlete()!.team_id,
-            },
-          })
-          .subscribe({
-            next: (data) => {
-              this.toastService.showSuccess('Athlete updated successfully');
-              this.router.navigate(
-                ['/admin', 'teams', this.editAthlete()!.team_id],
-                { replaceUrl: true }
-              );
-            },
-            error: (error) => {
-              console.error('Error updating athlete:', error);
-              this.toastService.showError(
-                'Failed to update athlete: ' + error.statusText
-              );
-            },
-          });
-      } else {
-        // Create Athlete
-        this.apiAthlete
-          .createAthleteAthletesPost({
-            body: {
-              ...(this.athleteForm.value as apiAthleteCreateModel),
-              email: this.athleteForm.value.email?.trim() || null,
-              phone_number: this.athleteForm.value.phone_number?.trim() || null,
-              team_id: this.teamId(),
-            },
-          })
-          .subscribe({
-            next: (data) => {
-              this.toastService.showSuccess('Athlete created successfully');
-              this.router.navigate(['/admin', 'teams', this.teamId()], {
-                replaceUrl: true,
-              });
-            },
-            error: (error) => {
-              console.error('Error creating athlete:', error);
-              this.toastService.showError(
-                'Failed to create athlete: ' + error.statusText
-              );
-            },
-          });
-      }
+    const formValue = this.athleteModel();
+    const trimmedData = {
+      ...formValue,
+      first_name: formValue.first_name.trim(),
+      last_name: formValue.last_name.trim(),
+    };
+
+    if (this.isEditing()) {
+      this.apiAthlete
+        .updateAthleteAthletesAthleteIdPatch({
+          athlete_id: this.editAthlete()?.id!,
+          body: {
+            ...trimmedData,
+            sex:
+              trimmedData.sex === 'M' || trimmedData.sex === 'F'
+                ? trimmedData.sex
+                : undefined,
+            team_id: this.editAthlete()!.team_id,
+          },
+        })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.toastService.showSuccess('Athlete updated successfully');
+            this.router.navigate(
+              ['/admin', 'teams', this.editAthlete()!.team_id],
+              { replaceUrl: true }
+            );
+          },
+          error: (error) => {
+            console.error('Error updating athlete:', error);
+            this.toastService.showError(
+              'Failed to update athlete: ' + error.statusText
+            );
+          },
+        });
+    } else {
+      this.apiAthlete
+        .createAthleteAthletesPost({
+          body: {
+            ...(trimmedData as apiAthleteCreateModel),
+            email: trimmedData.email?.trim() || null,
+            phone_number: trimmedData.phone_number?.trim() || null,
+            team_id: this.teamId(),
+          },
+        })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.toastService.showSuccess('Athlete created successfully');
+            this.router.navigate(['/admin', 'teams', this.teamId()], {
+              replaceUrl: true,
+            });
+          },
+          error: (error) => {
+            console.error('Error creating athlete:', error);
+            this.toastService.showError(
+              'Failed to create athlete: ' + error.statusText
+            );
+          },
+        });
     }
   }
 
@@ -238,6 +257,7 @@ export class AthletesPage implements OnInit {
         .deleteAthleteAthletesAthleteIdDelete({
           athlete_id: this.editAthlete()!.id,
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.toastService.showSuccess('Athlete deleted successfully');

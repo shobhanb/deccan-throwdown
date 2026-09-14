@@ -3,6 +3,7 @@
   "short_name": "DT Teams",
   "id": "deccan-throwdown",
   "description": "Deccan Throwdown",
+  "categories": ["fitness", "sports"],
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",
@@ -21,8 +22,8 @@
       "purpose": "maskable any"
     }
   ],
-  "theme_color": "#696969",
-  "background_color": "#696969",
+  "theme_color": "#1c1c1e",
+  "background_color": "#f2f2f7",
   "display_override": [
     "standalone",
     "minimal-ui",

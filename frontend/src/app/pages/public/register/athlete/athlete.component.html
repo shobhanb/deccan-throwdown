@@ -8,14 +8,14 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="athleteForm" (ngSubmit)="onSave()">
+  <form (submit)="onSave(); $event.preventDefault()">
     <ion-list [inset]="true">
       <ion-item>
         <ion-input
           type="text"
           label="First Name"
           labelPlacement="stacked"
-          formControlName="first_name"
+          [formField]="athleteForm.first_name"
           placeholder="Enter first name"
         ></ion-input>
       </ion-item>
@@ -24,7 +24,7 @@
           type="text"
           label="Last Name"
           labelPlacement="stacked"
-          formControlName="last_name"
+          [formField]="athleteForm.last_name"
           placeholder="Enter last name"
         ></ion-input>
       </ion-item>
@@ -33,7 +33,7 @@
           type="email"
           label="Email"
           labelPlacement="stacked"
-          formControlName="email"
+          [formField]="athleteForm.email"
           placeholder="Enter email address"
         ></ion-input>
       </ion-item>
@@ -42,7 +42,7 @@
           type="tel"
           label="Phone Number"
           labelPlacement="stacked"
-          formControlName="phone_number"
+          [formField]="athleteForm.phone_number"
           placeholder="Enter phone number"
         ></ion-input>
       </ion-item>
@@ -50,7 +50,7 @@
         <ion-select
           label="Gym"
           labelPlacement="stacked"
-          formControlName="gym_selection"
+          [formField]="athleteForm.gym_selection"
           placeholder="Select gym"
           interface="popover"
         >
@@ -66,7 +66,7 @@
           type="text"
           label="Other Gym Name"
           labelPlacement="stacked"
-          formControlName="gym"
+          [formField]="athleteForm.gym"
           placeholder="Enter gym name"
         ></ion-input>
       </ion-item>
@@ -79,7 +79,7 @@
       type="submit"
       [disabled]="!isFormValid()"
     >
-      {{ athleteData ? "Update" : "Add" }} Athlete
+      {{ athleteData() ? "Update" : "Add" }} Athlete
     </ion-button>
   </form>
 </ion-content>

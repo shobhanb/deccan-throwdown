@@ -1,11 +1,20 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  effect,
+  inject,
+  input,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  applyWhen,
+  email,
+  form,
+  FormField,
+  hidden,
+  pattern,
+  required,
+} from '@angular/forms/signals';
 import {
   IonContent,
   IonHeader,
@@ -19,14 +28,16 @@ import {
   IonSelect,
   IonSelectOption,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { apiAthleteRegistrationModel } from 'src/app/api/models';
+import { AthleteFormModel } from 'src/app/shared/models/form-models';
 
 @Component({
   selector: 'app-athlete',
   templateUrl: './athlete.component.html',
   styleUrls: ['./athlete.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonSelectOption,
     IonSelect,
@@ -39,96 +50,102 @@ import { apiAthleteRegistrationModel } from 'src/app/api/models';
     IonTitle,
     IonHeader,
     IonContent,
-    CommonModule,
-    ReactiveFormsModule,
+    FormField,
   ],
 })
-export class AthleteComponent implements OnInit {
+export class AthleteComponent {
   private modalController = inject(ModalController);
 
-  @Input() sex: 'M' | 'F' = 'F';
-  @Input() athleteData: apiAthleteRegistrationModel | null = null;
+  sex = input<'M' | 'F'>('F');
+  athleteData = input<apiAthleteRegistrationModel | null>(null);
 
-  athleteForm = new FormGroup({
-    first_name: new FormControl('', [Validators.required]),
-    last_name: new FormControl('', [Validators.required]),
-    sex: new FormControl<'M' | 'F'>('F', [Validators.required]),
-    email: new FormControl('', [Validators.email, Validators.required]),
-    phone_number: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[\\+]?[0-9\\s\\-\\(\\)\\.]{7,15}$'),
-    ]),
-    gym_selection: new FormControl('', { validators: [Validators.required] }),
-    gym: new FormControl('', { validators: [Validators.required] }),
+  athleteModel = signal<AthleteFormModel>({
+    first_name: '',
+    last_name: '',
+    sex: 'F',
+    email: '',
+    phone_number: '',
+    gym_selection: '',
+    gym: '',
   });
 
-  ngOnInit() {
-    // Set the sex based on the input
-    this.athleteForm.patchValue({ sex: this.sex });
-
-    // If editing an existing athlete, populate the form
-    if (this.athleteData) {
-      this.athleteForm.patchValue(this.athleteData);
-
-      // Set gym selection based on existing gym value
-      if (this.athleteData.gym === 'CFMF') {
-        this.athleteForm.patchValue({ gym_selection: 'CFMF' });
-      } else if (this.athleteData.gym) {
-        this.athleteForm.patchValue({
-          gym_selection: 'Other',
-        });
+  athleteForm = form(this.athleteModel, (schemaPath) => {
+    required(schemaPath.first_name, { message: 'First name is required' });
+    required(schemaPath.last_name, { message: 'Last name is required' });
+    required(schemaPath.email, { message: 'Email is required' });
+    email(schemaPath.email, { message: 'Enter a valid email address' });
+    required(schemaPath.phone_number, { message: 'Phone number is required' });
+    pattern(schemaPath.phone_number, /^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
+      message: 'Enter a valid phone number',
+    });
+    required(schemaPath.gym_selection, { message: 'Gym selection is required' });
+    applyWhen(
+      schemaPath,
+      ({ value }) => value().gym_selection === 'Other',
+      (path) => {
+        required(path.gym, { message: 'Gym name is required' });
       }
-    }
+    );
+    hidden(schemaPath.gym, {
+      when: ({ valueOf }) => valueOf(schemaPath.gym_selection) !== 'Other',
+    });
+  });
 
-    // Listen to gym selection changes
-    this.athleteForm.get('gym_selection')?.valueChanges.subscribe((value) => {
-      this.onGymSelectionChange(value);
+  constructor() {
+    effect(() => {
+      const selection = this.athleteModel().gym_selection;
+      if (selection === 'CFMF') {
+        this.athleteModel.update((model) => ({ ...model, gym: 'CFMF' }));
+      } else if (selection === 'Other') {
+        this.athleteModel.update((model) => ({ ...model, gym: '' }));
+      }
+    });
+
+    effect(() => {
+      const sex = this.sex();
+      const data = this.athleteData();
+      this.athleteModel.set({
+        first_name: data?.first_name ?? '',
+        last_name: data?.last_name ?? '',
+        sex,
+        email: data?.email ?? '',
+        phone_number: data?.phone_number ?? '',
+        gym_selection:
+          data?.gym === 'CFMF'
+            ? 'CFMF'
+            : data?.gym
+              ? 'Other'
+              : '',
+        gym: data?.gym ?? '',
+      });
     });
   }
 
-  onGymSelectionChange(selection: string | null) {
-    if (selection === 'CFMF') {
-      this.athleteForm.patchValue({
-        gym: 'CFMF',
-      });
-    } else if (selection === 'Other') {
-      this.athleteForm.patchValue({ gym: '' });
-    } else {
-      this.athleteForm.patchValue({
-        gym: '',
-      });
-    }
-  }
-
-  onGymChange(value: string | null) {
-    if (this.athleteForm.get('gym_selection')?.value === 'Other') {
-      this.athleteForm.patchValue({ gym: value || '' });
-    }
-  }
-
   get showOtherGymInput(): boolean {
-    return this.athleteForm.get('gym_selection')?.value === 'Other';
+    return this.athleteModel().gym_selection === 'Other';
   }
 
   get formTitle(): string {
-    const gender = this.sex === 'F' ? 'Female' : 'Male';
-    const action = this.athleteData ? 'Edit' : 'Add';
+    const gender = this.sex() === 'F' ? 'Female' : 'Male';
+    const action = this.athleteData() ? 'Edit' : 'Add';
     return `${action} ${gender} Athlete`;
   }
 
   isFormValid(): boolean {
-    return this.athleteForm.valid && this.athleteForm.dirty;
+    return this.athleteForm().valid() && this.athleteForm().dirty();
   }
 
   onSave() {
-    if (this.isFormValid()) {
-      const athleteData: apiAthleteRegistrationModel = {
-        ...this.athleteForm.value,
-        sex: this.sex, // Ensure sex matches the modal type
-      } as apiAthleteRegistrationModel;
-
-      this.modalController.dismiss(athleteData);
+    if (!this.isFormValid()) {
+      return;
     }
+
+    const athleteData: apiAthleteRegistrationModel = {
+      ...this.athleteModel(),
+      sex: this.sex(),
+    };
+
+    this.modalController.dismiss(athleteData);
   }
 
   onCancel() {

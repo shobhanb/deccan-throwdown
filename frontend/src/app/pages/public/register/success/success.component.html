@@ -20,13 +20,13 @@
       <br />
       <p>
         Here is the payment link:
-        <a [href]="responseData?.payment_link" target="_blank">Pay Now</a>
+        <a [href]="responseData()?.payment_link" target="_blank">Pay Now</a>
       </p>
-      @if (responseData?.waiver_links) {
+      @if (responseData()?.waiver_links) {
       <br />
       <p>Please fill out the waiver forms (Non CFMF athletes)</p>
       <ul>
-        @for (waiverLink of responseData?.waiver_links; track $index) {
+        @for (waiverLink of responseData()?.waiver_links; track $index) {
         <li>
           {{ waiverLink?.athlete_name }}
           <a [href]="waiverLink?.waiver_link" target="_blank">Waiver Link</a>

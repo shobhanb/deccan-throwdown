@@ -1,11 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { email, form, FormField, required } from '@angular/forms/signals';
 import {
   IonContent,
   IonButton,
@@ -17,14 +11,8 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonMenuButton,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import {
   Auth,
@@ -36,19 +24,15 @@ import { ToastService } from 'src/app/services/toast.service';
 import { FirebaseError } from '@angular/fire/app';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { LoginFormModel } from 'src/app/shared/models/form-models';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonTitle,
     IonToolbar,
     IonHeader,
@@ -58,15 +42,14 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonButton,
     IonContent,
     IonInputPasswordToggle,
-    CommonModule,
-    ReactiveFormsModule,
+    FormField,
     IonRouterLink,
     RouterLink,
     ToolbarButtonsComponent,
     IonMenuButton,
   ],
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
   private fireAuth = inject(Auth);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
@@ -75,19 +58,19 @@ export class LoginPage implements OnInit {
 
   eventName = this.appConfigService.eventName;
 
-  constructor() {}
+  loginModel = signal<LoginFormModel>({
+    email: '',
+    password: '',
+  });
 
-  ngOnInit() {}
-
-  loginForm = new FormGroup({
-    email: new FormControl('', {
-      validators: [Validators.email, Validators.required],
-    }),
-    password: new FormControl('', { validators: [Validators.required] }),
+  loginForm = form(this.loginModel, (schemaPath) => {
+    required(schemaPath.email, { message: 'Email is required' });
+    email(schemaPath.email, { message: 'Enter a valid email address' });
+    required(schemaPath.password, { message: 'Password is required' });
   });
 
   isLoginFormValid() {
-    return this.loginForm.valid && this.loginForm.dirty;
+    return this.loginForm().valid() && this.loginForm().dirty();
   }
 
   async onClickLogin() {
@@ -95,12 +78,13 @@ export class LoginPage implements OnInit {
       return;
     }
 
+    const credentials = this.loginModel();
     this.loadingService.showLoading('Logging in');
 
     signInWithEmailAndPassword(
       this.fireAuth,
-      this.loginForm.value.email!,
-      this.loginForm.value.password!
+      credentials.email,
+      credentials.password
     )
       .then((value: UserCredential) => {
         this.loadingService.dismissLoading();

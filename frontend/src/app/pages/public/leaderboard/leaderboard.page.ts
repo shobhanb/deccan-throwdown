@@ -5,19 +5,15 @@ import {
   linkedSignal,
   OnInit,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
   IonMenuButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonSelect,
   IonSelectOption,
   IonLabel,
@@ -26,8 +22,11 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
+  Platform,
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { addIcons } from 'ionicons';
 import { trophyOutline } from 'ionicons/icons';
 import {
@@ -44,11 +43,10 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './leaderboard.page.html',
   styleUrls: ['./leaderboard.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    EmptyStateComponent,
+    PageHeaderComponent,
     IonLabel,
     IonItem,
     IonList,
@@ -61,8 +59,6 @@ import { ActivatedRoute } from '@angular/router';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     IonMenuButton,
     ToolbarButtonsComponent,
   ],
@@ -71,6 +67,12 @@ export class LeaderboardPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
   private activatedRoute = inject(ActivatedRoute);
+  private platform = inject(Platform);
+
+  /** Popovers misalign inside the centered ion-app shell on wide desktops. */
+  selectInterface = this.platform.width() > 768 ? 'alert' : 'popover';
+  wodSelectOptions = { side: 'bottom', alignment: 'start' };
+  categorySelectOptions = { side: 'bottom', alignment: 'end' };
 
   dataLoaded = signal<boolean>(false);
 
@@ -182,6 +184,7 @@ export class LeaderboardPage implements OnInit {
     if (eventShortNameParam) {
       this.eventShortName.set(eventShortNameParam);
     }
+    this.selectedCategory.set(this.categories()?.[0] || null);
 
     this.apiTeams
       .getTeamsTeamsGet({

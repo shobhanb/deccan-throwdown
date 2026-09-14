@@ -3,6 +3,24 @@
     <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
     <ion-title>Wods</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+    @if (wodsUrl() || movementStandardsUrl()) {
+    <ion-buttons slot="end">
+      @if (wodsUrl()) {
+      <ion-button [href]="wodsUrl()" target="_blank" aria-label="WODs PDF">
+        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+      </ion-button>
+      }
+      @if (movementStandardsUrl()) {
+      <ion-button
+        [href]="movementStandardsUrl()"
+        target="_blank"
+        aria-label="Movement Standards PDF"
+      >
+        <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -11,29 +29,14 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>WODs</ion-card-title>
-      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
-    </ion-card-header>
-    @if (wodsUrl()) {
-    <ion-button fill="clear" [href]="wodsUrl()" target="_blank"
-      >WODs PDF</ion-button
-    >
-    } @if (movementStandardsUrl()) {
-    <ion-button fill="clear" [href]="movementStandardsUrl()" target="_blank"
-      >Movement Standards PDF</ion-button
-    >
-    }
-  </ion-card>
+  <app-page-header [title]="'WODs'" [subtitle]="eventName()"></app-page-header>
 
   @if (useCategoryWodDescription()) {
-
-  <ion-list [inset]="true">
+  <ion-list [inset]="true" class="card-elevated">
     <ion-item>
       <ion-select
         label="Select Category"
-        labelPlacement="floating"
+        labelPlacement="stacked"
         [value]="selectedCategory()"
         (ionChange)="onClickChangeCategory($event)"
         interface="popover"
@@ -44,25 +47,35 @@
       </ion-select>
     </ion-item>
   </ion-list>
-  } @if (dataLoaded()) { @for (wod of wods(); track wod.wodNumber) {
-  <ion-card>
+  }
+
+  @if (dataLoaded()) {
+  @for (wod of wods(); track wod.wodNumber) {
+  <ion-card class="card-elevated wod-card">
     <ion-card-header>
-      <ion-card-title>{{ wod.wodName }}</ion-card-title>
-      <ion-card-subtitle>{{ 'WOD ' + wod.wodNumber}}</ion-card-subtitle>
+      <div class="wod-card-header">
+        <div>
+          <ion-card-title>{{ wod.wodName }}</ion-card-title>
+          <ion-card-subtitle>{{ 'WOD ' + wod.wodNumber }}</ion-card-subtitle>
+        </div>
+        <div class="wod-type-chips">
+          @for (chip of getWodTypeChips(wod.scoreTypes); track chip) {
+          <span class="stat-badge">{{ chip }}</span>
+          }
+        </div>
+      </div>
     </ion-card-header>
     <ion-card-content>
-      <div>
-        <div class="wod-summary">{{ wod.wodSummary }}</div>
+      <div class="wod-summary">{{ wod.wodSummary }}</div>
+      <div class="wod-description">
         @for (line of getWodDescription(wod); track $index) {
         <div class="wod-description-line">{{ line }}</div>
         }
       </div>
     </ion-card-content>
   </ion-card>
-  } } @else {
-  <!-- Loading skeleton for leaderboard -->
-
-  <!-- Loading skeleton for selectors -->
+  }
+  } @else {
   <ion-list [inset]="true">
     <ion-item>
       <ion-skeleton-text
@@ -75,52 +88,27 @@
         style="width: 70%; height: 20px"
       ></ion-skeleton-text>
     </ion-item>
-    <ion-item>
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 25%; height: 16px; margin-bottom: 4px"
-      ></ion-skeleton-text>
-      <br />
+  </ion-list>
+
+  @for (item of [1, 2, 3]; track $index) {
+  <ion-card class="card-elevated">
+    <ion-card-header>
       <ion-skeleton-text
         [animated]="true"
         style="width: 60%; height: 20px"
       ></ion-skeleton-text>
-    </ion-item>
-  </ion-list>
-
-  <!-- Loading skeleton for leaderboard items -->
-  <ion-list [inset]="true">
-    @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
-    <ion-item>
-      <div slot="start">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 20px; height: 20px"
-        ></ion-skeleton-text>
-      </div>
-      <ion-label>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 80%; height: 20px; margin-bottom: 4px"
-        ></ion-skeleton-text>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 60%; height: 16px"
-        ></ion-skeleton-text>
-      </ion-label>
-      <ion-label slot="end" class="ion-text-end">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 40px; height: 18px; margin-bottom: 2px"
-        ></ion-skeleton-text>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 50px; height: 18px"
-        ></ion-skeleton-text>
-      </ion-label>
-    </ion-item>
-    }
-  </ion-list>
-
+    </ion-card-header>
+    <ion-card-content>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 90%; height: 16px; margin-bottom: 8px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 75%; height: 16px"
+      ></ion-skeleton-text>
+    </ion-card-content>
+  </ion-card>
+  }
   }
 </ion-content>

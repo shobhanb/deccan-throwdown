@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import {
   appConfig,
   AppConfig,
+  archiveEventShortNames,
   defaultConfig,
+  RegistrationStatus,
   WodConfig,
 } from '../config/config';
 
@@ -40,6 +42,33 @@ export class AppConfigService {
 
   get eventName(): string {
     return this._config.eventName;
+  }
+
+  get eventDates(): string {
+    return this._config.eventDates;
+  }
+
+  get tagline(): string {
+    return this._config.tagline;
+  }
+
+  get registrationStatus(): RegistrationStatus {
+    return this._config.registrationStatus;
+  }
+
+  get leaderboardEnabled(): boolean {
+    return this._config.leaderboardEnabled;
+  }
+
+  get registrationPricing(): AppConfig['registrationPricing'] {
+    return this._config.registrationPricing;
+  }
+
+  get archiveEvents(): { shortName: string; eventName: string }[] {
+    return archiveEventShortNames.map((shortName) => ({
+      shortName,
+      eventName: appConfig[shortName].eventName,
+    }));
   }
 
   get categories(): string[] {

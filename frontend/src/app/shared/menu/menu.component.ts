@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   IonHeader,
@@ -13,7 +13,7 @@ import {
   IonButton,
   IonRouterLink,
   IonMenuToggle,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   barbellOutline,
@@ -21,6 +21,7 @@ import {
   calculatorOutline,
   cameraOutline,
   checkmarkCircleOutline,
+  createOutline,
   fingerPrintOutline,
   homeOutline,
   peopleOutline,
@@ -32,6 +33,7 @@ import { AuthService } from 'src/app/services/auth.service';
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonButton,
     IonLabel,
@@ -49,16 +51,17 @@ import { AuthService } from 'src/app/services/auth.service';
     IonMenuToggle,
   ],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
   private appConfigService = inject(AppConfigService);
   private authService = inject(AuthService);
 
   adminUser = this.authService.adminUser;
 
-  isLeaderboardEnabled = signal(this.checkLeaderboardEnabled());
-
-  eventShortName = this.appConfigService.eventShortName;
   eventName = this.appConfigService.eventName;
+  archiveEvents = this.appConfigService.archiveEvents;
+  registrationOpen =
+    this.appConfigService.registrationStatus === 'open';
+  leaderboardEnabled = this.appConfigService.leaderboardEnabled;
 
   constructor() {
     addIcons({
@@ -70,15 +73,7 @@ export class MenuComponent implements OnInit {
       checkmarkCircleOutline,
       fingerPrintOutline,
       cameraOutline,
+      createOutline,
     });
-  }
-
-  ngOnInit() {}
-
-  private checkLeaderboardEnabled(): boolean {
-    // Enable leaderboard on or after October 30, 2025
-    const targetDate = new Date('2025-10-30T00:00:00');
-    const currentDate = new Date();
-    return currentDate >= targetDate;
   }
 }

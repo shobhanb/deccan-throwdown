@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import {
   ModalController,
   IonHeader,
@@ -12,7 +12,7 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   closeOutline,
@@ -25,6 +25,7 @@ import {
   selector: 'app-install-app-modal',
   templateUrl: './install-app-modal.component.html',
   styleUrls: ['./install-app-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonNote,
     IonLabel,
@@ -39,10 +40,10 @@ import {
     IonIcon,
   ],
 })
-export class InstallAppModalComponent implements OnInit {
+export class InstallAppModalComponent {
   private modalController = inject(ModalController);
 
-  @Input() platformType: 'ios' | 'android' = 'ios';
+  platformType = input<'ios' | 'android'>('ios');
 
   constructor() {
     addIcons({
@@ -52,8 +53,6 @@ export class InstallAppModalComponent implements OnInit {
       ellipsisVerticalOutline,
     });
   }
-
-  ngOnInit() {}
 
   closeModal() {
     this.modalController.dismiss();

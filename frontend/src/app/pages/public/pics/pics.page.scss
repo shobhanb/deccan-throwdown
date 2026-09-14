@@ -1,11 +1,22 @@
-// Gallery grid styles
+.gallery-grid {
+  padding: 0 var(--dt-space-sm);
+}
+
 .gallery-image {
   cursor: pointer;
+  border-radius: var(--ion-border-radius);
+  overflow: hidden;
   transition: transform 0.2s ease;
-  
+
   &:hover {
     transform: scale(1.02);
   }
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: var(--ion-border-radius);
 }
 
 // Modal styles

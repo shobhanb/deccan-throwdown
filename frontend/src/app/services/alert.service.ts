@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { AlertController } from '@ionic/angular/standalone';
+import { AlertController } from '@ionic/angular';
 
 export interface AlertResult {
   role?: 'confirm' | 'cancel';
@@ -11,6 +11,26 @@ export interface AlertResult {
 })
 export class AlertService {
   private alertController = inject(AlertController);
+
+  async showConfirm(
+    header: string,
+    message: string,
+    confirmText = 'OK',
+    cancelText = 'Cancel'
+  ): Promise<boolean> {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: [
+        { text: cancelText, role: 'cancel' },
+        { text: confirmText, role: 'confirm' },
+      ],
+    });
+
+    await alert.present();
+    const result = await alert.onDidDismiss();
+    return result.role === 'confirm';
+  }
 
   async showAlert(
     header: string,

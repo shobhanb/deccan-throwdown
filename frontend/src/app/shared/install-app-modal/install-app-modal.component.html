@@ -12,10 +12,10 @@
   <div class="installation-container ion-padding">
     <ion-icon name="arrow-down-circle-outline" class="install-icon"></ion-icon>
     <h3>
-      {{ "Install this app on your " + platformType + " device" }}
+      {{ "Install this app on your " + platformType() + " device" }}
     </h3>
   </div>
-  @if (platformType === 'ios') {
+  @if (platformType() === 'ios') {
   <ion-list [inset]="true" lines="none">
     <ion-item color="light">
       <ion-note slot="start">1</ion-note>

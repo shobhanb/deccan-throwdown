@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular';
+import { provideRouter } from '@angular/router';
 
 import { AuthStateComponent } from './auth-state.component';
 
@@ -9,8 +10,8 @@ describe('AuthStateComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AuthStateComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [AuthStateComponent],
+      providers: [provideIonicAngular(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AuthStateComponent);

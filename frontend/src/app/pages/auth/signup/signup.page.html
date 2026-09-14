@@ -6,74 +6,66 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Admin Signup</ion-card-title>
-      <ion-card-subtitle>Deccan Throwdown</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text
-        >Talk to your event organizer before signing up as admin</ion-text
+<ion-content class="auth-content">
+  <div class="auth-container">
+    <img src="icons/logo_192.jpg" alt="Deccan Throwdown" class="auth-logo" />
+    <h1 class="auth-title">Admin Signup</h1>
+    <p class="auth-subtitle">Deccan Throwdown</p>
+    <p class="auth-description">
+      Talk to your event organizer before signing up as admin
+    </p>
+
+    <form (submit)="onSubmitSignupForm(); $event.preventDefault()">
+      <ion-list [inset]="true" class="card-elevated">
+        <ion-item>
+          <ion-input
+            type="text"
+            label="Name"
+            labelPlacement="stacked"
+            placeholder="Shubham Hiller"
+            [formField]="signupForm.display_name"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            type="email"
+            label="Email"
+            labelPlacement="stacked"
+            placeholder="froning@crossfit.com"
+            [formField]="signupForm.email"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            type="password"
+            label="Password"
+            labelPlacement="stacked"
+            placeholder="burpees4LYFE"
+            minlength="6"
+            errorText="Min 6 chars"
+            [formField]="signupForm.password"
+          >
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="!isSignupFormValid()"
+        >Sign Up</ion-button
       >
-    </ion-card-content>
-  </ion-card>
 
-  <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignupForm()">
-    <ion-list [inset]="true">
-      <ion-item>
-        <ion-input
-          type="text"
-          label="Name"
-          labelPlacement="stacked"
-          placeholder="Shubham Hiller"
-          formControlName="display_name"
-          [required]="true"
-        ></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input
-          type="email"
-          label="Email"
-          labelPlacement="stacked"
-          placeholder="froning@crossfit.com"
-          formControlName="email"
-          [required]="true"
-        ></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input
-          type="password"
-          label="Password"
-          labelPlacement="stacked"
-          placeholder="burpees4LYFE"
-          formControlName="password"
-          minlength="6"
-          errorText="Min 6 chars"
-          [required]="true"
-        >
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
-      </ion-item>
-    </ion-list>
-
-    <ion-button
-      expand="block"
-      type="submit"
-      class="ion-margin"
-      [disabled]="!isSignupFormValid()"
-      >Sign Up</ion-button
-    >
-
-    <ion-button
-      expand="block"
-      fill="outline"
-      type="cancel"
-      class="ion-margin"
-      [routerLink]="['/home']"
-      routerDirection="root"
-      [replaceUrl]="true"
-      >Cancel</ion-button
-    >
-  </form>
+      <ion-button
+        expand="block"
+        fill="outline"
+        type="button"
+        [routerLink]="['/home']"
+        routerDirection="root"
+        [replaceUrl]="true"
+        >Cancel</ion-button
+      >
+    </form>
+  </div>
 </ion-content>

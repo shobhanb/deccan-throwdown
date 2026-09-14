@@ -1,6 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   IonContent,
   IonHeader,
@@ -10,19 +8,25 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonIcon,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonMenuButton,
-  IonCardContent,
-  IonText,
-  IonRouterLink,
-} from '@ionic/angular/standalone';
+  IonChip,
+  IonList,
+  IonItem,
+  IonLabel,
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppInstallService } from 'src/app/services/app-install.service';
 import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+import {
+  barbellOutline,
+  cameraOutline,
+  closeOutline,
+  createOutline,
+  downloadOutline,
+  logoInstagram,
+  peopleOutline,
+  trophyOutline,
+} from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { RouterLink } from '@angular/router';
 
@@ -31,13 +35,12 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    IonLabel,
+    IonItem,
+    IonList,
+    IonChip,
     IonIcon,
     IonRefresherContent,
     IonRefresher,
@@ -46,28 +49,34 @@ import { RouterLink } from '@angular/router';
     IonHeader,
     IonTitle,
     IonToolbar,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
     IonMenuButton,
     RouterLink,
-    IonRouterLink,
   ],
 })
-export class HomePage implements OnInit {
+export class HomePage {
   private appConfigService = inject(AppConfigService);
   appInstallService = inject(AppInstallService);
 
-  eventShortName = this.appConfigService.eventShortName;
   eventName = this.appConfigService.eventName;
+  tagline = this.appConfigService.tagline;
+  eventDates = this.appConfigService.eventDates;
+  registrationStatus = this.appConfigService.registrationStatus;
+  registrationOpen = this.appConfigService.registrationStatus === 'open';
+  leaderboardEnabled = this.appConfigService.leaderboardEnabled;
 
   constructor() {
-    addIcons({ closeOutline });
+    addIcons({
+      closeOutline,
+      downloadOutline,
+      barbellOutline,
+      peopleOutline,
+      trophyOutline,
+      cameraOutline,
+      logoInstagram,
+      createOutline,
+    });
   }
-
-  ngOnInit() {}
-
-  ionViewWillEnter() {}
 
   handleRefresh(event: CustomEvent) {
     (event.target as HTMLIonRefresherElement).complete();

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular';
+import { provideRouter } from '@angular/router';
 
 import { SuccessComponent } from './success.component';
 
@@ -9,8 +10,8 @@ describe('SuccessComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SuccessComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [SuccessComponent],
+      providers: [provideIonicAngular(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SuccessComponent);

@@ -1,18 +1,37 @@
+.wod-card {
+  margin: var(--dt-space-md);
+}
 
-.wod-score-type {
-    color: var(--ion-color-dark, #000000)
+.wod-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--dt-space-sm);
+}
+
+.wod-type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dt-space-xs);
+  flex-shrink: 0;
+
+  .stat-badge {
+    min-height: 24px;
+    font-size: 0.7rem;
+  }
 }
 
 .wod-summary {
-  font-weight: bold;
-  color: var(--ion-color-primary, #3880ff);
-  padding: 8px 0;
-  margin-bottom: 4px;
-  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  padding-bottom: var(--dt-space-sm);
+  margin-bottom: var(--dt-space-sm);
+  border-bottom: 1px solid var(--ion-color-step-200, #e5e5ea);
+  font-size: 1.05rem;
 }
 
 .wod-description-line {
-  color: var(--ion-color-medium, #92949c);
-  padding: 4px 0;
-  line-height: 1.2;
+  color: var(--ion-color-medium);
+  padding: 3px 0;
+  line-height: 1.4;
 }

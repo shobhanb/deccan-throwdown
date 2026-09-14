@@ -1,49 +1,90 @@
-/* Ionic Variables and Theming
- * ---------------------------------------------------------------
- * Any overrides to theme variables should be placed in this file.
- * For more information, please see:
- * http://ionicframework.com/docs/theming/
- */
+/* Ionic Variables and Theming */
 
-/* This sets a different item border color for the default theme on ios and md */
 :root {
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+    sans-serif;
+
+  --ion-color-primary: #1c1c1e;
+  --ion-color-primary-rgb: 28, 28, 30;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #19191a;
+  --ion-color-primary-tint: #333335;
+
+  --ion-color-secondary: #ff6b35;
+  --ion-color-secondary-rgb: 255, 107, 53;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #e05e2f;
+  --ion-color-secondary-tint: #ff7a49;
+
+  --ion-border-radius: 12px;
+
+  --dt-space-xs: 4px;
+  --dt-space-sm: 8px;
+  --dt-space-md: 16px;
+  --dt-space-lg: 24px;
+  --dt-space-xl: 32px;
+
+  --dt-surface: #ffffff;
+  --dt-grouped-background: #f2f2f7;
+  --dt-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --dt-badge-background: #e5e5ea;
+  --dt-badge-color: #1c1c1e;
+  --dt-toolbar-icon-color: #1c1c1e;
+  --dt-app-max-width: 100%;
+
   --ion-item-border-color: var(--ion-background-color-step-200);
-  --ion-background-color: var(--ion-color-light);
-  --ion-toolbar-background: var(--ion-background-color);
-  --ion-item-background: #fff;
+  --ion-background-color: var(--dt-grouped-background);
+  --ion-toolbar-background: var(--dt-grouped-background);
+  --ion-item-background: var(--dt-surface);
 }
 
-:root .dark {
-  --ion-background-color: var(--ion-background-color-step-50, #0d0d0d);
-  --ion-item-background: #1c1c1d;
-}
-
-
-/* This sets a different item background when dark mode is enabled on ios and md */
+:root .dark,
 .ion-palette-dark {
-  --ion-background-color: green;
-}
+  --ion-color-primary: #f2f2f7;
+  --ion-color-primary-rgb: 242, 242, 247;
+  --ion-color-primary-contrast: #1c1c1e;
+  --ion-color-primary-contrast-rgb: 28, 28, 30;
+  --ion-color-primary-shade: #d5d5da;
+  --ion-color-primary-tint: #f3f3f8;
 
-ion-item {
-  --transition: none;
-}
+  --dt-surface: #1c1c1d;
+  --dt-grouped-background: #000000;
+  --dt-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --dt-badge-background: #3a3a3c;
+  --dt-badge-color: #f2f2f7;
+  --dt-toolbar-icon-color: #f2f2f7;
 
-.section-title {
-    margin-left: 2rem;
-    margin-top: 2rem;
-    margin-bottom: -0.5rem;
-    color: var(--ion-color-medium);
-    text-transform: uppercase;
-    font-size: 0.8rem;
+  --ion-background-color: var(--dt-grouped-background);
+  --ion-item-background: var(--dt-surface);
+  --ion-toolbar-background: var(--dt-grouped-background);
+  --ion-text-color: #f2f2f7;
+  --ion-text-color-rgb: 242, 242, 247;
 }
 
 ion-app {
-  // max-width: 992px;
+  width: 100%;
+  max-width: var(--dt-app-max-width);
   margin: 0 auto;
-  overflow-x: hidden;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 769px) {
+  :root {
+    --dt-app-max-width: 1120px;
+  }
+
+  body {
+    background: #e5e5ea;
+  }
+
+  body.dark {
+    background: #000000;
+  }
 }
 
 ion-fab {
-  margin-bottom: 20px;
+  margin-bottom: calc(20px + env(safe-area-inset-bottom));
   margin-right: 20px;
 }

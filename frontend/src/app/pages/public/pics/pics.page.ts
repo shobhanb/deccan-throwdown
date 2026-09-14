@@ -1,6 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 
 import { HttpClient } from '@angular/common/http';
 import {
@@ -16,8 +15,10 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 
 interface ImageData {
   filename: string;
@@ -46,7 +47,10 @@ interface ImageListData {
   templateUrl: './pics.page.html',
   styleUrls: ['./pics.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     IonSkeletonText,
     IonRefresherContent,
     IonRefresher,
@@ -59,15 +63,14 @@ interface ImageListData {
     IonTitle,
     IonToolbar,
     IonMenuButton,
-    CommonModule,
-    FormsModule,
-    ToolbarButtonsComponent,
-  ],
+    ToolbarButtonsComponent
+],
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
 
   imageData = signal<ImageData[]>([]);
+  dataLoaded = signal(false);
 
   constructor() {}
 
@@ -94,24 +97,26 @@ export class PicsPage implements OnInit {
 
   async loadImages() {
     if (this.imageData().length > 0) {
-      // Images already loaded, just shuffle
       this.imageData.set(this.shuffleArray(this.imageData()));
+      this.dataLoaded.set(true);
       return;
     }
+    this.dataLoaded.set(false);
     try {
-      // Load the generated image list JSON file
       this.http.get<ImageListData>('assets/image-list.json').subscribe({
         next: (data) => {
-          // Randomize the order of images
           const shuffledImages = this.shuffleArray(data.images);
           this.imageData.set(shuffledImages);
+          this.dataLoaded.set(true);
         },
         error: (error) => {
           console.error('Error loading image list:', error);
+          this.dataLoaded.set(true);
         },
       });
     } catch (error) {
       console.error('Error in loadImages:', error);
+      this.dataLoaded.set(true);
     }
   }
 }

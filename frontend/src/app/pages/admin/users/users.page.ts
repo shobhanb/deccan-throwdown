@@ -1,6 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -23,7 +22,7 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonText,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiFirebaseUserRecord } from 'src/app/api/models';
 import { AuthService } from 'src/app/services/auth.service';
@@ -38,6 +37,7 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonText,
     IonCardContent,
@@ -58,11 +58,9 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
     IonHeader,
     IonTitle,
     IonToolbar,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
-    IonMenuButton,
-  ],
+    IonMenuButton
+],
 })
 export class UsersPage implements OnInit {
   private apiFireAuth = inject(apiFireauthService);

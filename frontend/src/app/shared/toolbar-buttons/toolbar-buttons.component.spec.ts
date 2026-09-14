@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular';
+import { provideRouter } from '@angular/router';
 
 import { ToolbarButtonsComponent } from './toolbar-buttons.component';
 
@@ -9,8 +10,8 @@ describe('ToolbarButtonsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToolbarButtonsComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [ToolbarButtonsComponent],
+      providers: [provideIonicAngular(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ToolbarButtonsComponent);
