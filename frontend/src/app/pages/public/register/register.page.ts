@@ -87,6 +87,9 @@ export class RegisterPage {
   eventName = this.appConfigService.eventName;
   registrationPricing = this.appConfigService.registrationPricing;
   registrationOpen = this.appConfigService.registrationStatus === 'open';
+  athletesPerTeam = this.appConfigService.athletesPerTeam;
+  femaleAthletesPerTeam = this.appConfigService.femaleAthletesPerTeam;
+  maleAthletesPerTeam = this.appConfigService.maleAthletesPerTeam;
 
   athletes = signal<apiAthleteRegistrationModel[]>([]);
 
@@ -128,7 +131,7 @@ export class RegisterPage {
   }[] {
     const slots = [];
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.femaleAthletesPerTeam; i++) {
       slots.push({
         type: 'F' as const,
         index: i,
@@ -136,7 +139,7 @@ export class RegisterPage {
       });
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.maleAthletesPerTeam; i++) {
       slots.push({
         type: 'M' as const,
         index: i,
@@ -191,9 +194,9 @@ export class RegisterPage {
   isFormValid(): boolean {
     return (
       this.teamForm().valid() &&
-      this.athletes().length === 4 &&
-      this.femaleAthletes.length === 2 &&
-      this.maleAthletes.length === 2
+      this.athletes().length === this.athletesPerTeam &&
+      this.femaleAthletes.length === this.femaleAthletesPerTeam &&
+      this.maleAthletes.length === this.maleAthletesPerTeam
     );
   }
 

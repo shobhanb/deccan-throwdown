@@ -52,7 +52,8 @@
           labelPlacement="stacked"
           [formField]="athleteForm.gym_selection"
           placeholder="Select gym"
-          interface="popover"
+          interface="action-sheet"
+          (ionChange)="onGymSelectionChange($event)"
         >
           <ion-select-option value="CFMF"
             >Crossfit Monkey Flag</ion-select-option

@@ -87,6 +87,20 @@ export class AppConfigService {
     return this._config.athletesPerTeam;
   }
 
+  get femaleAthletesPerTeam(): number {
+    return (
+      this._config.femaleAthletesPerTeam ??
+      Math.floor(this._config.athletesPerTeam / 2)
+    );
+  }
+
+  get maleAthletesPerTeam(): number {
+    return (
+      this._config.maleAthletesPerTeam ??
+      this._config.athletesPerTeam - this.femaleAthletesPerTeam
+    );
+  }
+
   get wods(): WodConfig[] {
     return this._config.wods;
   }

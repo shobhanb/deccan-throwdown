@@ -1,6 +1,5 @@
 import {
   Component,
-  effect,
   inject,
   Input,
   OnInit,
@@ -92,18 +91,6 @@ export class AthleteComponent implements OnInit {
     });
   });
 
-  constructor() {
-    effect(() => {
-      const selection = this.athleteModel().gym_selection;
-      if (selection === 'CFMF') {
-        this.athleteModel.update((model) => ({ ...model, gym: 'CFMF' }));
-      } else if (selection === 'Other') {
-        this.athleteModel.update((model) => ({ ...model, gym: '' }));
-      }
-    });
-
-  }
-
   ngOnInit() {
     this.applyAthleteData();
   }
@@ -126,6 +113,14 @@ export class AthleteComponent implements OnInit {
     return this.athleteModel().gym_selection === 'Other';
   }
 
+  onGymSelectionChange(event: CustomEvent) {
+    const selection = event.detail.value as string;
+    this.athleteModel.update((model) => ({
+      ...model,
+      gym: selection === 'CFMF' ? 'CFMF' : '',
+    }));
+  }
+
   get formTitle(): string {
     const gender = this.sex === 'F' ? 'Female' : 'Male';
     const action = this.athleteData ? 'Edit' : 'Add';
@@ -141,8 +136,16 @@ export class AthleteComponent implements OnInit {
       return;
     }
 
+    const model = this.athleteModel();
+    const gym =
+      model.gym_selection === 'CFMF' ? 'CFMF' : model.gym.trim();
+
     const athleteData: apiAthleteRegistrationModel = {
-      ...this.athleteModel(),
+      first_name: model.first_name,
+      last_name: model.last_name,
+      email: model.email,
+      phone_number: model.phone_number,
+      gym,
       sex: this.sex,
     };
 

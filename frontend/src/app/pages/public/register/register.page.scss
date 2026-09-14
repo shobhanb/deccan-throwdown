@@ -152,7 +152,7 @@
 
 @media (min-width: 769px) {
   .athlete-slots {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     max-width: 960px;
     margin: 0 auto;
     padding-left: var(--dt-space-md);

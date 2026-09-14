@@ -74,7 +74,10 @@
       </ion-item>
     </ion-list>
 
-    <div class="section-header">Athletes ({{ athletes().length }}/4)</div>
+    <div class="section-header">
+      Athletes ({{ athletes().length }}/{{ athletesPerTeam }} — {{ femaleAthletesPerTeam }}F,
+      {{ maleAthletesPerTeam }}M)
+    </div>
     <div class="athlete-slots">
       @for (slot of athleteSlots; track $index) {
       <button
