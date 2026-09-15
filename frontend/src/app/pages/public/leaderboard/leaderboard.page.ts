@@ -69,8 +69,7 @@ export class LeaderboardPage implements OnInit {
   private platform = inject(Platform);
   private destroyRef = inject(DestroyRef);
 
-  /** Popovers misalign inside the centered ion-app shell on wide desktops. */
-  selectInterface = this.platform.width() > 768 ? 'alert' : 'popover';
+  selectInterface =  'popover';
   wodSelectOptions = { side: 'bottom', alignment: 'start' };
   categorySelectOptions = { side: 'bottom', alignment: 'end' };
 
