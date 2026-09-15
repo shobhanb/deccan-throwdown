@@ -1,4 +1,11 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  computed,
+  effect,
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
@@ -37,6 +44,7 @@ const TAB_ROUTES = ['/home', '/wods', '/leaderboard', '/teams'];
 export class TabBarComponent {
   private router = inject(Router);
   private menuController = inject(MenuController);
+  private document = inject(DOCUMENT);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -47,9 +55,8 @@ export class TabBarComponent {
     { initialValue: this.router.url }
   );
 
-  showTabBar = () => {
-    const url = this.currentUrl();
-    const path = url.split('?')[0];
+  tabBarVisible = computed(() => {
+    const path = this.currentUrl().split('?')[0];
     if (path.startsWith('/auth') || path.startsWith('/admin')) {
       return false;
     }
@@ -66,7 +73,7 @@ export class TabBarComponent {
       return false;
     }
     return TAB_ROUTES.some((tab) => path === tab) || path === '/';
-  };
+  });
 
   constructor() {
     addIcons({
@@ -75,6 +82,13 @@ export class TabBarComponent {
       barChartOutline,
       peopleOutline,
       menuOutline,
+    });
+
+    effect(() => {
+      this.document.body.classList.toggle(
+        'tab-bar-visible',
+        this.tabBarVisible()
+      );
     });
   }
 

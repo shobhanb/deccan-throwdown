@@ -5,7 +5,7 @@
     <p class="auth-subtitle">{{ eventName }}</p>
     <p class="auth-description">Login as an admin user</p>
 
-    <form (submit)="onClickLogin(); $event.preventDefault()">
+    <form novalidate (submit)="onClickLogin(); $event.preventDefault()">
       <ion-list [inset]="true" class="card-elevated auth-form-card">
         <ion-item>
           <ion-input

@@ -46,7 +46,7 @@
   </div>
   }
 
-  <form id="register-form" (submit)="onSubmit(); $event.preventDefault()">
+  <form id="register-form" novalidate (submit)="onSubmit(); $event.preventDefault()">
     <ion-list [inset]="true" class="card-elevated">
       <ion-item>
         <ion-input

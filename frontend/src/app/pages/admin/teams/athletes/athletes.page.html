@@ -17,7 +17,7 @@
 
   @if (dataLoaded()) {
 
-  <form (submit)="onSubmit(); $event.preventDefault()">
+  <form novalidate (submit)="onSubmit(); $event.preventDefault()">
     <ion-list [inset]="true">
       <ion-item>
         <ion-input

@@ -493,8 +493,11 @@ ion-skeleton-text {
   opacity: 0.25;
 }
 
-.page-with-tabs ion-content {
-  --padding-bottom: calc(var(--dt-tab-bar-height) + env(safe-area-inset-bottom));
+@media (max-width: 768px) {
+  body.tab-bar-visible ion-content.page-with-tabs,
+  body.tab-bar-visible ion-menu ion-content {
+    --padding-bottom: var(--dt-tab-bar-inset);
+  }
 }
 
 .auth-content {

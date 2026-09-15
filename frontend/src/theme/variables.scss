@@ -55,6 +55,9 @@
   --dt-app-max-width: 100%;
   --dt-sidebar-width: 260px;
   --dt-tab-bar-height: 56px;
+  --dt-tab-bar-inset: calc(
+    var(--dt-tab-bar-height) + env(safe-area-inset-bottom) + var(--dt-space-md)
+  );
 
   --ion-item-border-color: var(--ion-background-color-step-200);
   --ion-background-color: var(--dt-grouped-background);

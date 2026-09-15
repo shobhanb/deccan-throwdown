@@ -16,7 +16,7 @@
   @if (dataLoaded()) { @if (isEditing()) {
   <div class="section-title">{{ editTeam()?.event_short_name }}</div>
   }
-  <form (submit)="onSubmit(); $event.preventDefault()">
+  <form novalidate (submit)="onSubmit(); $event.preventDefault()">
     <ion-list [inset]="true">
       <ion-item>
         <ion-input

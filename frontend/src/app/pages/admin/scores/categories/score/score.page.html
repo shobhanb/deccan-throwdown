@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <form (submit)="submitScore(); $event.preventDefault()">
+  <form novalidate (submit)="submitScore(); $event.preventDefault()">
     <ion-list [inset]="true" class="dt-admin-list score-entry-list">
       @if (wod()?.scoreTypes?.includes('Reps') ||
       wod()?.scoreTypes?.includes('Weight')) {

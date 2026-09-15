@@ -7,7 +7,7 @@
       Talk to your event organizer before signing up as admin
     </p>
 
-    <form (submit)="onSubmitSignupForm(); $event.preventDefault()">
+    <form novalidate (submit)="onSubmitSignupForm(); $event.preventDefault()">
       <ion-list [inset]="true" class="card-elevated auth-form-card">
         <ion-item>
           <ion-input
