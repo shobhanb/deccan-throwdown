@@ -27,6 +27,7 @@
   @if (useCategoryWodDescription()) {
   <ion-segment
     class="category-segment"
+    [scrollable]="true"
     [value]="selectedCategory()"
     (ionChange)="onSegmentChangeCategory($event)"
   >

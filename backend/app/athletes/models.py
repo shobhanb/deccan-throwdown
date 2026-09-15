@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import Boolean, ForeignKey, String, Uuid
+from datetime import date
+
+from sqlalchemy import Boolean, Date, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
@@ -18,6 +20,7 @@ class Athlete(Base):
     sex: Mapped[str] = mapped_column(String)
     email: Mapped[str | None] = mapped_column(String, nullable=True)
     phone_number: Mapped[str | None] = mapped_column(String, nullable=True)
+    date_of_birth: Mapped[date | None] = mapped_column(Date, nullable=True)
 
     waiver: Mapped[bool] = mapped_column(Boolean, default=False)
     gym: Mapped[str | None] = mapped_column(String, nullable=True)

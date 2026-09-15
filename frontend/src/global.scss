@@ -468,6 +468,12 @@ ion-item {
 }
 
 @media (min-width: 769px) {
+  ion-split-pane {
+    --side-min-width: var(--dt-sidebar-width);
+    --side-max-width: var(--dt-sidebar-width);
+    --side-width: var(--dt-sidebar-width);
+  }
+
   .dt-admin-banner-fixed {
     left: var(--dt-sidebar-width);
   }

@@ -29,7 +29,7 @@ export class AppConfigService {
       hostname.endsWith('.local');
 
     if (isLocalDev) {
-      // Use same-origin relative URLs; ionic serve proxies to localhost:8000 (see proxy.conf.json).
+      // API calls go directly to the local backend (CORS allowed in main.py).
       this._apiBaseUrl = 'http://localhost:8000';
     } else {
       this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;

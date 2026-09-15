@@ -24,6 +24,7 @@ export interface AthleteFormModel {
   sex: 'M' | 'F';
   email: string;
   phone_number: string;
+  date_of_birth: string;
   gym_selection: string;
   gym: string;
 }

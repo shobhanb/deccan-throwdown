@@ -6,8 +6,24 @@
 }
 
 .category-segment {
+  width: calc(100% - 2 * var(--dt-space-md));
+  max-width: calc(100% - 2 * var(--dt-space-md));
   margin: 0 var(--dt-space-md) var(--dt-space-md);
   --background: var(--dt-badge-background);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  ion-segment-button {
+    --padding-start: var(--dt-space-sm);
+    --padding-end: var(--dt-space-sm);
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  ion-label {
+    white-space: nowrap;
+  }
 }
 
 .wod-grid {

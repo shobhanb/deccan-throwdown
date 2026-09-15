@@ -216,6 +216,7 @@ export class RegisterPage {
         sex: athlete.sex,
         email: athlete.email?.trim() || null,
         phone_number: athlete.phone_number?.trim() || null,
+        date_of_birth: athlete.date_of_birth,
         gym: athlete.gym?.trim() || null,
         city: athlete.city?.trim() || null,
       })),

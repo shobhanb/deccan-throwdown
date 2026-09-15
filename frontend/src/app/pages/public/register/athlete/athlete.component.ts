@@ -14,6 +14,7 @@ import {
   hidden,
   pattern,
   required,
+  validate,
 } from '@angular/forms/signals';
 import {
   IonContent,
@@ -65,6 +66,7 @@ export class AthleteComponent implements OnInit {
     sex: 'F',
     email: '',
     phone_number: '',
+    date_of_birth: '',
     gym_selection: '',
     gym: '',
   });
@@ -77,6 +79,31 @@ export class AthleteComponent implements OnInit {
     required(schemaPath.phone_number, { message: 'Phone number is required' });
     pattern(schemaPath.phone_number, /^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
       message: 'Enter a valid phone number',
+    });
+    required(schemaPath.date_of_birth, {
+      message: 'Date of birth is required',
+    });
+    validate(schemaPath.date_of_birth, ({ value }) => {
+      const dateOfBirth = value();
+      if (!dateOfBirth) {
+        return undefined;
+      }
+
+      const parsed = new Date(`${dateOfBirth}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) {
+        return { kind: 'invalidDate', message: 'Enter a valid date of birth' };
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (parsed > today) {
+        return {
+          kind: 'futureDate',
+          message: 'Date of birth cannot be in the future',
+        };
+      }
+
+      return undefined;
     });
     required(schemaPath.gym_selection, { message: 'Gym selection is required' });
     applyWhen(
@@ -103,6 +130,7 @@ export class AthleteComponent implements OnInit {
       sex: this.sex,
       email: data?.email ?? '',
       phone_number: data?.phone_number ?? '',
+      date_of_birth: data?.date_of_birth ?? '',
       gym_selection:
         data?.gym === 'CFMF' ? 'CFMF' : data?.gym ? 'Other' : '',
       gym: data?.gym ?? '',
@@ -145,6 +173,7 @@ export class AthleteComponent implements OnInit {
       last_name: model.last_name,
       email: model.email,
       phone_number: model.phone_number,
+      date_of_birth: model.date_of_birth,
       gym,
       sex: this.sex,
     };

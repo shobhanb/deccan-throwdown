@@ -79,11 +79,11 @@
 @media (min-width: 769px) {
   .filter-bar {
     flex-direction: row;
-    max-width: 720px;
   }
 
   .filter-bar ion-select {
     flex: 1;
+    min-width: 0;
   }
 
   .leaderboard-row {
