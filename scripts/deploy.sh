@@ -40,8 +40,9 @@ Examples:
   $0 --skip-frontend root@203.0.113.10
 
 Notes:
-  - Builds frontend locally, rsyncs frontend/www, then runs git pull and
-    docker compose up -d --build on the droplet.
+  - Pulls latest code on the droplet, builds frontend locally, rsyncs
+    frontend/www, then runs docker compose up -d --build.
+  - Clones the repo on first deploy if ${DEPLOY_PATH} does not exist yet.
   - Production database.db is never copied from local to the droplet.
 EOF
 }
@@ -137,27 +138,8 @@ build_frontend() {
     fi
 }
 
-sync_frontend() {
-    log "Syncing frontend/www to ${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
-    run rsync -avz --delete \
-        "${REPO_ROOT}/frontend/www/" \
-        "${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
-}
-
-deploy_remote() {
-    log "Updating code and restarting containers on ${SSH_TARGET}"
-
-    local remote_cmd
-    remote_cmd=$(cat <<EOF
-set -euo pipefail
-cd '${DEPLOY_PATH}'
-git fetch origin
-git checkout '${DEPLOY_BRANCH}'
-git pull --ff-only origin '${DEPLOY_BRANCH}'
-docker compose up -d --build
-docker compose ps
-EOF
-)
+run_remote() {
+    local remote_cmd="$1"
 
     if [[ "${DRY_RUN}" == true ]]; then
         echo "[dry-run] ssh ${SSH_TARGET} <<'REMOTE'"
@@ -166,6 +148,52 @@ EOF
     else
         ssh "${SSH_TARGET}" "${remote_cmd}"
     fi
+}
+
+prepare_remote() {
+    local repo_url
+    repo_url="$(git -C "${REPO_ROOT}" remote get-url origin)"
+
+    log "Ensuring repo exists and is up to date on ${SSH_TARGET}"
+
+    local remote_cmd
+    remote_cmd=$(cat <<EOF
+set -euo pipefail
+if [[ ! -d '${DEPLOY_PATH}/.git' ]]; then
+    mkdir -p '$(dirname "${DEPLOY_PATH}")'
+    git clone '${repo_url}' '${DEPLOY_PATH}'
+fi
+cd '${DEPLOY_PATH}'
+git fetch origin
+git checkout '${DEPLOY_BRANCH}'
+git pull --ff-only origin '${DEPLOY_BRANCH}'
+mkdir -p '${DEPLOY_PATH}/frontend/www'
+EOF
+)
+
+    run_remote "${remote_cmd}"
+}
+
+sync_frontend() {
+    log "Syncing frontend/www to ${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
+    run rsync -avz --delete \
+        "${REPO_ROOT}/frontend/www/" \
+        "${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
+}
+
+restart_containers() {
+    log "Restarting containers on ${SSH_TARGET}"
+
+    local remote_cmd
+    remote_cmd=$(cat <<EOF
+set -euo pipefail
+cd '${DEPLOY_PATH}'
+docker compose up -d --build
+docker compose ps
+EOF
+)
+
+    run_remote "${remote_cmd}"
 }
 
 main() {
@@ -180,6 +208,8 @@ main() {
     log "Remote path: ${DEPLOY_PATH}"
     log "Branch: ${DEPLOY_BRANCH}"
 
+    prepare_remote
+
     if [[ "${SKIP_FRONTEND}" == false ]]; then
         if [[ "${SKIP_BUILD}" == false ]]; then
             build_frontend
@@ -193,7 +223,7 @@ main() {
         log "Skipping frontend build and rsync"
     fi
 
-    deploy_remote
+    restart_containers
 
     log "Deploy complete"
     log "Production database was not modified."
