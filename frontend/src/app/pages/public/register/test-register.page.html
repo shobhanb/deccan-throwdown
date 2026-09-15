@@ -1,0 +1,44 @@
+<app-page-toolbar title="Test Registration"></app-page-toolbar>
+
+<ion-content class="test-register-content">
+  <div class="test-register-card card-elevated">
+    @switch (status()) {
+      @case ('blocked') {
+        <h1>Unavailable</h1>
+        <p>Test registration is only available in local development builds.</p>
+        <ion-button expand="block" fill="outline" (click)="goToRegister()">
+          Go to Register
+        </ion-button>
+      }
+      @case ('submitting') {
+        <ion-spinner name="crescent"></ion-spinner>
+        <h1>Registering test team</h1>
+        @if (teamName()) {
+          <p>Creating <strong>{{ teamName() }}</strong> with random athlete names...</p>
+        } @else {
+          <p>Generating random team data...</p>
+        }
+      }
+      @case ('success') {
+        <h1>Test team registered</h1>
+        <p><strong>{{ teamName() }}</strong> was created successfully.</p>
+        <ion-button expand="block" (click)="registerFakeTeam()">
+          Register Another Test Team
+        </ion-button>
+        <ion-button expand="block" fill="outline" routerLink="/teams">
+          View Teams
+        </ion-button>
+      }
+      @case ('error') {
+        <h1>Registration failed</h1>
+        <p>{{ errorMessage() }}</p>
+        <ion-button expand="block" (click)="registerFakeTeam()">
+          Try Again
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="goToRegister()">
+          Go to Register
+        </ion-button>
+      }
+    }
+  </div>
+</ion-content>

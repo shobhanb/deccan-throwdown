@@ -1,14 +1,125 @@
-
-ion-card img {
-  width: 100%;
-  object-fit: cover;
-}
-
-.install-button-container {
-  background-color: var(--ion-color-medium);
+.install-banner {
   display: flex;
+  align-items: center;
+  gap: var(--dt-space-sm);
+  margin: var(--dt-space-md);
+  padding: var(--dt-space-md);
+  background: var(--dt-surface);
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
 }
 
-.install-button-container .install-button {
+.install-icon {
+  font-size: 1.5rem;
+  color: var(--ion-color-primary);
+  flex-shrink: 0;
+}
+
+.install-text {
   flex: 1;
+  min-width: 0;
+
+  p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.hero-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: var(--dt-space-sm);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.hero-tagline {
+  margin: var(--dt-space-sm) 0 var(--dt-space-md);
+  line-height: 1.5;
+}
+
+.hero-chip {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.hero-date {
+  margin: var(--dt-space-sm) 0 0;
+  font-size: 0.9rem;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--dt-space-md);
+  padding: 0 var(--dt-space-md) var(--dt-space-md);
+}
+
+.action-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dt-space-sm);
+  padding: var(--dt-space-lg) var(--dt-space-md);
+  background: var(--dt-surface);
+  box-shadow: var(--dt-card-shadow);
+  border-radius: var(--ion-border-radius);
+  text-decoration: none;
+  color: var(--ion-text-color);
+  min-height: 110px;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.action-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--dt-brand-navy);
+  color: #ffffff;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.action-tile span {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.action-tile-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.links-list {
+  margin-bottom: var(--dt-space-lg);
+}
+
+@media (min-width: 769px) {
+  .hero-title {
+    font-size: 2.75rem;
+  }
+
+  .action-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: var(--dt-space-lg);
+  }
 }

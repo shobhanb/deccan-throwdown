@@ -11,70 +11,42 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Admin User Management</ion-card-title>
-      <ion-card-subtitle>Deccan Throwdown</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text>Manage admin user access</ion-text>
-    </ion-card-content>
-  </ion-card>
+  <app-admin-page-header
+    title="Admin User Management"
+    subtitle="Deccan Throwdown"
+  ></app-admin-page-header>
 
   @if (dataLoaded()) {
-  <ion-list [inset]="true">
+  <ion-list [inset]="true" class="dt-admin-list">
     @for (user of allUsers(); track user.uid) {
-    <ion-item>
+    <ion-item class="admin-data-row">
       <ion-label>
-        <ion-label><strong> {{ user.display_name }}</strong></ion-label>
-        <ion-note>{{ user.email }}</ion-note>
+        <h2><strong>{{ user.display_name }}</strong></h2>
+        <p>{{ user.email }}</p>
       </ion-label>
 
-      @if (user.custom_claims?.admin) {
-      <ion-label slot="end">Admin</ion-label>
-      } @if (!user.email_verified) {
-      <ion-label slot="end" color="medium">Not Verified</ion-label>
-      }
-      <ion-button slot="end" fill="clear" (click)="presentActionSheet(user)">
-        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
-      </ion-button>
+      <div slot="end" class="admin-row-actions">
+        @if (user.custom_claims?.admin) {
+        <span class="dt-pill dt-pill-gold">Admin</span>
+        }
+        @if (!user.email_verified) {
+        <span class="dt-pill">Not Verified</span>
+        }
+        <ion-button fill="clear" (click)="presentActionSheet(user)">
+          <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+        </ion-button>
+      </div>
     </ion-item>
-
     }
   </ion-list>
   } @else {
-  <!-- Loading skeleton for users list -->
-  <ion-list [inset]="true">
+  <ion-list [inset]="true" class="dt-admin-list">
     @for (item of [1, 2, 3, 4, 5, 6]; track $index) {
     <ion-item>
-      <ion-label>
-        <!-- User display name -->
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 65%; height: 18px; margin-bottom: 6px"
-        ></ion-skeleton-text>
-        <!-- User email -->
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 80%; height: 14px; margin-bottom: 2px"
-        ></ion-skeleton-text>
-      </ion-label>
-
-      <!-- Admin status label -->
-      <ion-label slot="end">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 50px; height: 16px; border-radius: 8px"
-        ></ion-skeleton-text>
-      </ion-label>
-
-      <!-- Action button -->
-      <ion-button slot="end" fill="clear">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 24px; height: 24px; border-radius: 4px"
-        ></ion-skeleton-text>
-      </ion-button>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
     </ion-item>
     }
   </ion-list>

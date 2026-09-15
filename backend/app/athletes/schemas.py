@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Literal
 from uuid import UUID
 
@@ -12,6 +13,7 @@ class AthleteBaseModel(CustomBaseModel):
     email: EmailStr | None = None
     phone_number: str | None = None
     sex: Literal["M", "F"]
+    date_of_birth: date | None = None
     waiver: bool = False
     gym: str | None = None
     city: str | None = None
@@ -36,6 +38,7 @@ class AthleteUpdateModel(CustomBaseModel):
     email: EmailStr | None = None
     phone_number: str | None = None
     sex: Literal["M", "F"] | None = None
+    date_of_birth: date | None = None
     waiver: bool | None = None
     gym: str | None = None
     city: str | None = None
@@ -43,4 +46,4 @@ class AthleteUpdateModel(CustomBaseModel):
 
 
 class AthleteRegistrationModel(AthleteBaseModel):
-    pass
+    date_of_birth: date

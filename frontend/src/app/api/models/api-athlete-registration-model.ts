@@ -4,6 +4,7 @@
 
 export interface apiAthleteRegistrationModel {
   city?: (string | null);
+  date_of_birth: string;
   email?: (string | null);
   first_name: string;
   gym?: (string | null);

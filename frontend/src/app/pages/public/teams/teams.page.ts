@@ -1,35 +1,30 @@
 import {
   Component,
   computed,
+  DestroyRef,
   inject,
   linkedSignal,
   OnInit,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonItem,
   IonIcon,
   IonList,
   IonLabel,
-  IonCardSubtitle,
-  IonNote,
-  IonMenuButton,
   IonAccordionGroup,
   IonAccordion,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+} from '@ionic/angular';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
@@ -42,41 +37,35 @@ import {
 } from 'ionicons/icons';
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-teams',
   templateUrl: './teams.page.html',
   styleUrls: ['./teams.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageToolbarComponent,
+    PageHeaderComponent,
+    EmptyStateComponent,
     IonAccordion,
     IonAccordionGroup,
-    IonNote,
-    IonCardSubtitle,
     IonLabel,
     IonList,
     IonIcon,
     IonItem,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonRefresherContent,
     IonRefresher,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
-    ToolbarButtonsComponent,
-    IonMenuButton,
   ],
 })
 export class TeamsPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
   private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   dataLoaded = signal<boolean>(false);
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -103,33 +92,48 @@ export class TeamsPage implements OnInit {
     addIcons({ personOutline, addOutline, manOutline, womanOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.activatedRoute.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadTeams());
+  }
 
   ionViewWillEnter() {
-    this.getData();
+    this.loadTeams();
+  }
+
+  getCategoryClass(category: string): string {
+    const lower = category.toLowerCase();
+    if (lower.includes('beginner')) return 'dt-category-beginner';
+    if (lower.includes('intermediate')) return 'dt-category-intermediate';
+    return 'dt-category-open';
+  }
+
+  getInitials(firstName: string, lastName: string): string {
+    return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase();
   }
 
   handleRefresh(event: CustomEvent) {
-    this.getData();
+    this.loadTeams();
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  getData() {
-    this.dataLoaded.set(false);
+  private loadTeams() {
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
-    if (eventShortNameParam) {
-      this.eventShortName.set(eventShortNameParam);
-    }
+    this.eventShortName.set(eventShortNameParam ?? defaultConfig);
+    this.dataLoaded.set(false);
+
     this.apiTeams
       .getTeamsTeamsGet({
         event_short_name: this.eventShortName(),
       })
+      .pipe(finalize(() => this.dataLoaded.set(true)))
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
           const sortedAthletes = data.map((team) => ({
             ...team,
-            athletes: team.athletes.sort((a, b) => {
+            athletes: [...team.athletes].sort((a, b) => {
               if (a.sex != b.sex) {
                 return a.sex.localeCompare(b.sex);
               }
@@ -140,12 +144,11 @@ export class TeamsPage implements OnInit {
         },
         error: (error) => {
           console.error(error);
+          this.teamsData.set([]);
           this.toastService.showError(
-            'Failed to load team data ' + error.statusText
+            'Failed to load team data. ' +
+              (error.error?.detail || error.statusText || 'Check backend is running.')
           );
-        },
-        complete: () => {
-          this.dataLoaded.set(true);
         },
       });
   }

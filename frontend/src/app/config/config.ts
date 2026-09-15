@@ -1,12 +1,27 @@
 type ScoreType = 'Reps' | 'Weight' | 'Time' | 'Tiebreak';
 
+export type EventType = 'teams' | 'pairs';
+export type RegistrationStatus = 'open' | 'closed' | 'coming-soon';
+
 export interface AppConfig {
   eventName: string;
+  eventType: EventType;
+  eventDates: string;
+  tagline: string;
+  registrationStatus: RegistrationStatus;
+  leaderboardEnabled: boolean;
   categories: string[];
   athletesPerTeam: number;
+  femaleAthletesPerTeam?: number;
+  maleAthletesPerTeam?: number;
   wods: WodConfig[];
   wodsUrl?: string;
   standardsUrl?: string;
+  registrationPricing?: {
+    standard: number;
+    earlyBird?: number;
+    earlyBirdDeadline?: string;
+  };
 }
 
 export interface WodConfig {
@@ -21,6 +36,11 @@ export interface WodConfig {
 export const appConfig: { [key: string]: AppConfig } = {
   dtpairs2025: {
     eventName: 'Deccan Throwdown Pairs 2025',
+    eventType: 'pairs',
+    eventDates: '2025',
+    tagline: 'Same-sex pairs competing across Beginner and Open divisions.',
+    registrationStatus: 'closed',
+    leaderboardEnabled: true,
     categories: [
       'FF-Beginners',
       'MF-Beginners',
@@ -79,6 +99,12 @@ export const appConfig: { [key: string]: AppConfig } = {
   },
   dtteams2025: {
     eventName: 'Deccan Throwdown Teams 2025',
+    eventType: 'teams',
+    eventDates: 'Nov 1 & Nov 2, 2025',
+    tagline:
+      'Teams of 4 athletes (2 female, 2 male). Categories: Beginner, Intermediate, Open.',
+    registrationStatus: 'closed',
+    leaderboardEnabled: true,
     categories: ['Open', 'Intermediate', 'Beginner'],
     athletesPerTeam: 4,
     wods: [
@@ -314,6 +340,132 @@ export const appConfig: { [key: string]: AppConfig } = {
     ],
     wodsUrl: 'assets/standards/dtteams2025-wods.pdf',
   },
+  dtteams2026: {
+    eventName: 'Deccan Throwdown Teams 2026',
+    eventType: 'teams',
+    eventDates: 'Nov 28 & 29, 2026',
+    tagline:
+      'Teams of 6 athletes (2 female, 4 male). Categories: Scaled, Open.',
+    registrationStatus: 'open',
+    leaderboardEnabled: false,
+    categories: ['Scaled', 'Open'],
+    athletesPerTeam: 6,
+    femaleAthletesPerTeam: 2,
+    maleAthletesPerTeam: 4,
+    registrationPricing: {
+      standard: 8000,
+      earlyBird: 6000,
+      earlyBirdDeadline: 'TBA',
+    },
+    wods: [
+      {
+        wodNumber: 1,
+        wodName: 'WOD 1 — TBA',
+        wodSummary: 'Team workout — details coming soon',
+        categoryWodDescription: {
+          Open: [
+            'Workout details for Open will be announced closer to the event.',
+            'Expect a team-based test of strength and conditioning.',
+          ],
+          Intermediate: [
+            'Workout details for Intermediate will be announced closer to the event.',
+            'Scaled movements and loads will apply for this division.',
+          ],
+          Beginner: [
+            'Workout details for Beginner will be announced closer to the event.',
+            'Beginner-friendly movement options will be provided.',
+          ],
+        },
+        scoreTypes: ['Reps', 'Time', 'Tiebreak'],
+      },
+      {
+        wodNumber: 2,
+        wodName: 'WOD 2 — TBA',
+        wodSummary: 'AMRAP-style team workout — details coming soon',
+        categoryWodDescription: {
+          Open: [
+            'Full workout description will be published before registration closes.',
+            'Scoring: total repetitions completed within the time cap.',
+          ],
+          Intermediate: [
+            'Full workout description will be published before registration closes.',
+            'Scoring: total repetitions completed within the time cap.',
+          ],
+          Beginner: [
+            'Full workout description will be published before registration closes.',
+            'Scoring: total repetitions completed within the time cap.',
+          ],
+        },
+        scoreTypes: ['Reps', 'Tiebreak'],
+      },
+      {
+        wodNumber: 3,
+        wodName: 'WOD 3 — TBA',
+        wodSummary: 'For-time team workout — details coming soon',
+        categoryWodDescription: {
+          Open: [
+            'Workout structure and movement standards to be confirmed.',
+            'Score is total time or repetitions completed at time cap.',
+          ],
+          Intermediate: [
+            'Workout structure and movement standards to be confirmed.',
+            'Score is total time or repetitions completed at time cap.',
+          ],
+          Beginner: [
+            'Workout structure and movement standards to be confirmed.',
+            'Score is total time or repetitions completed at time cap.',
+          ],
+        },
+        scoreTypes: ['Time', 'Reps'],
+      },
+      {
+        wodNumber: 4,
+        wodName: 'WOD 4 — TBA',
+        wodSummary: 'Max-weight team workout — details coming soon',
+        categoryWodDescription: {
+          Open: [
+            'Athletes will establish a team max lift — movement TBA.',
+            'Details including time cap and tiebreak rules coming soon.',
+          ],
+          Intermediate: [
+            'Athletes will establish a team max lift — movement TBA.',
+            'Scaled loading will apply for this division.',
+          ],
+          Beginner: [
+            'Athletes will establish a team max lift — movement TBA.',
+            'Beginner-friendly loading and technique standards will apply.',
+          ],
+        },
+        scoreTypes: ['Weight'],
+      },
+      {
+        wodNumber: 5,
+        wodName: 'WOD 5 — TBA',
+        wodSummary: 'Finale workout — details coming soon',
+        categoryWodDescription: {
+          Open: [
+            'The finale WOD caps off the weekend — full details TBA.',
+            'Expect a team test combining multiple movement domains.',
+          ],
+          Intermediate: [
+            'The finale WOD caps off the weekend — full details TBA.',
+            'Scaled options will be provided for this division.',
+          ],
+          Beginner: [
+            'The finale WOD caps off the weekend — full details TBA.',
+            'Beginner-friendly movement standards will apply.',
+          ],
+        },
+        scoreTypes: ['Time', 'Reps'],
+      },
+    ],
+  },
 };
 
-export const defaultConfig = 'dtteams2025';
+export const defaultConfig = 'dtteams2026';
+
+/** Past events shown in the archive section of the menu. */
+export const archiveEventShortNames: string[] = [
+  'dtteams2025',
+  'dtpairs2025',
+];

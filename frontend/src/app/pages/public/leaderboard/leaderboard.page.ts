@@ -1,23 +1,21 @@
 import {
   Component,
   computed,
+  DestroyRef,
   inject,
   linkedSignal,
   OnInit,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
   IonMenuButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonSelect,
   IonSelectOption,
   IonLabel,
@@ -26,8 +24,11 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+  Platform,
+} from '@ionic/angular';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { addIcons } from 'ionicons';
 import { trophyOutline } from 'ionicons/icons';
 import {
@@ -38,17 +39,18 @@ import { apiTeamsService } from 'src/app/api/services';
 import { ToastService } from 'src/app/services/toast.service';
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.page.html',
   styleUrls: ['./leaderboard.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    PageToolbarComponent,
+    EmptyStateComponent,
+    PageHeaderComponent,
     IonLabel,
     IonItem,
     IonList,
@@ -57,20 +59,19 @@ import { ActivatedRoute } from '@angular/router';
     IonRefresherContent,
     IonRefresher,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
-    IonMenuButton,
-    ToolbarButtonsComponent,
   ],
 })
 export class LeaderboardPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
   private activatedRoute = inject(ActivatedRoute);
+  private platform = inject(Platform);
+  private destroyRef = inject(DestroyRef);
+
+  selectInterface =  'popover';
+  wodSelectOptions = { side: 'bottom', alignment: 'start' };
+  categorySelectOptions = { side: 'bottom', alignment: 'end' };
 
   dataLoaded = signal<boolean>(false);
 
@@ -79,9 +80,7 @@ export class LeaderboardPage implements OnInit {
   wods = linkedSignal(() => appConfig[this.eventShortName()]?.wods);
   categories = linkedSignal(() => appConfig[this.eventShortName()]?.categories);
 
-  selectedCategory = linkedSignal<string | null>(
-    () => this.categories()?.[0] || null
-  );
+  selectedCategory = signal<string | null>(null);
   selectedWod = signal<number>(0);
   selectedWodName = computed(
     () =>
@@ -124,6 +123,12 @@ export class LeaderboardPage implements OnInit {
       });
   });
 
+  podiumTeams = computed(() =>
+    this.filteredSortedTeamsData()
+      .filter((t) => t.rank && t.rank <= 3)
+      .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0))
+  );
+
   convertSecondsToMinunites(seconds: number | null | undefined): string {
     if (seconds == null || isNaN(seconds)) return '';
     const mins = Math.floor(seconds / 60);
@@ -163,41 +168,48 @@ export class LeaderboardPage implements OnInit {
     addIcons({ trophyOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.activatedRoute.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadLeaderboard());
+  }
 
   ionViewWillEnter() {
-    this.getData();
+    this.loadLeaderboard();
   }
 
   handleRefresh(event: CustomEvent) {
-    this.getData();
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+    this.loadLeaderboard();
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  getData() {
-    this.dataLoaded.set(false);
-
+  private loadLeaderboard() {
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
-    if (eventShortNameParam) {
-      this.eventShortName.set(eventShortNameParam);
-    }
+    this.eventShortName.set(eventShortNameParam ?? defaultConfig);
+    this.selectedCategory.set(this.categories()?.[0] ?? null);
+    this.selectedWod.set(0);
+    this.dataLoaded.set(false);
 
     this.apiTeams
       .getTeamsTeamsGet({
         event_short_name: this.eventShortName(),
       })
+      .pipe(finalize(() => this.dataLoaded.set(true)))
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
           this.teamsData.set(data);
         },
         error: (error) => {
+          console.error(error);
+          this.teamsData.set([]);
           this.toastService.showError(
-            'Error loading teams: ' + error.statusText
+            'Error loading leaderboard. ' +
+              (error.error?.detail || error.statusText || 'Check backend is running.')
           );
-        },
-        complete: () => {
-          this.dataLoaded.set(true);
         },
       });
   }

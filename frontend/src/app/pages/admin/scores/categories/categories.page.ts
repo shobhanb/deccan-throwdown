@@ -1,6 +1,5 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -9,12 +8,6 @@ import {
   IonBackButton,
   IonRefresherContent,
   IonRefresher,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonList,
   IonItem,
   IonLabel,
@@ -24,13 +17,13 @@ import {
   IonCheckbox,
   IonSkeletonText,
   IonRouterLink,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
 import {
-  apiAthleteOutputModel,
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
@@ -41,18 +34,14 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   templateUrl: './categories.page.html',
   styleUrls: ['./categories.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonCheckbox,
     IonButtons,
     IonLabel,
     IonItem,
     IonList,
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    AdminPageHeaderComponent,
     IonRefresher,
     IonRefresherContent,
     IonBackButton,
@@ -61,14 +50,12 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
     RouterLink,
     IonAccordion,
     IonAccordionGroup,
-    IonRouterLink,
-  ],
+    IonRouterLink
+],
 })
 export class CategoriesPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
@@ -162,7 +149,7 @@ export class CategoriesPage implements OnInit {
         verified: isChecked,
       })
       .subscribe({
-        next: (data) => {
+        next: () => {
           this.toastService.showSuccess(
             'Score verification updated for team ' + team?.team_name
           );

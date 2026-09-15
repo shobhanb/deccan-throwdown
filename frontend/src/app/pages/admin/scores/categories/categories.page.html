@@ -15,31 +15,24 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title
-        >{{ verificationMode() ? 'Score Verification' : 'Score
-        Keeping'}}</ion-card-title
-      >
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text>
-        <strong>
-          {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading
-          WOD...' }}
-        </strong>
-      </ion-text>
-      <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
-      <div class="wod-summary">{{ wod()?.wodSummary }}</div>
-      @if (verificationMode()) {
-      <ion-text>Click the checkbox to verify scores</ion-text>
-      }
-    </ion-card-content>
-  </ion-card>
+  <app-admin-page-header
+    [title]="verificationMode() ? 'Score Verification' : 'Score Keeping'"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  <div class="admin-wod-info card-elevated">
+    <strong>
+      {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading WOD...' }}
+    </strong>
+    <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
+    <div class="wod-summary">{{ wod()?.wodSummary }}</div>
+    @if (verificationMode()) {
+    <p class="admin-hint">Click the checkbox to verify scores</p>
+    }
+  </div>
 
   @if (dataLoaded()) {
-  <ion-list inset="true">
+  <ion-list inset="true" class="dt-admin-list">
     @for (category of teamsCategoriesData(); track $index) {
     <ion-accordion-group>
       <ion-accordion>
@@ -115,7 +108,7 @@
   </ion-list>
   } @else {
   <!-- Loading skeleton -->
-  <ion-list inset="true">
+  <ion-list inset="true" class="dt-admin-list">
     @for (category of [1, 2, 3]; track $index) {
     <ion-accordion-group>
       <ion-accordion>

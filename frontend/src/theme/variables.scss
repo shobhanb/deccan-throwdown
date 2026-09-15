@@ -1,49 +1,126 @@
-/* Ionic Variables and Theming
- * ---------------------------------------------------------------
- * Any overrides to theme variables should be placed in this file.
- * For more information, please see:
- * http://ionicframework.com/docs/theming/
- */
+/* Ionic Variables and Theming — Deccan Throwdown brand */
 
-/* This sets a different item border color for the default theme on ios and md */
 :root {
+  --dt-brand-navy: #2b4c6f;
+  --dt-brand-navy-rgb: 43, 76, 111;
+  --dt-brand-steel: #4a6fa5;
+  --dt-brand-steel-rgb: 74, 111, 165;
+  --dt-brand-silver: #8e9aaf;
+  --dt-brand-gold: #e5a319;
+  --dt-brand-gold-rgb: 229, 163, 25;
+
+  --dt-category-open: #2b4c6f;
+  --dt-category-intermediate: #4a6fa5;
+  --dt-category-beginner: #8e9aaf;
+
+  --dt-gradient-hero: linear-gradient(
+    145deg,
+    var(--dt-brand-navy) 0%,
+    #1a3350 55%,
+    #0f2438 100%
+  );
+
+  --dt-font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+    sans-serif;
+
+  --ion-color-primary: var(--dt-brand-navy);
+  --ion-color-primary-rgb: var(--dt-brand-navy-rgb);
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #264362;
+  --ion-color-primary-tint: #405e7d;
+
+  --ion-color-secondary: var(--dt-brand-gold);
+  --ion-color-secondary-rgb: var(--dt-brand-gold-rgb);
+  --ion-color-secondary-contrast: #1c1c1e;
+  --ion-color-secondary-contrast-rgb: 28, 28, 30;
+  --ion-color-secondary-shade: #ca8f16;
+  --ion-color-secondary-tint: #e8ac30;
+
+  --ion-border-radius: 12px;
+
+  --dt-space-xs: 4px;
+  --dt-space-sm: 8px;
+  --dt-space-md: 16px;
+  --dt-space-lg: 24px;
+  --dt-space-xl: 32px;
+
+  --dt-surface: #ffffff;
+  --dt-grouped-background: #f2f2f7;
+  --dt-card-shadow: 0 2px 8px rgba(43, 76, 111, 0.1);
+  --dt-badge-background: #e8edf3;
+  --dt-badge-color: var(--dt-brand-navy);
+  --dt-toolbar-icon-color: var(--dt-brand-navy);
+  --dt-app-max-width: 100%;
+  --dt-sidebar-width: 260px;
+  --dt-tab-bar-height: 56px;
+  --dt-tab-bar-inset: calc(
+    var(--dt-tab-bar-height) + env(safe-area-inset-bottom) + var(--dt-space-md)
+  );
+  --dt-admin-banner-height: 28px;
+
   --ion-item-border-color: var(--ion-background-color-step-200);
-  --ion-background-color: var(--ion-color-light);
-  --ion-toolbar-background: var(--ion-background-color);
-  --ion-item-background: #fff;
+  --ion-background-color: var(--dt-grouped-background);
+  --ion-toolbar-background: var(--dt-surface);
+  --ion-item-background: var(--dt-surface);
+  --ion-tab-bar-background: var(--dt-surface);
+  --ion-tab-bar-color: var(--dt-brand-silver);
+  --ion-tab-bar-color-selected: var(--dt-brand-gold);
 }
 
-:root .dark {
-  --ion-background-color: var(--ion-background-color-step-50, #0d0d0d);
-  --ion-item-background: #1c1c1d;
-}
-
-
-/* This sets a different item background when dark mode is enabled on ios and md */
+:root .dark,
 .ion-palette-dark {
-  --ion-background-color: green;
-}
+  --dt-surface: #1a2332;
+  --dt-grouped-background: #0a0f16;
+  --dt-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  --dt-badge-background: #2a3544;
+  --dt-badge-color: #f2f2f7;
+  --dt-toolbar-icon-color: #f2f2f7;
 
-ion-item {
-  --transition: none;
-}
+  --ion-color-primary: #8eb4e0;
+  --ion-color-primary-rgb: 142, 180, 224;
+  --ion-color-primary-contrast: #0a0f16;
+  --ion-color-primary-contrast-rgb: 10, 15, 22;
+  --ion-color-primary-shade: #7d9ec5;
+  --ion-color-primary-tint: #9abce3;
 
-.section-title {
-    margin-left: 2rem;
-    margin-top: 2rem;
-    margin-bottom: -0.5rem;
-    color: var(--ion-color-medium);
-    text-transform: uppercase;
-    font-size: 0.8rem;
+  --ion-background-color: var(--dt-grouped-background);
+  --ion-item-background: var(--dt-surface);
+  --ion-toolbar-background: var(--dt-surface);
+  --ion-text-color: #f2f2f7;
+  --ion-text-color-rgb: 242, 242, 247;
+  --ion-tab-bar-background: #121a26;
 }
 
 ion-app {
-  // max-width: 992px;
+  width: 100%;
+  max-width: var(--dt-app-max-width);
   margin: 0 auto;
-  overflow-x: hidden;
+  box-shadow: 0 0 32px rgba(43, 76, 111, 0.12);
+}
+
+@media (min-width: 769px) {
+  :root {
+    --dt-app-max-width: 100%;
+  }
+
+  body {
+    background: #d8dee8;
+  }
+
+  body.dark {
+    background: #000000;
+  }
+
+  ion-app {
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+  }
 }
 
 ion-fab {
-  margin-bottom: 20px;
+  margin-bottom: calc(20px + env(safe-area-inset-bottom));
   margin-right: 20px;
 }

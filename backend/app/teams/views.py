@@ -91,6 +91,7 @@ async def get_team_waiver_links(
                 last_name=athlete.last_name,
                 email=athlete.email,
                 phone_number=athlete.phone_number,
+                date_of_birth=athlete.date_of_birth,
                 gym=athlete.gym,
                 sex=athlete.sex if athlete.sex in ("M", "F") else "M",
             )
@@ -201,7 +202,7 @@ async def register_team(
     team: TeamRegistrationModel,
     background_tasks: BackgroundTasks,
 ) -> TeamRegistrationResponseModel:
-    if team.event_short_name != "dtteams2025":
+    if team.event_short_name != "dtteams2026":
         raise conflict_exception(detail="Team registration is not open for this event.")
 
     team_exists = await Team.find(
@@ -212,7 +213,16 @@ async def register_team(
     if team_exists:
         raise conflict_exception(detail="Team name already registered for this event.")
 
-    if len(team.athletes) != 4:  # noqa: PLR2004
+    if team.event_short_name == "dtteams2026":
+        female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
+        male_count = sum(1 for athlete in team.athletes if athlete.sex == "M")
+        if len(team.athletes) != 6:  # noqa: PLR2004
+            raise conflict_exception(detail="A team must have exactly 6 athletes.")
+        if female_count != 2 or male_count != 4:  # noqa: PLR2004
+            raise conflict_exception(
+                detail="A team must have exactly 2 female and 4 male athletes.",
+            )
+    elif len(team.athletes) != 4:  # noqa: PLR2004
         raise conflict_exception(detail="A team must have exactly 4 athletes.")
 
     new_team = Team(

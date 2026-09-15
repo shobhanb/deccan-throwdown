@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import {
   appConfig,
   AppConfig,
+  archiveEventShortNames,
   defaultConfig,
+  RegistrationStatus,
   WodConfig,
 } from '../config/config';
 
@@ -15,12 +17,20 @@ export class AppConfigService {
   private _apiBaseUrl: string;
 
   constructor() {
-    const subdomain = window.location.hostname.split('.')[0];
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
     this._config = appConfig[defaultConfig];
     this._eventShortName = defaultConfig;
 
-    if (subdomain === 'localhost' || subdomain === '127') {
-      this._apiBaseUrl = `http://localhost:8000`;
+    const isLocalDev =
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      subdomain === '127' ||
+      hostname.endsWith('.local');
+
+    if (isLocalDev) {
+      // API calls go directly to the local backend (CORS allowed in main.py).
+      this._apiBaseUrl = 'http://localhost:8000';
     } else {
       this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;
     }
@@ -42,12 +52,53 @@ export class AppConfigService {
     return this._config.eventName;
   }
 
+  get eventDates(): string {
+    return this._config.eventDates;
+  }
+
+  get tagline(): string {
+    return this._config.tagline;
+  }
+
+  get registrationStatus(): RegistrationStatus {
+    return this._config.registrationStatus;
+  }
+
+  get leaderboardEnabled(): boolean {
+    return this._config.leaderboardEnabled;
+  }
+
+  get registrationPricing(): AppConfig['registrationPricing'] {
+    return this._config.registrationPricing;
+  }
+
+  get archiveEvents(): { shortName: string; eventName: string }[] {
+    return archiveEventShortNames.map((shortName) => ({
+      shortName,
+      eventName: appConfig[shortName].eventName,
+    }));
+  }
+
   get categories(): string[] {
     return this._config.categories;
   }
 
   get athletesPerTeam(): number {
     return this._config.athletesPerTeam;
+  }
+
+  get femaleAthletesPerTeam(): number {
+    return (
+      this._config.femaleAthletesPerTeam ??
+      Math.floor(this._config.athletesPerTeam / 2)
+    );
+  }
+
+  get maleAthletesPerTeam(): number {
+    return (
+      this._config.maleAthletesPerTeam ??
+      this._config.athletesPerTeam - this.femaleAthletesPerTeam
+    );
   }
 
   get wods(): WodConfig[] {

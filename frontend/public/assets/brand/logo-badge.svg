@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" aria-hidden="true">
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#2B4C6F" stroke-width="3"/>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#2B4C6F" stroke-width="1" opacity="0.5"/>
+  <image href="/icons/logo_192.jpg" x="20" y="20" width="160" height="160" preserveAspectRatio="xMidYMid slice"/>
+</svg>

@@ -1,8 +1,15 @@
 <ion-app>
-  <app-menu></app-menu>
-  <ion-router-outlet
-    id="main-content"
-    [swipeGesture]="false"
-  ></ion-router-outlet>
+  @if (showAdminBanner()) {
+  <div class="dt-admin-banner dt-admin-banner-fixed">Admin Mode — Volunteer Tools</div>
+  }
+  <ion-split-pane contentId="main-content" when="(min-width: 769px)">
+    <app-menu></app-menu>
+    <ion-router-outlet
+      id="main-content"
+      [animated]="pageAnimationsEnabled"
+      [swipeGesture]="false"
+    ></ion-router-outlet>
+  </ion-split-pane>
+  <app-tab-bar></app-tab-bar>
   <app-toast></app-toast>
 </ion-app>

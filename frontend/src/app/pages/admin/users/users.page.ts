@@ -1,6 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -12,18 +11,11 @@ import {
   IonLabel,
   IonItem,
   IonSkeletonText,
-  IonNote,
   IonIcon,
   IonButton,
   ActionSheetController,
   IonMenuButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { apiFireauthService } from 'src/app/api/services';
 import { apiFirebaseUserRecord } from 'src/app/api/models';
 import { AuthService } from 'src/app/services/auth.service';
@@ -32,22 +24,18 @@ import { ellipsisHorizontalOutline } from 'ionicons/icons';
 import { AlertService } from 'src/app/services/alert.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
+    AdminPageHeaderComponent,
     IonButton,
     IonIcon,
-    IonNote,
     IonSkeletonText,
     IonItem,
     IonLabel,
@@ -58,11 +46,9 @@ import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-
     IonHeader,
     IonTitle,
     IonToolbar,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
-    IonMenuButton,
-  ],
+    IonMenuButton
+],
 })
 export class UsersPage implements OnInit {
   private apiFireAuth = inject(apiFireauthService);

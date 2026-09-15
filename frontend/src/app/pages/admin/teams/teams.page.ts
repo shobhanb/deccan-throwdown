@@ -1,6 +1,5 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import {
   IonContent,
   IonHeader,
@@ -8,27 +7,20 @@ import {
   IonToolbar,
   IonRefresher,
   IonRefresherContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonText,
   IonItem,
   IonFab,
   IonFabButton,
   IonIcon,
   IonList,
   IonLabel,
-  IonCardSubtitle,
-  IonNote,
   IonMenuButton,
   IonSkeletonText,
   IonRouterLink,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 import { apiTeamsService } from 'src/app/api/services';
 import {
-  apiAthleteOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
@@ -42,20 +34,15 @@ import { AppConfigService } from 'src/app/services/app-config-service';
   templateUrl: './teams.page.html',
   styleUrls: ['./teams.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonNote,
-    IonCardSubtitle,
+    AdminPageHeaderComponent,
     IonLabel,
     IonList,
     IonIcon,
     IonFabButton,
     IonFab,
     IonItem,
-    IonText,
-    IonCardContent,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonRefresherContent,
     IonRefresher,
     IonContent,
@@ -63,13 +50,11 @@ import { AppConfigService } from 'src/app/services/app-config-service';
     IonTitle,
     IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
     ToolbarButtonsComponent,
     RouterLink,
     IonMenuButton,
-    IonRouterLink,
-  ],
+    IonRouterLink
+],
 })
 export class TeamsPage implements OnInit {
   private apiTeams = inject(apiTeamsService);

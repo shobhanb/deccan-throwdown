@@ -1,126 +1,69 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Wods</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-toolbar title="WODs"></app-page-toolbar>
 
-<ion-content>
+<ion-content class="page-with-tabs">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>WODs</ion-card-title>
-      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
-    </ion-card-header>
+  <app-page-header [title]="'Workouts'" [subtitle]="eventName()"></app-page-header>
+
+  @if (wodsUrl() || movementStandardsUrl()) {
+  <div class="wod-pdf-row">
     @if (wodsUrl()) {
-    <ion-button fill="clear" [href]="wodsUrl()" target="_blank"
-      >WODs PDF</ion-button
-    >
-    } @if (movementStandardsUrl()) {
-    <ion-button fill="clear" [href]="movementStandardsUrl()" target="_blank"
-      >Movement Standards PDF</ion-button
-    >
+    <ion-button fill="outline" size="small" [href]="wodsUrl()" target="_blank">
+      <ion-icon slot="start" name="document-text-outline"></ion-icon>
+      WODs PDF
+    </ion-button>
     }
-  </ion-card>
+    @if (movementStandardsUrl()) {
+    <ion-button fill="outline" size="small" [href]="movementStandardsUrl()" target="_blank">
+      <ion-icon slot="start" name="document-outline"></ion-icon>
+      Standards
+    </ion-button>
+    }
+  </div>
+  }
 
   @if (useCategoryWodDescription()) {
+  <ion-segment
+    class="category-segment"
+    [scrollable]="true"
+    [value]="selectedCategory()"
+    (ionChange)="onSegmentChangeCategory($event)"
+  >
+    @for (category of categories() || []; track category) {
+    <ion-segment-button [value]="category">{{ category }}</ion-segment-button>
+    }
+  </ion-segment>
+  }
 
-  <ion-list [inset]="true">
-    <ion-item>
-      <ion-select
-        label="Select Category"
-        labelPlacement="floating"
-        [value]="selectedCategory()"
-        (ionChange)="onClickChangeCategory($event)"
-        interface="popover"
-      >
-        @for (category of categories() || []; track category) {
-        <ion-select-option [value]="category">{{ category }}</ion-select-option>
+  <div class="wod-grid">
+    @if (dataLoaded()) {
+    @for (wod of wods(); track wod.wodNumber) {
+    <article class="dt-card-workout wod-card">
+      <div class="wod-number text-display">WOD {{ wod.wodNumber }}</div>
+      <h2 class="wod-name">{{ wod.wodName }}</h2>
+      <div class="wod-type-chips">
+        @for (chip of getWodTypeChips(wod.scoreTypes); track chip) {
+        <span class="dt-pill">{{ chip }}</span>
         }
-      </ion-select>
-    </ion-item>
-  </ion-list>
-  } @if (dataLoaded()) { @for (wod of wods(); track wod.wodNumber) {
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ wod.wodName }}</ion-card-title>
-      <ion-card-subtitle>{{ 'WOD ' + wod.wodNumber}}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <div>
-        <div class="wod-summary">{{ wod.wodSummary }}</div>
+      </div>
+      <div class="wod-summary">{{ wod.wodSummary }}</div>
+      <div class="wod-description">
         @for (line of getWodDescription(wod); track $index) {
         <div class="wod-description-line">{{ line }}</div>
         }
       </div>
-    </ion-card-content>
-  </ion-card>
-  } } @else {
-  <!-- Loading skeleton for leaderboard -->
-
-  <!-- Loading skeleton for selectors -->
-  <ion-list [inset]="true">
-    <ion-item>
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 30%; height: 16px; margin-bottom: 4px"
-      ></ion-skeleton-text>
-      <br />
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 70%; height: 20px"
-      ></ion-skeleton-text>
-    </ion-item>
-    <ion-item>
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 25%; height: 16px; margin-bottom: 4px"
-      ></ion-skeleton-text>
-      <br />
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 60%; height: 20px"
-      ></ion-skeleton-text>
-    </ion-item>
-  </ion-list>
-
-  <!-- Loading skeleton for leaderboard items -->
-  <ion-list [inset]="true">
-    @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
-    <ion-item>
-      <div slot="start">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 20px; height: 20px"
-        ></ion-skeleton-text>
-      </div>
-      <ion-label>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 80%; height: 20px; margin-bottom: 4px"
-        ></ion-skeleton-text>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 60%; height: 16px"
-        ></ion-skeleton-text>
-      </ion-label>
-      <ion-label slot="end" class="ion-text-end">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 40px; height: 18px; margin-bottom: 2px"
-        ></ion-skeleton-text>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 50px; height: 18px"
-        ></ion-skeleton-text>
-      </ion-label>
-    </ion-item>
+    </article>
     }
-  </ion-list>
-
-  }
+    } @else {
+    @for (item of [1, 2, 3]; track $index) {
+    <article class="dt-card-workout wod-card wod-skeleton">
+      <ion-skeleton-text [animated]="true" style="width: 40%; height: 24px"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" style="width: 70%; height: 20px; margin-top: 8px"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" style="width: 90%; height: 14px; margin-top: 12px"></ion-skeleton-text>
+    </article>
+    }
+    }
+  </div>
 </ion-content>

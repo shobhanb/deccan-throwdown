@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import {
   IonButtons,
   IonLabel,
@@ -12,7 +12,7 @@ import {
   IonListHeader,
   IonNote,
   IonTitle,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
   selector: 'app-auth-state',
   templateUrl: './auth-state.component.html',
   styleUrls: ['./auth-state.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonTitle,
     IonNote,

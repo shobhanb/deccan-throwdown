@@ -1,74 +1,62 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Login</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="auth-content" [fullscreen]="true">
+  <div class="auth-container">
+    <img src="assets/brand/logo-badge.svg" alt="Deccan Throwdown" class="auth-logo auth-logo-badge" />
+    <h1 class="auth-title text-display">Login</h1>
+    <p class="auth-subtitle">{{ eventName }}</p>
+    <p class="auth-description">Login as an admin user</p>
 
-<ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Login</ion-card-title>
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text>Login as an admin user</ion-text>
-    </ion-card-content>
-  </ion-card>
-  <form [formGroup]="loginForm" (ngSubmit)="onClickLogin()">
-    <ion-list [inset]="true">
-      <ion-item>
-        <ion-input
-          type="email"
-          label="Email"
-          labelPlacement="stacked"
-          placeholder="froning@crossfit.com"
-          formControlName="email"
-          [required]="true"
-        ></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input
-          type="password"
-          label="Password"
-          labelPlacement="stacked"
-          placeholder="burpees4LYFE"
-          formControlName="password"
-          minlength="6"
-          [required]="true"
-        >
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
-      </ion-item>
-    </ion-list>
+    <form novalidate (submit)="onClickLogin(); $event.preventDefault()">
+      <ion-list [inset]="true" class="card-elevated auth-form-card">
+        <ion-item>
+          <ion-input
+            type="email"
+            label="Email"
+            labelPlacement="stacked"
+            placeholder="froning@crossfit.com"
+            [formField]="loginForm.email"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            type="password"
+            label="Password"
+            labelPlacement="stacked"
+            placeholder="burpees4LYFE"
+            minlength="6"
+            [formField]="loginForm.password"
+          >
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+        </ion-item>
+      </ion-list>
 
-    <ion-button
-      fill="clear"
-      class="ion-margin-horizontal"
-      type="button"
-      routerLink="/auth/forgot-password"
-      routerDirection="forward"
-    >
-      <a>Forgot Password?</a>
-    </ion-button>
+      <ion-button
+        fill="clear"
+        class="auth-link-button"
+        type="button"
+        routerLink="/auth/forgot-password"
+        routerDirection="forward"
+      >
+        Forgot Password?
+      </ion-button>
 
-    <ion-button
-      expand="block"
-      type="submit"
-      class="ion-margin"
-      [disabled]="!isLoginFormValid()"
-      >Login</ion-button
-    >
-    <ion-button
-      expand="block"
-      type="button"
-      fill="outline"
-      class="ion-margin"
-      [routerLink]="['/home']"
-      routerDirection="root"
-      [replaceUrl]="true"
-      >Cancel</ion-button
-    >
-  </form>
+      <ion-button
+        expand="block"
+        color="secondary"
+        type="submit"
+        [disabled]="!isLoginFormValid()"
+        >Sign In</ion-button
+      >
+      <ion-button
+        expand="block"
+        type="button"
+        fill="outline"
+        class="auth-cancel-button"
+        [routerLink]="['/home']"
+        routerDirection="root"
+        [replaceUrl]="true"
+        >Cancel</ion-button
+      >
+    </form>
+  </div>
 </ion-content>

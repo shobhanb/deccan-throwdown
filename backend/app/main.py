@@ -38,12 +38,8 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
     yield
 
 
-app_configs: dict[str, Any] = {"debug": True, "title": "Deccan Throwdown API", "lifespan": lifespan}
+app_configs: dict[str, Any] = {"title": "Deccan Throwdown API", "lifespan": lifespan}
 
-ENVIRONMENT = env_settings.environment
-DEV_ENVIRONMENTS = {"local", "dev", "test"}
-if ENVIRONMENT not in DEV_ENVIRONMENTS:
-    app_configs["openapi_url"] = None
 
 app = FastAPI(**app_configs)
 
@@ -54,7 +50,13 @@ app.include_router(scores_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[url_settings.frontend_url],
+    allow_origins=[
+        url_settings.frontend_url,
+        "http://localhost:8100",
+        "http://127.0.0.1:8100",
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

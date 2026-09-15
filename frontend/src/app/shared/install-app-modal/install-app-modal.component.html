@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Install this app</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Install App</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="closeModal()">
         <ion-icon name="close-outline"></ion-icon>
@@ -8,62 +8,57 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content class="install-modal-content">
   <div class="installation-container ion-padding">
-    <ion-icon name="arrow-down-circle-outline" class="install-icon"></ion-icon>
-    <h3>
-      {{ "Install this app on your " + platformType + " device" }}
+    <img src="assets/brand/logo-badge.svg" alt="Deccan Throwdown" class="install-logo" />
+    <h3 class="text-display">
+      Install on {{ platformType }}
     </h3>
+    <p class="install-tagline">Add Deccan Throwdown to your home screen for event-day access</p>
   </div>
   @if (platformType === 'ios') {
-  <ion-list [inset]="true" lines="none">
-    <ion-item color="light">
+  <ion-list [inset]="true" lines="none" class="install-steps">
+    <ion-item>
       <ion-note slot="start">1</ion-note>
       <ion-label
         >Tap the <ion-icon name="share-outline"></ion-icon> share button in your
         browser</ion-label
       >
     </ion-item>
-    <ion-item color="light">
+    <ion-item>
       <ion-note slot="start">2</ion-note>
       <ion-label>Select "Add to Home Screen" from the menu options</ion-label>
     </ion-item>
-
-    <ion-item color="light">
+    <ion-item>
       <ion-note slot="start">3</ion-note>
-      <ion-label>PR?</ion-label>
+      <ion-label>Open from your home screen — PR?</ion-label>
     </ion-item>
   </ion-list>
   } @else {
-  <ion-list [inset]="true" lines="none">
-    <ion-item color="light">
+  <ion-list [inset]="true" lines="none" class="install-steps">
+    <ion-item>
       <ion-note slot="start">1</ion-note>
       <ion-label
-        >Tap the <ion-icon name="ellipsis-vertical-outline"></ion-icon> button
-        in your browser</ion-label
+        >Tap the <ion-icon name="ellipsis-vertical-outline"></ion-icon> menu in your
+        browser</ion-label
       >
     </ion-item>
-    <ion-item color="light">
+    <ion-item>
       <ion-note slot="start">2</ion-note>
-      <ion-label>Select "Add to Home Screen" from the menu options</ion-label>
+      <ion-label>Select "Add to Home Screen" or "Install"</ion-label>
     </ion-item>
-    <ion-item color="light">
+    <ion-item>
       <ion-note slot="start">3</ion-note>
-      <ion-label>Select "Install"</ion-label>
-    </ion-item>
-
-    <ion-item color="light">
-      <ion-note slot="start">4</ion-note>
-      <ion-label>PR?</ion-label>
+      <ion-label>Open from your home screen — PR?</ion-label>
     </ion-item>
   </ion-list>
   }
 
   <ion-button
     expand="block"
-    fill="clear"
+    color="secondary"
     class="ion-padding-horizontal"
     (click)="closeModal()"
-    >Close</ion-button
+    >Got it</ion-button
   >
 </ion-content>

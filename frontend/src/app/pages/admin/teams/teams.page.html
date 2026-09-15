@@ -11,31 +11,28 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Teams Management</ion-card-title>
-      <ion-card-subtitle>{{ eventName }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-text>Edit or create teams</ion-text>
-    </ion-card-content>
-  </ion-card>
+  <app-admin-page-header
+    title="Teams Management"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
 
   @if (dataLoaded()) { @for (category of teamsCategoriesData(); track category)
   {
-  <div class="section-title">
+  <div class="section-title admin-section-title">
     {{ category[0] + ' (' + category[1].length + ')' }}
   </div>
-  <ion-list [inset]="true">
+  <ion-list [inset]="true" class="dt-admin-list">
     @for (team of category[1]; track team.id) {
-    <ion-item [routerLink]="team.id" routerDirection="forward">
+    <ion-item [routerLink]="team.id" routerDirection="forward" class="admin-data-row">
       <ion-label>
         <h2>{{ team.team_name }}</h2>
         @if (!team.verified) {
-        <p class="pending-verification">Pending Verification</p>
+        <p><span class="dt-pill dt-pill-warning">Pending Verification</span></p>
+        } @else {
+        <p><span class="dt-pill dt-pill-gold">Verified</span></p>
         }
       </ion-label>
-      <ion-label>
+      <ion-label slot="end" class="admin-athletes-col">
         @for (athlete of team.athletes; track $index) {
         <p>{{ athlete.first_name + ' ' + athlete.last_name }}</p>
         }
@@ -44,7 +41,6 @@
     }
   </ion-list>
   }} @else {
-  <!-- Loading skeleton -->
   @for (category of [1, 2, 3]; track $index) {
   <div class="section-title">
     <ion-skeleton-text
@@ -52,29 +48,20 @@
       style="width: 40%; height: 16px"
     ></ion-skeleton-text>
   </div>
-  <ion-list [inset]="true">
+  <ion-list [inset]="true" class="dt-admin-list">
     @for (team of [1, 2, 3, 4]; track $index) {
     <ion-item>
-      <ion-label>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 70%; height: 16px"
-        ></ion-skeleton-text>
-      </ion-label>
-      <ion-note>
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 80%; height: 14px"
-        ></ion-skeleton-text>
-      </ion-note>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
     </ion-item>
     }
   </ion-list>
   } }
 
-  <!-- FAB button for adding new events -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="addTeam()">
+    <ion-fab-button color="secondary" (click)="addTeam()">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

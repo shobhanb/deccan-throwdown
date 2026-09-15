@@ -1,11 +1,35 @@
+.install-modal-content {
+  --background: var(--ion-background-color);
+}
+
 .installation-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+  padding-top: var(--dt-space-lg);
 }
 
-.install-icon {
-  font-size: 56px;
-  color: var(--ion-color-primary);
+.install-logo {
+  width: 96px;
+  height: 96px;
+  margin-bottom: var(--dt-space-md);
+  border-radius: 50%;
+}
+
+.install-tagline {
+  margin: var(--dt-space-sm) 0 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.install-steps {
+  margin-bottom: var(--dt-space-md);
+
+  ion-note {
+    font-weight: 700;
+    color: var(--dt-brand-gold);
+    font-size: 1rem;
+  }
 }

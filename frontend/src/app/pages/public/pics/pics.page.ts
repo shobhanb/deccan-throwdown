@@ -1,23 +1,27 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonMenuButton,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonImg,
   IonRefresher,
   IonRefresherContent,
   IonSkeletonText,
-} from '@ionic/angular/standalone';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  chevronForwardOutline,
+  closeOutline,
+} from 'ionicons/icons';
 
 interface ImageData {
   filename: string;
@@ -46,30 +50,34 @@ interface ImageListData {
   templateUrl: './pics.page.html',
   styleUrls: ['./pics.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageToolbarComponent,
+    PageHeaderComponent,
+    EmptyStateComponent,
     IonSkeletonText,
     IonRefresherContent,
     IonRefresher,
-    IonImg,
-    IonRow,
-    IonGrid,
-    IonCol,
     IonContent,
+    IonModal,
     IonHeader,
-    IonTitle,
     IonToolbar,
-    IonMenuButton,
-    CommonModule,
-    FormsModule,
-    ToolbarButtonsComponent,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
   ],
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
 
   imageData = signal<ImageData[]>([]);
+  dataLoaded = signal(false);
+  selectedImageIndex = signal<number | null>(null);
 
-  constructor() {}
+  constructor() {
+    addIcons({ closeOutline, chevronBackOutline, chevronForwardOutline });
+  }
 
   ngOnInit() {}
 
@@ -82,9 +90,30 @@ export class PicsPage implements OnInit {
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  // Helper method to shuffle array using Fisher-Yates algorithm
+  openLightbox(index: number) {
+    this.selectedImageIndex.set(index);
+  }
+
+  closeLightbox() {
+    this.selectedImageIndex.set(null);
+  }
+
+  prevImage() {
+    const current = this.selectedImageIndex();
+    if (current !== null && current > 0) {
+      this.selectedImageIndex.set(current - 1);
+    }
+  }
+
+  nextImage() {
+    const current = this.selectedImageIndex();
+    if (current !== null && current < this.imageData().length - 1) {
+      this.selectedImageIndex.set(current + 1);
+    }
+  }
+
   private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array]; // Create a copy to avoid mutating original
+    const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -94,24 +123,26 @@ export class PicsPage implements OnInit {
 
   async loadImages() {
     if (this.imageData().length > 0) {
-      // Images already loaded, just shuffle
       this.imageData.set(this.shuffleArray(this.imageData()));
+      this.dataLoaded.set(true);
       return;
     }
+    this.dataLoaded.set(false);
     try {
-      // Load the generated image list JSON file
       this.http.get<ImageListData>('assets/image-list.json').subscribe({
         next: (data) => {
-          // Randomize the order of images
           const shuffledImages = this.shuffleArray(data.images);
           this.imageData.set(shuffledImages);
+          this.dataLoaded.set(true);
         },
         error: (error) => {
           console.error('Error loading image list:', error);
+          this.dataLoaded.set(true);
         },
       });
     } catch (error) {
       console.error('Error in loadImages:', error);
+      this.dataLoaded.set(true);
     }
   }
 }

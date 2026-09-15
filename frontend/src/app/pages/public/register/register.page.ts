@@ -1,106 +1,121 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  form,
+  FormField,
+  minLength,
+  required,
+} from '@angular/forms/signals';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
+  IonFooter,
   IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
   IonList,
   IonItem,
   IonInput,
   IonSelect,
   IonSelectOption,
   IonButton,
-  IonLabel,
   IonIcon,
-  IonMenuButton,
   ModalController,
-  IonCardContent,
-  IonText,
   IonRouterLink,
-} from '@ionic/angular/standalone';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+} from '@ionic/angular';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { AthleteComponent } from './athlete/athlete.component';
 import { SuccessComponent } from './success/success.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
 import { RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { addOutline, manOutline, womanOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  cashOutline,
+  manOutline,
+  womanOutline,
+} from 'ionicons/icons';
 import { apiTeamsService } from 'src/app/api/services';
 import {
   apiAthleteRegistrationModel,
   apiTeamRegistrationResponseModel,
 } from 'src/app/api/models';
+import { TeamFormModel } from 'src/app/shared/models/form-models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
+    DatePipe,
+    DecimalPipe,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    IonFooter,
+    IonToolbar,
     IonIcon,
-    IonLabel,
     IonButton,
     IonSelectOption,
     IonSelect,
     IonInput,
     IonItem,
     IonList,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonMenuButton,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ToolbarButtonsComponent,
+    PageToolbarComponent,
+    FormField,
     RouterLink,
     IonRouterLink,
   ],
 })
-export class RegisterPage implements OnInit {
+export class RegisterPage {
   private modalController = inject(ModalController);
   private appConfigService = inject(AppConfigService);
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   categories = this.appConfigService.categories;
   eventName = this.appConfigService.eventName;
+  registrationPricing = this.appConfigService.registrationPricing;
+  registrationOpen = this.appConfigService.registrationStatus === 'open';
+  athletesPerTeam = this.appConfigService.athletesPerTeam;
+  femaleAthletesPerTeam = this.appConfigService.femaleAthletesPerTeam;
+  maleAthletesPerTeam = this.appConfigService.maleAthletesPerTeam;
 
   athletes = signal<apiAthleteRegistrationModel[]>([]);
 
-  teamForm = new FormGroup({
-    team_name: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-    ]),
-    category: new FormControl('', [Validators.required]),
+  registrationStep = computed(() => {
+    if (this.isFormValid()) return 3;
+    if (this.teamForm().valid()) return 2;
+    return 1;
+  });
+
+  teamModel = signal<TeamFormModel>({
+    team_name: '',
+    category: '',
+  });
+
+  teamForm = form(this.teamModel, (schemaPath) => {
+    required(schemaPath.team_name, { message: 'Team name is required' });
+    minLength(schemaPath.team_name, 2, {
+      message: 'Team name must be at least 2 characters',
+    });
+    required(schemaPath.category, { message: 'Category is required' });
   });
 
   constructor() {
-    addIcons({ addOutline, manOutline, womanOutline });
+    addIcons({ addOutline, manOutline, womanOutline, cashOutline });
   }
-
-  ngOnInit() {}
 
   get femaleAthletes(): apiAthleteRegistrationModel[] {
     return this.athletes().filter((athlete) => athlete.sex === 'F');
@@ -117,8 +132,7 @@ export class RegisterPage implements OnInit {
   }[] {
     const slots = [];
 
-    // Create 2 female slots
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.femaleAthletesPerTeam; i++) {
       slots.push({
         type: 'F' as const,
         index: i,
@@ -126,8 +140,7 @@ export class RegisterPage implements OnInit {
       });
     }
 
-    // Create 2 male slots
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.maleAthletesPerTeam; i++) {
       slots.push({
         type: 'M' as const,
         index: i,
@@ -171,10 +184,8 @@ export class RegisterPage implements OnInit {
     const otherGenderAthletes = currentAthletes.filter((a) => a.sex !== sex);
 
     if (athleteIndex !== undefined && sameGenderAthletes[athleteIndex]) {
-      // Update existing athlete
       sameGenderAthletes[athleteIndex] = athleteData;
     } else {
-      // Add new athlete
       sameGenderAthletes.push(athleteData);
     }
 
@@ -183,57 +194,55 @@ export class RegisterPage implements OnInit {
 
   isFormValid(): boolean {
     return (
-      this.teamForm.valid &&
-      this.athletes().length === 4 &&
-      this.femaleAthletes.length === 2 &&
-      this.maleAthletes.length === 2
+      this.teamForm().valid() &&
+      this.athletes().length === this.athletesPerTeam &&
+      this.femaleAthletes.length === this.femaleAthletesPerTeam &&
+      this.maleAthletes.length === this.maleAthletesPerTeam
     );
   }
 
   onSubmit() {
-    if (this.isFormValid()) {
-      const registrationData = {
-        team_name: this.teamForm.value.team_name!.trim(),
-        category: this.teamForm.value.category!,
-        event_short_name: this.appConfigService.eventShortName,
-        athletes: this.athletes().map((athlete) => ({
-          first_name: athlete.first_name.trim(),
-          last_name: athlete.last_name.trim(),
-          sex: athlete.sex,
-          email: athlete.email?.trim() || null,
-          phone_number: athlete.phone_number?.trim() || null,
-          gym: athlete.gym?.trim() || null,
-          city: athlete.city?.trim() || null,
-        })),
-      };
-
-      console.log('Registration Data:', registrationData);
-
-      this.apiTeams
-        .registerTeamTeamsRegisterPost({ body: registrationData })
-        .subscribe({
-          next: async (response: apiTeamRegistrationResponseModel) => {
-            console.log('Team registered successfully:', response);
-            this.toastService.showSuccess('Team registered successfully!');
-
-            // Show success modal
-            const modal = await this.modalController.create({
-              component: SuccessComponent,
-              componentProps: {
-                responseData: response,
-              },
-            });
-
-            await modal.present();
-          },
-          error: (error) => {
-            console.error('Error registering team:', error);
-            this.toastService.showError(
-              'Failed to register team: ' +
-                (error.statusText || 'Unknown error')
-            );
-          },
-        });
+    if (!this.isFormValid()) {
+      return;
     }
+
+    const teamData = this.teamModel();
+    const registrationData = {
+      team_name: teamData.team_name.trim(),
+      category: teamData.category,
+      event_short_name: this.appConfigService.eventShortName,
+      athletes: this.athletes().map((athlete) => ({
+        first_name: athlete.first_name.trim(),
+        last_name: athlete.last_name.trim(),
+        sex: athlete.sex,
+        email: athlete.email?.trim() || null,
+        phone_number: athlete.phone_number?.trim() || null,
+        date_of_birth: athlete.date_of_birth,
+        gym: athlete.gym?.trim() || null,
+        city: athlete.city?.trim() || null,
+      })),
+    };
+
+    this.apiTeams
+      .registerTeamTeamsRegisterPost({ body: registrationData })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: async (response: apiTeamRegistrationResponseModel) => {
+          const modal = await this.modalController.create({
+            component: SuccessComponent,
+            componentProps: {
+              responseData: response,
+            },
+          });
+
+          await modal.present();
+        },
+        error: (error) => {
+          console.error('Error registering team:', error);
+          this.toastService.showError(
+            'Failed to register team: ' + (error.statusText || 'Unknown error')
+          );
+        },
+      });
   }
 }

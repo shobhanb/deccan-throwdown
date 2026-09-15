@@ -1,18 +1,77 @@
+.wod-pdf-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dt-space-sm);
+  padding: 0 var(--dt-space-md) var(--dt-space-md);
+}
 
-.wod-score-type {
-    color: var(--ion-color-dark, #000000)
+.category-segment {
+  width: calc(100% - 2 * var(--dt-space-md));
+  max-width: calc(100% - 2 * var(--dt-space-md));
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  --background: var(--dt-badge-background);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  ion-segment-button {
+    --padding-start: var(--dt-space-sm);
+    --padding-end: var(--dt-space-sm);
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  ion-label {
+    white-space: nowrap;
+  }
+}
+
+.wod-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--dt-space-md);
+  padding: 0 var(--dt-space-md) var(--dt-space-xl);
+}
+
+.wod-card {
+  padding: var(--dt-space-md);
+}
+
+.wod-number {
+  font-size: 1.5rem;
+  color: var(--dt-brand-gold);
+  line-height: 1;
+}
+
+.wod-name {
+  margin: var(--dt-space-xs) 0 var(--dt-space-sm);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.wod-type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dt-space-xs);
+  margin-bottom: var(--dt-space-sm);
 }
 
 .wod-summary {
-  font-weight: bold;
-  color: var(--ion-color-primary, #3880ff);
-  padding: 8px 0;
-  margin-bottom: 4px;
-  font-size: 1.1em;
+  font-weight: 700;
+  padding-bottom: var(--dt-space-sm);
+  margin-bottom: var(--dt-space-sm);
+  border-bottom: 1px solid var(--ion-color-step-200, #e5e5ea);
 }
 
 .wod-description-line {
-  color: var(--ion-color-medium, #92949c);
-  padding: 4px 0;
-  line-height: 1.2;
+  color: var(--ion-color-medium);
+  padding: 3px 0;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 769px) {
+  .wod-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

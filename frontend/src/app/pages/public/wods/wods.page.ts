@@ -1,30 +1,24 @@
-import { Component, inject, linkedSignal, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, DestroyRef, inject, linkedSignal, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonMenuButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonLabel,
-  IonItem,
   IonRefresherContent,
   IonRefresher,
-  IonList,
   IonSkeletonText,
-  IonCardContent,
   IonButton,
-  IonSelect,
-  IonSelectOption,
-} from '@ionic/angular/standalone';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+  IonIcon,
+  IonSegment,
+  IonSegmentButton,
+} from '@ionic/angular';
+import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
+import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { addIcons } from 'ionicons';
-import { trophyOutline } from 'ionicons/icons';
+import {
+  documentOutline,
+  documentTextOutline,
+  trophyOutline,
+} from 'ionicons/icons';
 import { appConfig, defaultConfig, WodConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 
@@ -33,33 +27,23 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './wods.page.html',
   styleUrls: ['./wods.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    PageToolbarComponent,
+    PageHeaderComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonIcon,
     IonButton,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
-    IonLabel,
-    IonItem,
-    IonList,
     IonRefresherContent,
     IonRefresher,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonSkeletonText,
-    CommonModule,
-    FormsModule,
-    IonMenuButton,
-    ToolbarButtonsComponent,
-    IonSelect,
-    IonSelectOption,
   ],
 })
 export class WodsPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   dataLoaded = signal<boolean>(false);
 
@@ -81,10 +65,14 @@ export class WodsPage implements OnInit {
   );
 
   constructor() {
-    addIcons({ trophyOutline });
+    addIcons({ trophyOutline, documentOutline, documentTextOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.activatedRoute.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getData());
+  }
 
   ionViewWillEnter() {
     this.getData();
@@ -100,13 +88,28 @@ export class WodsPage implements OnInit {
 
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
-    if (eventShortNameParam) {
-      this.eventShortName.set(eventShortNameParam);
-    }
+    this.eventShortName.set(eventShortNameParam ?? defaultConfig);
+    this.selectedCategory.set(this.categories()?.[0] || null);
   }
 
   onClickChangeCategory(event: CustomEvent) {
     this.selectedCategory.set(event.detail.value);
+  }
+
+  onSegmentChangeCategory(event: CustomEvent) {
+    this.selectedCategory.set(event.detail.value);
+  }
+
+  getWodTypeChips(scoreTypes: WodConfig['scoreTypes']): string[] {
+    const labels: Record<string, string> = {
+      Reps: 'AMRAP',
+      Time: 'For Time',
+      Weight: 'Max Weight',
+      Tiebreak: 'Tiebreak',
+    };
+    return scoreTypes
+      .filter((type) => type !== 'Tiebreak')
+      .map((type) => labels[type] ?? type);
   }
 
   getWodDescription(wod: WodConfig): string[] {

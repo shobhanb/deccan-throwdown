@@ -1,0 +1,37 @@
+:host ::ng-deep .dt-toast {
+  --bottom: calc(var(--dt-space-md) + env(safe-area-inset-bottom));
+  --start: var(--dt-space-md);
+  --end: var(--dt-space-md);
+  --border-radius: 12px;
+  --min-height: 48px;
+  --box-shadow: var(--dt-card-shadow);
+}
+
+:host ::ng-deep .dt-toast .toast-message {
+  padding: 12px 16px;
+  line-height: 1.4;
+}
+
+:host ::ng-deep .dt-toast-success {
+  --background: var(--dt-brand-gold);
+  --color: var(--dt-brand-navy);
+  --button-color: var(--dt-brand-navy);
+}
+
+:host ::ng-deep .dt-toast-primary {
+  --background: var(--dt-brand-navy);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}
+
+:host ::ng-deep .dt-toast-warning {
+  --background: var(--dt-brand-steel);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}
+
+:host ::ng-deep .dt-toast-danger {
+  --background: var(--ion-color-danger);
+  --color: #ffffff;
+  --button-color: #ffffff;
+}

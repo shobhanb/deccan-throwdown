@@ -1,63 +1,70 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Teams</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-toolbar title="Teams"></app-page-toolbar>
 
-<ion-content>
+<ion-content class="page-with-tabs">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Teams & Athletes</ion-card-title>
-      <ion-card-subtitle>{{ eventName() }}</ion-card-subtitle>
-    </ion-card-header>
-  </ion-card>
+  <app-page-header
+    title="Teams & Athletes"
+    [subtitle]="eventName()"
+  ></app-page-header>
 
-  @if (dataLoaded()) { @for (category of teamsCategoriesData(); track category)
-  {
-  <div class="section-title">
-    {{ category[0] + ' (' + category[1].length + ')' }}
+  @if (dataLoaded()) {
+  @if (teamsCategoriesData().length === 0) {
+  <app-empty-state
+    icon="people-outline"
+    message="No teams registered yet"
+  ></app-empty-state>
+  }
+  @for (category of teamsCategoriesData(); track category[0]) {
+  <div
+    [class]="'section-header sticky-section-header dt-category-section ' + getCategoryClass(category[0])"
+  >
+    {{ category[0] }} ({{ category[1].length }})
   </div>
-  <ion-list [inset]="true">
-    @for (team of category[1]; track team.id) {
-
+  <ion-list [inset]="true" class="card-elevated team-roster-list">
     <ion-accordion-group>
+      @for (team of category[1]; track team.id) {
       <ion-accordion>
         <ion-item slot="header">
           <ion-label>{{ team.team_name }}</ion-label>
-          @if (!team.verified ) {
-          <ion-note>Pending Verification</ion-note>
-          }
+          <div class="team-header-badges" slot="end">
+            @if (team.verified) {
+            <span class="dt-pill dt-pill-gold">Verified</span>
+            } @else {
+            <span class="dt-pill dt-pill-warning">Pending</span>
+            }
+          </div>
         </ion-item>
         <div class="ion-padding-vertical" slot="content">
           <ion-list>
             @for (athlete of team.athletes; track athlete.id) {
             <ion-item>
+              <div class="athlete-avatar" slot="start">
+                {{ getInitials(athlete.first_name, athlete.last_name) }}
+              </div>
+              <ion-label>
+                <h3>{{ athlete.first_name }} {{ athlete.last_name }}</h3>
+                <p>{{ athlete.gym }}</p>
+              </ion-label>
               <ion-icon
                 [name]="athlete.sex === 'M' ? 'man-outline' : 'woman-outline'"
-                slot="start"
+                slot="end"
+                color="medium"
               ></ion-icon>
-              <ion-label
-                >{{ athlete.first_name + ' ' + athlete.last_name }}</ion-label
-              >
-              <ion-note slot="end">{{ athlete.gym}}</ion-note>
             </ion-item>
             }
           </ion-list>
         </div>
       </ion-accordion>
+      }
     </ion-accordion-group>
-    }
   </ion-list>
-  }} @else {
-  <!-- Loading skeleton -->
+  }
+  } @else {
   @for (category of [1, 2, 3]; track $index) {
-  <div class="section-title">
+  <div class="section-header">
     <ion-skeleton-text
       [animated]="true"
       style="width: 40%; height: 16px"
@@ -65,40 +72,14 @@
   </div>
   <ion-list [inset]="true">
     @for (team of [1, 2, 3, 4]; track $index) {
-    <ion-accordion-group>
-      <ion-accordion>
-        <ion-item slot="header">
-          <ion-label>
-            <ion-skeleton-text
-              [animated]="true"
-              style="width: 70%; height: 16px"
-            ></ion-skeleton-text>
-          </ion-label>
-        </ion-item>
-        <div class="ion-padding-vertical" slot="content">
-          <ion-list>
-            @for (athlete of [1, 2, 3, 4]; track $index) {
-            <ion-item>
-              <ion-icon name="person-outline" slot="start"></ion-icon>
-              <ion-label>
-                <ion-skeleton-text
-                  [animated]="true"
-                  style="width: 80%; height: 16px"
-                ></ion-skeleton-text>
-              </ion-label>
-              <ion-note slot="end">
-                <ion-skeleton-text
-                  [animated]="true"
-                  style="width: 60px; height: 14px"
-                ></ion-skeleton-text>
-              </ion-note>
-            </ion-item>
-            }
-          </ion-list>
-        </div>
-      </ion-accordion>
-    </ion-accordion-group>
+    <ion-item>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
+    </ion-item>
     }
   </ion-list>
-  } }
+  }
+  }
 </ion-content>

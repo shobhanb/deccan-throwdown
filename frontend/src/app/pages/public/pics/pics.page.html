@@ -1,46 +1,96 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
-    <ion-title>Image Gallery</ion-title>
-    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-toolbar title="Gallery"></app-page-toolbar>
 
-<ion-content class="ion-padding">
+<ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-grid>
-    <ion-row>
-      @for (imageInfo of imageData(); track $index; let i = $index) {
-      <ion-col
-        size="auto"
-        [sizeSm]="imageInfo.type === 'horizontal' ? 'auto' : 6"
-        [sizeMd]="imageInfo.type === 'horizontal' ? 'auto' : 4"
-        [sizeLg]="imageInfo.type === 'horizontal' ? 'auto' : 3"
-        class="image-col"
-      >
-        <a [href]="imageInfo.path">
-          <ion-img [src]="imageInfo.path" class="gallery-image"> </ion-img>
-        </a>
-      </ion-col>
-      }
-    </ion-row>
+  <app-page-header title="Image Gallery" subtitle="Event Photos"></app-page-header>
 
-    @if (imageData().length === 0) {
-    <ion-row>
-      @for (skeleton of [1,2,3,4,5,6,7,8]; track skeleton) {
-      <ion-col size="12" sizeSm="6" sizeMd="4" sizeLg="3">
-        <div class="skeleton-image-container">
-          <ion-skeleton-text
-            [animated]="true"
-            style="width: 100%; height: 200px; border-radius: 8px"
-          ></ion-skeleton-text>
-        </div>
-      </ion-col>
-      }
-    </ion-row>
+  @if (dataLoaded() && imageData().length === 0) {
+  <app-empty-state
+    icon="camera-outline"
+    message="No photos available yet"
+  ></app-empty-state>
+  }
+
+  <div class="gallery-masonry">
+    @for (imageInfo of imageData(); track imageInfo.path; let i = $index) {
+    <button
+      type="button"
+      class="gallery-tile"
+      (click)="openLightbox(i)"
+      [attr.aria-label]="'View photo ' + (i + 1)"
+    >
+      <img
+        [src]="imageInfo.path"
+        [alt]="imageInfo.filename"
+        loading="lazy"
+        class="gallery-image"
+      />
+    </button>
     }
-  </ion-grid>
+  </div>
+
+  @if (!dataLoaded()) {
+  <div class="gallery-masonry">
+    @for (skeleton of [1, 2, 3, 4, 5, 6, 7, 8]; track skeleton) {
+    <div class="gallery-tile skeleton-tile">
+      <ion-skeleton-text [animated]="true" class="skeleton-image"></ion-skeleton-text>
+    </div>
+    }
+  </div>
+  }
 </ion-content>
+
+<ion-modal
+  [isOpen]="selectedImageIndex() !== null"
+  (didDismiss)="closeLightbox()"
+  class="gallery-lightbox-modal"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="dark">
+        <ion-title>Photo {{ (selectedImageIndex() ?? 0) + 1 }} / {{ imageData().length }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeLightbox()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="modal-content">
+      <div class="image-viewer">
+        @if (selectedImageIndex() !== null) {
+        <ion-button
+          class="nav-button prev-button"
+          fill="clear"
+          (click)="prevImage()"
+          [disabled]="selectedImageIndex() === 0"
+        >
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </ion-button>
+        <div class="full-image-container">
+          <img
+            [src]="imageData()[selectedImageIndex()!].path"
+            [alt]="imageData()[selectedImageIndex()!].filename"
+            class="full-size-image"
+          />
+        </div>
+        <ion-button
+          class="nav-button next-button"
+          fill="clear"
+          (click)="nextImage()"
+          [disabled]="selectedImageIndex() === imageData().length - 1"
+        >
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+        <div class="image-info">
+          <p>{{ imageData()[selectedImageIndex()!].filename }}</p>
+          <p>{{ imageData()[selectedImageIndex()!].sizeFormatted }}</p>
+        </div>
+        }
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

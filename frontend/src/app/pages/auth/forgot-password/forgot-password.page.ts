@@ -1,12 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { email, form, FormField, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import {
   IonContent,
@@ -14,50 +9,30 @@ import {
   IonInput,
   IonItem,
   IonList,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonText,
   IonRouterLink,
-  IonMenuButton,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ToastService } from 'src/app/services/toast.service';
-import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
+import { ForgotPasswordFormModel } from 'src/app/shared/models/form-models';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    IonText,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonList,
     IonItem,
     IonButton,
     IonInput,
     IonContent,
-    ReactiveFormsModule,
-    ToolbarButtonsComponent,
+    FormField,
     RouterLink,
     IonRouterLink,
-    IonMenuButton,
   ],
 })
-export class ForgotPasswordPage implements OnInit {
+export class ForgotPasswordPage {
   private toastService = inject(ToastService);
   private fireAuth = inject(Auth);
   private router = inject(Router);
@@ -65,33 +40,35 @@ export class ForgotPasswordPage implements OnInit {
 
   eventName = this.appConfigService.eventName;
 
-  emailForm = new FormGroup({
-    email: new FormControl('', {
-      validators: [Validators.email, Validators.required],
-    }),
+  emailModel = signal<ForgotPasswordFormModel>({
+    email: '',
+  });
+
+  emailForm = form(this.emailModel, (schemaPath) => {
+    required(schemaPath.email, { message: 'Email is required' });
+    email(schemaPath.email, { message: 'Enter a valid email address' });
   });
 
   isEmailFormValid() {
-    return this.emailForm.valid && this.emailForm.dirty;
+    return this.emailForm().valid() && this.emailForm().dirty();
   }
 
   async onSubmit() {
-    if (this.isEmailFormValid()) {
-      sendPasswordResetEmail(this.fireAuth, this.emailForm.value.email!)
-        .then(() => {
-          this.toastService.showSuccess(
-            `Password reset link sent to ${this.emailForm.value.email}`
-          );
-          this.router.navigate(['/home'], { replaceUrl: true });
-        })
-        .catch((err: FirebaseError) => {
-          console.error(err);
-          this.toastService.showError(err.message);
-        });
+    if (!this.isEmailFormValid()) {
+      return;
     }
+
+    const { email: emailAddress } = this.emailModel();
+    sendPasswordResetEmail(this.fireAuth, emailAddress)
+      .then(() => {
+        this.toastService.showSuccess(
+          `Password reset link sent to ${emailAddress}`
+        );
+        this.router.navigate(['/home'], { replaceUrl: true });
+      })
+      .catch((err: FirebaseError) => {
+        console.error(err);
+        this.toastService.showError(err.message);
+      });
   }
-
-  constructor() {}
-
-  ngOnInit() {}
 }
