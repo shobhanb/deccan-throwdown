@@ -58,6 +58,7 @@
   --dt-tab-bar-inset: calc(
     var(--dt-tab-bar-height) + env(safe-area-inset-bottom) + var(--dt-space-md)
   );
+  --dt-admin-banner-height: 28px;
 
   --ion-item-border-color: var(--ion-background-color-step-200);
   --ion-background-color: var(--dt-grouped-background);

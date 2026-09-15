@@ -1,4 +1,10 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -28,6 +34,7 @@ export class AppComponent {
   private swUpdate = inject(SwUpdate);
   private alertService = inject(AlertService);
   private router = inject(Router);
+  private document = inject(DOCUMENT);
 
   /** iOS slide transitions render at viewport width and flash on centered desktop layout. */
   pageAnimationsEnabled = !window.matchMedia('(min-width: 769px)').matches;
@@ -44,6 +51,13 @@ export class AppComponent {
   );
 
   constructor() {
+    effect(() => {
+      this.document.body.classList.toggle(
+        'admin-banner-visible',
+        this.showAdminBanner()
+      );
+    });
+
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates
         .pipe(

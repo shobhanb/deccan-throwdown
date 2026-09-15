@@ -1,0 +1,29 @@
+.test-register-content {
+  --padding-top: var(--dt-space-lg);
+  --padding-start: var(--dt-space-md);
+  --padding-end: var(--dt-space-md);
+}
+
+.test-register-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dt-space-md);
+  padding: var(--dt-space-xl);
+  text-align: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+  }
+
+  ion-button {
+    width: 100%;
+    margin-top: var(--dt-space-sm);
+  }
+}

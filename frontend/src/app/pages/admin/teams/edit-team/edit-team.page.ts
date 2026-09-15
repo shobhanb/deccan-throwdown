@@ -53,6 +53,7 @@ import { manOutline, womanOutline } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { AdminTeamFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-edit-team',
@@ -61,6 +62,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    DatePipe,
     IonIcon,
     IonList,
     IonRefresherContent,

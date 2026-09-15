@@ -456,15 +456,23 @@ ion-item {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 4px var(--dt-space-md);
+  padding: 0 var(--dt-space-md);
+  min-height: var(--dt-admin-banner-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dt-admin-banner-fixed {
   position: fixed;
-  top: 0;
+  top: env(safe-area-inset-top);
   left: 0;
   right: 0;
   z-index: 1000;
+}
+
+body.admin-banner-visible #main-content ion-header {
+  margin-top: var(--dt-admin-banner-height);
 }
 
 @media (min-width: 769px) {

@@ -48,7 +48,7 @@ import {
 import { TeamFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -57,6 +57,7 @@ import { DecimalPipe } from '@angular/common';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    DatePipe,
     DecimalPipe,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -227,8 +228,6 @@ export class RegisterPage {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: apiTeamRegistrationResponseModel) => {
-          this.toastService.showSuccess('Team registered successfully!');
-
           const modal = await this.modalController.create({
             component: SuccessComponent,
             componentProps: {

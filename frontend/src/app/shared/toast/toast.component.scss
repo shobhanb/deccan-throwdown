@@ -1,3 +1,17 @@
+:host ::ng-deep .dt-toast {
+  --bottom: calc(var(--dt-space-md) + env(safe-area-inset-bottom));
+  --start: var(--dt-space-md);
+  --end: var(--dt-space-md);
+  --border-radius: 12px;
+  --min-height: 48px;
+  --box-shadow: var(--dt-card-shadow);
+}
+
+:host ::ng-deep .dt-toast .toast-message {
+  padding: 12px 16px;
+  line-height: 1.4;
+}
+
 :host ::ng-deep .dt-toast-success {
   --background: var(--dt-brand-gold);
   --color: var(--dt-brand-navy);

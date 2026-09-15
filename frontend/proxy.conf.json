@@ -1,14 +1,4 @@
 {
-  "/scores": {
-    "target": "http://localhost:8000",
-    "secure": false,
-    "changeOrigin": true
-  },
-  "/athletes": {
-    "target": "http://localhost:8000",
-    "secure": false,
-    "changeOrigin": true
-  },
   "/fireauth": {
     "target": "http://localhost:8000",
     "secure": false,

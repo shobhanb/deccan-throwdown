@@ -88,6 +88,9 @@
         >{{ athletes()[item].first_name + ' ' + athletes()[item].last_name }}
         <p>{{ athletes()[item].email }}</p>
         <p>{{ athletes()[item].phone_number }}</p>
+        @if (athletes()[item].date_of_birth) {
+        <p>DOB: {{ athletes()[item].date_of_birth | date:'dd MMM yyyy':'UTC' }}</p>
+        }
       </ion-label>
     </ion-item>
     } @else {

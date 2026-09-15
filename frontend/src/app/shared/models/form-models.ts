@@ -35,6 +35,7 @@ export interface AdminAthleteFormModel {
   sex: string;
   email: string;
   phone_number: string;
+  date_of_birth: string;
   waiver: boolean;
   gym: string;
   city: string;

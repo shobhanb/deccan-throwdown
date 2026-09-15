@@ -96,6 +96,7 @@ export class AthletesPage {
     sex: '',
     email: '',
     phone_number: '',
+    date_of_birth: '',
     waiver: false,
     gym: '',
     city: '',
@@ -109,6 +110,31 @@ export class AthletesPage {
     email(schemaPath.email, { message: 'Enter a valid email address' });
     pattern(schemaPath.phone_number, /^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
       message: 'Enter a valid phone number',
+    });
+    required(schemaPath.date_of_birth, {
+      message: 'Date of birth is required',
+    });
+    validate(schemaPath.date_of_birth, ({ value }) => {
+      const dateOfBirth = value();
+      if (!dateOfBirth) {
+        return undefined;
+      }
+
+      const parsed = new Date(`${dateOfBirth}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) {
+        return { kind: 'invalidDate', message: 'Enter a valid date of birth' };
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (parsed > today) {
+        return {
+          kind: 'futureDate',
+          message: 'Date of birth cannot be in the future',
+        };
+      }
+
+      return undefined;
     });
     validate(schemaPath.waiver, ({ value }) =>
       value()
@@ -149,6 +175,7 @@ export class AthletesPage {
               last_name: data.last_name,
               email: data.email ?? '',
               phone_number: data.phone_number ?? '',
+              date_of_birth: data.date_of_birth ?? '',
               sex: data.sex,
               waiver: data.waiver ?? false,
               gym: data.gym ?? '',

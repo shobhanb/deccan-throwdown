@@ -33,16 +33,7 @@ async def create_athlete(
     _: admin_user_dependency,
     athlete: AthleteCreateModel,
 ) -> Athlete:
-    new_athlete = Athlete(
-        first_name=athlete.first_name,
-        last_name=athlete.last_name,
-        email=athlete.email,
-        waiver=athlete.waiver,
-        gym=athlete.gym,
-        city=athlete.city,
-        sex=athlete.sex,
-        team_id=athlete.team_id,
-    )
+    new_athlete = Athlete(**athlete.model_dump())
     db_session.add(new_athlete)
     await db_session.commit()
     await db_session.refresh(new_athlete)

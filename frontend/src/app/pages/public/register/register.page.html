@@ -102,6 +102,7 @@
             >{{ slot.athlete.first_name }} {{ slot.athlete.last_name }}</strong
           >
           <span>{{ slot.athlete.email }}</span>
+          <span>DOB: {{ slot.athlete.date_of_birth | date:'dd MMM yyyy':'UTC' }}</span>
         </div>
         } @else {
         <span class="athlete-slot-label">

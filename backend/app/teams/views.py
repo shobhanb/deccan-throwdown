@@ -91,6 +91,7 @@ async def get_team_waiver_links(
                 last_name=athlete.last_name,
                 email=athlete.email,
                 phone_number=athlete.phone_number,
+                date_of_birth=athlete.date_of_birth,
                 gym=athlete.gym,
                 sex=athlete.sex if athlete.sex in ("M", "F") else "M",
             )
