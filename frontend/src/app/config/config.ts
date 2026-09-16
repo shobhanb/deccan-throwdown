@@ -346,15 +346,15 @@ export const appConfig: { [key: string]: AppConfig } = {
     eventDates: 'Nov 28 & 29, 2026',
     tagline:
       'Teams of 6 athletes (2 female, 4 male). Categories: Scaled, Open.',
-    registrationStatus: 'open',
+    registrationStatus: 'coming-soon',
     leaderboardEnabled: false,
     categories: ['Scaled', 'Open'],
     athletesPerTeam: 6,
     femaleAthletesPerTeam: 2,
     maleAthletesPerTeam: 4,
     registrationPricing: {
-      standard: 8000,
-      earlyBird: 6000,
+      standard: 13000,
+      earlyBird: 10000,
       earlyBirdDeadline: 'TBA',
     },
     wods: [
