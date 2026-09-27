@@ -15,6 +15,7 @@ from app.athletes.schemas import AthleteRegistrationModel
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
+from app.notifications.service import NotificationService
 from app.settings import registration_settings, resend_settings
 
 from .models import Team
@@ -62,7 +63,11 @@ async def get_team_emails(
     )
     athletes = [athlete for team in teams if team.athletes for athlete in team.athletes]
     return " ; ".join(
-        {f"{athlete.first_name} {athlete.last_name} <{athlete.email}>" for athlete in athletes if athlete.email},
+        {
+            f"{athlete.first_name} {athlete.last_name} <{athlete.email}>"
+            for athlete in athletes
+            if athlete.email
+        },
     )
 
 
@@ -147,6 +152,12 @@ async def create_team(
     db_session.add(new_team)
     await db_session.commit()
     await db_session.refresh(new_team)
+    if new_team.verified:
+        NotificationService.send_team_verified(
+            new_team.event_short_name,
+            new_team.team_name,
+            new_team.category,
+        )
     return new_team
 
 
@@ -162,6 +173,7 @@ async def update_team(
     update_data: TeamsUpdateModel,
 ) -> Team:
     team = await Team.find_or_raise(async_session=db_session, id=team_id)
+    was_verified = team.verified
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -171,6 +183,12 @@ async def update_team(
     db_session.add(team)
     await db_session.commit()
     await db_session.refresh(team)
+    if not was_verified and team.verified:
+        NotificationService.send_team_verified(
+            team.event_short_name,
+            team.team_name,
+            team.category,
+        )
     return team
 
 
@@ -257,6 +275,12 @@ async def register_team(
         registration_response,
         team,
     )
+    background_tasks.add_task(
+        NotificationService.send_new_team_registration,
+        new_team.event_short_name,
+        new_team.team_name,
+        new_team.category,
+    )
     log.info("Registered new team: %s", team.team_name)
 
     return registration_response
@@ -287,7 +311,10 @@ def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | Non
         if athlete.gym and athlete.gym != "CFMF":
             waiver_link = add_domain_redirect(get_waiver_link(athlete, team.team_name))
             waiver_links.append(
-                WaiverLinkModel(athlete_name=f"{athlete.first_name} {athlete.last_name}", waiver_link=waiver_link),
+                WaiverLinkModel(
+                    athlete_name=f"{athlete.first_name} {athlete.last_name}",
+                    waiver_link=waiver_link,
+                ),
             )
     return waiver_links if waiver_links else None
 
@@ -301,17 +328,24 @@ def get_waiver_link(athlete: AthleteRegistrationModel, team_name: str) -> str:
         "email": athlete.email,
         "team": team_name,
     }
-    waiver_params_base64 = base64.b64encode(json.dumps(waiver_params).encode("utf-8")).decode("utf-8")
+    waiver_params_base64 = base64.b64encode(
+        json.dumps(waiver_params).encode("utf-8")
+    ).decode("utf-8")
 
     return f"{registration_settings.waiver_link}{waiver_params_base64}"
 
 
-def send_registration_email(registration_response: TeamRegistrationResponseModel, team: TeamRegistrationModel) -> None:
+def send_registration_email(
+    registration_response: TeamRegistrationResponseModel, team: TeamRegistrationModel
+) -> None:
     athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
     email_payment_link = registration_response.payment_link
 
     waiver_section = ""
-    if registration_response.waiver_links and len(registration_response.waiver_links) > 0:
+    if (
+        registration_response.waiver_links
+        and len(registration_response.waiver_links) > 0
+    ):
         waiver_section = f"""
         <p>Please fill out the waiver forms (for Non-CFMF athletes), if not already filled:</p>
         <ul>
@@ -356,4 +390,8 @@ def send_registration_email(registration_response: TeamRegistrationResponseModel
         """,  # noqa: E501
     }
     email_id: resend.Emails.SendResponse = resend.Emails.send(params)
-    log.info("Sent team registration email to team %s, email id: %s", team.team_name, email_id)
+    log.info(
+        "Sent team registration email to team %s, email id: %s",
+        team.team_name,
+        email_id,
+    )

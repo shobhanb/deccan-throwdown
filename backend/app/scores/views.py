@@ -5,6 +5,7 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
+from app.notifications.wod_complete import sync_wod_leaderboard_notification
 
 from .models import Score
 from .schemas import ScoreCreateModel, ScoreOutputModel, ScoreUpdateModel
@@ -117,6 +118,11 @@ async def update_score_verification(
         event_short_name=score.team.event_short_name,
         wod_number=score.wod_number,
     )
+    await sync_wod_leaderboard_notification(
+        db_session,
+        score.team.event_short_name,
+        score.wod_number,
+    )
 
     return score
 
@@ -131,13 +137,16 @@ async def delete_score(
     score_id: UUID,
 ) -> None:
     score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
+    event_short_name = score.team.event_short_name
+    wod_number = score.wod_number
     await score.delete(async_session=db_session)
 
     await update_ranks(
         async_session=db_session,
-        event_short_name=score.team.event_short_name,
-        wod_number=score.wod_number,
+        event_short_name=event_short_name,
+        wod_number=wod_number,
     )
+    await sync_wod_leaderboard_notification(db_session, event_short_name, wod_number)
 
 
 @scores_router.put("/update-ranks", status_code=status.HTTP_200_OK)

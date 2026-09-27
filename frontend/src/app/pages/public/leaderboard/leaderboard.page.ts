@@ -25,7 +25,9 @@ import {
   IonList,
   IonSkeletonText,
   Platform,
+  IonToggle,
 } from '@ionic/angular';
+import { PushNotificationService } from 'src/app/services/push-notification.service';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
@@ -60,11 +62,13 @@ import { finalize } from 'rxjs';
     IonRefresher,
     IonContent,
     IonSkeletonText,
+    IonToggle,
   ],
 })
 export class LeaderboardPage implements OnInit {
   private apiTeams = inject(apiTeamsService);
   private toastService = inject(ToastService);
+  private pushNotificationService = inject(PushNotificationService);
   private activatedRoute = inject(ActivatedRoute);
   private platform = inject(Platform);
   private destroyRef = inject(DestroyRef);
@@ -220,5 +224,17 @@ export class LeaderboardPage implements OnInit {
 
   onClickChangeWod(event: CustomEvent) {
     this.selectedWod.set(event.detail.value);
+  }
+
+  pushSubscribed = this.pushNotificationService.subscribed;
+
+  async onPushToggle(event: CustomEvent) {
+    const enabled = event.detail.checked;
+    await this.pushNotificationService.setSubscribed(enabled);
+    if (!enabled) {
+      (event.target as HTMLIonToggleElement).checked = false;
+    } else if (!this.pushNotificationService.subscribed()) {
+      (event.target as HTMLIonToggleElement).checked = false;
+    }
   }
 }

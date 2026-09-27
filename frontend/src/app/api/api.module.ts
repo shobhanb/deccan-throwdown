@@ -10,6 +10,7 @@ import { apiFireauthService } from './services/api-fireauth.service';
 import { apiAthletesService } from './services/api-athletes.service';
 import { apiTeamsService } from './services/api-teams.service';
 import { apiScoresService } from './services/api-scores.service';
+import { apiNotificationsService } from './services/api-notifications.service';
 
 /**
  * Module that provides all services and configuration.
@@ -23,6 +24,7 @@ import { apiScoresService } from './services/api-scores.service';
     apiAthletesService,
     apiTeamsService,
     apiScoresService,
+    apiNotificationsService,
     ApiConfiguration
   ],
 })

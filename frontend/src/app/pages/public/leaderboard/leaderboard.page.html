@@ -7,6 +7,20 @@
 
   <app-page-header title="Scoreboard" [subtitle]="eventName()"></app-page-header>
 
+  <ion-list [inset]="true" class="push-opt-in-list">
+    <ion-item>
+      <ion-label>
+        <h3>Event updates</h3>
+        <p>Push notifications for leaderboard and roster changes</p>
+      </ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="pushSubscribed()"
+        (ionChange)="onPushToggle($event)"
+      ></ion-toggle>
+    </ion-item>
+  </ion-list>
+
   @if (dataLoaded()) {
   <div class="filter-bar dt-card-scoreboard">
     <ion-select

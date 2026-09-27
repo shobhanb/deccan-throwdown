@@ -41,6 +41,10 @@ class RegistrationSettings(CustomBaseSettings):
     use_early_bird_fee: bool = False
 
 
+class NotificationSettings(CustomBaseSettings):
+    notifications_enabled: bool = True
+
+
 env_settings = EnvSettings()
 db_settings = DBSettings()
 url_settings = URLSettings()
@@ -48,3 +52,4 @@ auth_settings = AuthSettings()
 admin_user_settings = AdminUserSettings()
 resend_settings = ResendSettings()
 registration_settings = RegistrationSettings()
+notification_settings = NotificationSettings()

@@ -18,6 +18,7 @@ import { isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideServiceWorker } from '@angular/service-worker';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 
 const appConfigService = new AppConfigService();
 
@@ -27,16 +28,17 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
       mode: 'ios',
-      swipeBackEnabled: false,
+      swipeBackEnabled: true,
     }),
     provideRouter(routes, withComponentInputBinding()),
     ...(ApiModule.forRoot({ rootUrl: appConfigService.apiBaseUrl }).providers ??
       []),
     provideHttpClient(withXhr(), withInterceptors([httpInterceptor])),
-    provideServiceWorker('ngsw-worker.js', {
+    provideServiceWorker('firebase-messaging-sw.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    provideMessaging(() => getMessaging()),
     provideFirebaseApp(() =>
       initializeApp({
         projectId: 'deccan-throwdown',

@@ -13,6 +13,8 @@ from app.athletes.views import athletes_router
 from app.database.base import Base
 from app.database.core import session_manager
 from app.firebase_auth.views import firebase_auth_router
+from app.notifications import models as notifications_models  # noqa: F401
+from app.notifications.views import notifications_router
 from app.scores.views import scores_router
 from app.settings import env_settings, resend_settings, url_settings
 from app.teams.views import teams_router
@@ -34,6 +36,9 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
         async with session_manager.connect() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
+    else:
+        async with session_manager.connect() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
     yield
 
@@ -47,6 +52,7 @@ app.include_router(firebase_auth_router)
 app.include_router(athletes_router)
 app.include_router(teams_router)
 app.include_router(scores_router)
+app.include_router(notifications_router)
 
 app.add_middleware(
     CORSMiddleware,
