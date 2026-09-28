@@ -44,7 +44,7 @@ export const appConfig: ApplicationConfig = {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
       mode: 'ios',
-      swipeBackEnabled: true,
+      swipeBackEnabled: false,
     }),
     provideRouter(routes, withComponentInputBinding()),
     AppConfigService,

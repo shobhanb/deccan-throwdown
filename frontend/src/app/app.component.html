@@ -6,7 +6,7 @@
     <app-menu></app-menu>
     <ion-router-outlet
       id="main-content"
-      [animated]="pageAnimationsEnabled"
+      [animated]="pageAnimationsEnabled && !suppressPageAnimationForHistoryNav"
       [swipeGesture]="false"
     ></ion-router-outlet>
   </ion-split-pane>

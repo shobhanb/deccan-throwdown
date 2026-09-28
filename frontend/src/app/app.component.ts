@@ -7,7 +7,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { filter, map, merge, of, startWith } from 'rxjs';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { ToastComponent } from './shared/toast/toast.component';
@@ -46,6 +46,13 @@ export class AppComponent {
     ? !window.matchMedia('(min-width: 769px)').matches
     : false;
 
+  /**
+   * iOS Safari/PWA runs its own interactive back transition on edge swipe. When
+   * the gesture completes, history fires popstate and Ionic would animate back
+   * again — skip that second transition (in-app back still uses imperative nav).
+   */
+  suppressPageAnimationForHistoryNav = false;
+
   showAdminBanner = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -64,6 +71,15 @@ export class AppComponent {
     )
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.applyRouteSeo());
+
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.suppressPageAnimationForHistoryNav =
+          event.navigationTrigger === 'popstate';
+      } else if (event instanceof NavigationEnd) {
+        this.suppressPageAnimationForHistoryNav = false;
+      }
+    });
 
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
