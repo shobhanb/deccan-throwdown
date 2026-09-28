@@ -1,8 +1,10 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   effect,
   inject,
   Injectable,
   isDevMode,
+  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
@@ -19,17 +21,23 @@ const STORAGE_KEY = 'dt_fcm_subscribed';
   providedIn: 'root',
 })
 export class PushNotificationService {
-  private messaging = inject(Messaging);
+  private platformId = inject(PLATFORM_ID);
+  private messaging = inject(Messaging, { optional: true });
   private apiNotifications = inject(apiNotificationsService);
   private appConfigService = inject(AppConfigService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
-  private swUpdate = inject(SwUpdate);
+  private swUpdate = inject(SwUpdate, { optional: true });
 
   readonly subscribed = signal(this.readStoredSubscription());
 
   constructor() {
-    if (!isDevMode() && environment.notificationsEnabled) {
+    if (
+      isPlatformBrowser(this.platformId) &&
+      this.messaging &&
+      !isDevMode() &&
+      environment.notificationsEnabled
+    ) {
       onMessage(this.messaging, (payload) => {
         const title = payload.notification?.title ?? 'Deccan Throwdown';
         const body = payload.notification?.body ?? '';
@@ -45,22 +53,34 @@ export class PushNotificationService {
   }
 
   private readStoredSubscription(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
     return localStorage.getItem(STORAGE_KEY) === 'true';
   }
 
   private persistSubscription(value: boolean): void {
-    localStorage.setItem(STORAGE_KEY, value ? 'true' : 'false');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(STORAGE_KEY, value ? 'true' : 'false');
+    }
     this.subscribed.set(value);
   }
 
   private async getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration | null> {
-    if (!this.swUpdate.isEnabled || !('serviceWorker' in navigator)) {
+    if (
+      !this.swUpdate?.isEnabled ||
+      !isPlatformBrowser(this.platformId) ||
+      !('serviceWorker' in navigator)
+    ) {
       return null;
     }
     return navigator.serviceWorker.ready;
   }
 
   async enable(): Promise<boolean> {
+    if (!this.messaging || !isPlatformBrowser(this.platformId)) {
+      return false;
+    }
     if (isDevMode() || !environment.notificationsEnabled) {
       this.toastService.showError(
         'Push notifications require a production build over HTTPS.'
@@ -118,6 +138,9 @@ export class PushNotificationService {
   }
 
   async disable(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     const token = localStorage.getItem('dt_fcm_token');
     if (token) {
       try {
@@ -143,6 +166,9 @@ export class PushNotificationService {
   }
 
   private async registerCurrentToken(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     const token = localStorage.getItem('dt_fcm_token');
     if (!token || !this.subscribed()) {
       return;

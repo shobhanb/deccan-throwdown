@@ -1,9 +1,10 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   effect,
   inject,
+  PLATFORM_ID,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
@@ -31,13 +32,16 @@ import { AlertService } from './services/alert.service';
   ],
 })
 export class AppComponent {
-  private swUpdate = inject(SwUpdate);
+  private swUpdate = inject(SwUpdate, { optional: true });
   private alertService = inject(AlertService);
   private router = inject(Router);
   private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
 
   /** iOS slide transitions render at viewport width and flash on centered desktop layout. */
-  pageAnimationsEnabled = !window.matchMedia('(min-width: 769px)').matches;
+  pageAnimationsEnabled = isPlatformBrowser(this.platformId)
+    ? !window.matchMedia('(min-width: 769px)').matches
+    : false;
 
   showAdminBanner = toSignal(
     this.router.events.pipe(
@@ -58,7 +62,7 @@ export class AppComponent {
       );
     });
 
-    if (this.swUpdate.isEnabled) {
+    if (this.swUpdate?.isEnabled) {
       this.swUpdate.versionUpdates
         .pipe(
           filter(

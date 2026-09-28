@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  PendingTasks,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   IonContent,
@@ -17,6 +24,7 @@ import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.comp
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { addIcons } from 'ionicons';
+import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
 import {
   chevronBackOutline,
   chevronForwardOutline,
@@ -70,6 +78,7 @@ interface ImageListData {
 })
 export class PicsPage implements OnInit {
   private http = inject(HttpClient);
+  private pendingTasks = inject(PendingTasks);
 
   imageData = signal<ImageData[]>([]);
   dataLoaded = signal(false);
@@ -79,7 +88,9 @@ export class PicsPage implements OnInit {
     addIcons({ closeOutline, chevronBackOutline, chevronForwardOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadImages();
+  }
 
   ionViewWillEnter() {
     this.loadImages();
@@ -129,7 +140,10 @@ export class PicsPage implements OnInit {
     }
     this.dataLoaded.set(false);
     try {
-      this.http.get<ImageListData>('assets/image-list.json').subscribe({
+      this.http
+        .get<ImageListData>('assets/image-list.json')
+        .pipe(pendingUntilComplete(this.pendingTasks))
+        .subscribe({
         next: (data) => {
           const shuffledImages = this.shuffleArray(data.images);
           this.imageData.set(shuffledImages);

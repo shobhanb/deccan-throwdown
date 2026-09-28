@@ -469,3 +469,7 @@ export const archiveEventShortNames: string[] = [
   'dtteams2025',
   'dtpairs2025',
 ];
+
+export function isArchivedEvent(eventShortName: string): boolean {
+  return archiveEventShortNames.includes(eventShortName);
+}

@@ -27,10 +27,8 @@ export class AuthService {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-
-  private auth = inject(Auth);
-  private user$ = user(this.auth);
-  private userSubscription: Subscription;
+  private auth = inject(Auth, { optional: true });
+  private userSubscription?: Subscription;
 
   readonly user = signal<User | null>(null);
   readonly userCustomClaims = signal<apiFirebaseCustomClaims | null>(null);
@@ -68,16 +66,21 @@ export class AuthService {
   }
 
   constructor() {
-    this.userSubscription = this.user$.subscribe((user) => {
-      this.user.set(user);
+    if (!this.auth) {
+      return;
+    }
 
-      if (user) {
-        this.getCustomClaims(user);
+    const user$ = user(this.auth);
+    this.userSubscription = user$.subscribe((currentUser) => {
+      this.user.set(currentUser);
+
+      if (currentUser) {
+        this.getCustomClaims(currentUser);
       }
     });
 
     this.destroyRef.onDestroy(() => {
-      this.userSubscription.unsubscribe();
+      this.userSubscription?.unsubscribe();
     });
 
     effect(() => {
@@ -88,6 +91,9 @@ export class AuthService {
   }
 
   async logout() {
+    if (!this.auth) {
+      return;
+    }
     await signOut(this.auth)
       .then(() => {
         this.toastService.showSuccess('Logged out');
@@ -99,6 +105,9 @@ export class AuthService {
   }
 
   async sendVerificationEmail() {
+    if (!this.user()) {
+      return;
+    }
     sendEmailVerification(this.user()!)
       .then(() => {
         this.toastService.showSuccess('Sent verification email');
@@ -111,13 +120,16 @@ export class AuthService {
   }
 
   async forceRefreshToken() {
+    if (!this.auth) {
+      return;
+    }
     const currentUser = this.auth.currentUser;
     if (currentUser) {
       await currentUser.reload().then(() => {
         currentUser.getIdToken(true).then(() => {
-          this.user.update((user) => {
-            return user
-              ? { ...user, emailVerified: currentUser.emailVerified }
+          this.user.update((existingUser) => {
+            return existingUser
+              ? { ...existingUser, emailVerified: currentUser.emailVerified }
               : null;
           });
           this.getCustomClaims(currentUser, true);

@@ -5,6 +5,7 @@ import {
   inject,
   linkedSignal,
   OnInit,
+  PendingTasks,
   signal,
   ChangeDetectionStrategy
 } from '@angular/core';
@@ -38,6 +39,7 @@ import {
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
+import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
 import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 
 @Component({
@@ -67,6 +69,7 @@ export class TeamsPage implements OnInit {
   private toastService = inject(ToastService);
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+  private pendingTasks = inject(PendingTasks);
 
   dataLoaded = signal<boolean>(false);
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -130,7 +133,10 @@ export class TeamsPage implements OnInit {
         event_short_name: this.eventShortName(),
       })
     )
-      .pipe(finalize(() => this.dataLoaded.set(true)))
+      .pipe(
+        pendingUntilComplete(this.pendingTasks),
+        finalize(() => this.dataLoaded.set(true))
+      )
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
           const sortedAthletes = data.map((team) => ({

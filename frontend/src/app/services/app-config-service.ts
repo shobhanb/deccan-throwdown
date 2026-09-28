@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import {
   appConfig,
   AppConfig,
@@ -7,32 +8,37 @@ import {
   RegistrationStatus,
   WodConfig,
 } from '../config/config';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppConfigService {
+  private platformId = inject(PLATFORM_ID);
   private _config: AppConfig;
   private _eventShortName: string;
   private _apiBaseUrl: string;
 
   constructor() {
-    const hostname = window.location.hostname;
-    const subdomain = hostname.split('.')[0];
     this._config = appConfig[defaultConfig];
     this._eventShortName = defaultConfig;
 
-    const isLocalDev =
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      subdomain === '127' ||
-      hostname.endsWith('.local');
+    if (isPlatformBrowser(this.platformId)) {
+      const hostname = window.location.hostname;
+      const subdomain = hostname.split('.')[0];
+      const isLocalDev =
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        subdomain === '127' ||
+        hostname.endsWith('.local');
 
-    if (isLocalDev) {
-      // API calls go directly to the local backend (CORS allowed in main.py).
-      this._apiBaseUrl = 'http://localhost:8000';
+      if (isLocalDev) {
+        this._apiBaseUrl = 'http://localhost:8000';
+      } else {
+        this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;
+      }
     } else {
-      this._apiBaseUrl = `https://${subdomain}.cfgames.site/api`;
+      this._apiBaseUrl = environment.prerenderApiBaseUrl;
     }
   }
 
