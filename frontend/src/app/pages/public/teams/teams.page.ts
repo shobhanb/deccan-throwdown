@@ -5,9 +5,8 @@ import {
   inject,
   linkedSignal,
   OnInit,
-  PendingTasks,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -26,7 +25,6 @@ import {
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
-import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import { ToastService } from 'src/app/services/toast.service';
 import { addIcons } from 'ionicons';
@@ -36,11 +34,10 @@ import {
   womanOutline,
   personOutline,
 } from 'ionicons/icons';
-import { appConfig, defaultConfig } from 'src/app/config/config';
+import { appConfig, defaultConfig, isArchivedEvent } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
-import { finalize } from 'rxjs';
-import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
-import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
+import { apiErrorDetail, apiErrorStatusText } from 'src/app/services/api-call.util';
+import { EventTeamsDataService } from 'src/app/services/event-teams-data.service';
 
 @Component({
   selector: 'app-teams',
@@ -65,11 +62,10 @@ import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/ap
   ],
 })
 export class TeamsPage implements OnInit {
-  private apiTeams = inject(apiTeamsService);
+  private eventTeamsData = inject(EventTeamsDataService);
   private toastService = inject(ToastService);
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
-  private pendingTasks = inject(PendingTasks);
 
   dataLoaded = signal<boolean>(false);
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -88,7 +84,6 @@ export class TeamsPage implements OnInit {
       }
       grouped[team.category].push(team);
     }
-    // Sort categories alphabetically
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
   });
 
@@ -100,10 +95,6 @@ export class TeamsPage implements OnInit {
     this.activatedRoute.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadTeams());
-  }
-
-  ionViewWillEnter() {
-    this.loadTeams();
   }
 
   getCategoryClass(category: string): string {
@@ -118,39 +109,35 @@ export class TeamsPage implements OnInit {
   }
 
   handleRefresh(event: CustomEvent) {
-    this.loadTeams();
+    if (isArchivedEvent(this.eventShortName())) {
+      window.location.reload();
+      (event.target as HTMLIonRefresherElement).complete();
+      return;
+    }
+    this.loadTeams({ forceNetwork: true });
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  private loadTeams() {
+  private loadTeams(options?: { forceNetwork?: boolean }) {
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
     this.eventShortName.set(eventShortNameParam ?? defaultConfig);
-    this.dataLoaded.set(false);
+    const eventShortName = this.eventShortName();
 
-    fromApi(
-      this.apiTeams.getTeamsTeamsGet({
-        event_short_name: this.eventShortName(),
-      })
-    )
-      .pipe(
-        pendingUntilComplete(this.pendingTasks),
-        finalize(() => this.dataLoaded.set(true))
-      )
-      .subscribe({
-        next: (data: apiTeamsOutputDetailModel[]) => {
-          const sortedAthletes = data.map((team) => ({
-            ...team,
-            athletes: [...team.athletes].sort((a, b) => {
-              if (a.sex != b.sex) {
-                return a.sex.localeCompare(b.sex);
-              }
-              return a.first_name.localeCompare(b.first_name);
-            }),
-          }));
-          this.teamsData.set(sortedAthletes);
+    if (!options?.forceNetwork && isArchivedEvent(eventShortName)) {
+      this.dataLoaded.set(true);
+    } else {
+      this.dataLoaded.set(false);
+    }
+
+    this.eventTeamsData.load(
+      'teams',
+      eventShortName,
+      {
+        onData: (data) => {
+          this.teamsData.set(this.sortAthletesPerTeam(data));
         },
-        error: (error: unknown) => {
+        onError: (error: unknown) => {
           console.error(error);
           this.teamsData.set([]);
           this.toastService.showError(
@@ -159,6 +146,23 @@ export class TeamsPage implements OnInit {
                 apiErrorStatusText(error, 'Check backend is running.'))
           );
         },
-      });
+        onSettled: () => this.dataLoaded.set(true),
+      },
+      options
+    );
+  }
+
+  private sortAthletesPerTeam(
+    data: apiTeamsOutputDetailModel[]
+  ): apiTeamsOutputDetailModel[] {
+    return data.map((team) => ({
+      ...team,
+      athletes: [...team.athletes].sort((a, b) => {
+        if (a.sex != b.sex) {
+          return a.sex.localeCompare(b.sex);
+        }
+        return a.first_name.localeCompare(b.first_name);
+      }),
+    }));
   }
 }

@@ -151,8 +151,7 @@
           <ion-item
             button
             detail="false"
-            [routerLink]="['/teams', event.shortName]"
-            routerLinkActive="menu-active-item"
+            [href]="'/teams/' + event.shortName"
           >
             <ion-icon name="people-outline" slot="start"></ion-icon>
             <ion-label>Teams & Athletes</ion-label>
@@ -160,8 +159,7 @@
           <ion-item
             button
             detail="false"
-            [routerLink]="['/leaderboard', event.shortName]"
-            routerLinkActive="menu-active-item"
+            [href]="'/leaderboard/' + event.shortName"
           >
             <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
             <ion-label>Leaderboard</ion-label>
@@ -169,8 +167,7 @@
           <ion-item
             button
             detail="false"
-            [routerLink]="['/wods', event.shortName]"
-            routerLinkActive="menu-active-item"
+            [href]="'/wods/' + event.shortName"
           >
             <ion-icon name="barbell-outline" slot="start"></ion-icon>
             <ion-label>WODs</ion-label>

@@ -5,9 +5,8 @@ import {
   inject,
   linkedSignal,
   OnInit,
-  PendingTasks,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -25,7 +24,6 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
-  Platform,
   IonToggle,
 } from '@ionic/angular';
 import { PushNotificationService } from 'src/app/services/push-notification.service';
@@ -38,13 +36,15 @@ import {
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
-import { apiTeamsService } from 'src/app/api/services';
 import { ToastService } from 'src/app/services/toast.service';
-import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
-import { appConfig, defaultConfig } from 'src/app/config/config';
+import { apiErrorDetail, apiErrorStatusText } from 'src/app/services/api-call.util';
+import {
+  appConfig,
+  defaultConfig,
+  isArchivedEvent,
+} from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
-import { finalize } from 'rxjs';
-import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
+import { EventTeamsDataService } from 'src/app/services/event-teams-data.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -69,13 +69,11 @@ import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
   ],
 })
 export class LeaderboardPage implements OnInit {
-  private apiTeams = inject(apiTeamsService);
+  private eventTeamsData = inject(EventTeamsDataService);
   private toastService = inject(ToastService);
   private pushNotificationService = inject(PushNotificationService);
   private activatedRoute = inject(ActivatedRoute);
-  private platform = inject(Platform);
   private destroyRef = inject(DestroyRef);
-  private pendingTasks = inject(PendingTasks);
 
   selectInterface =  'popover';
   wodSelectOptions = { side: 'bottom', alignment: 'start' };
@@ -182,40 +180,39 @@ export class LeaderboardPage implements OnInit {
       .subscribe(() => this.loadLeaderboard());
   }
 
-  ionViewWillEnter() {
-    this.loadLeaderboard();
-  }
-
   handleRefresh(event: CustomEvent) {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate(10);
     }
-    this.loadLeaderboard();
+    if (isArchivedEvent(this.eventShortName())) {
+      window.location.reload();
+      (event.target as HTMLIonRefresherElement).complete();
+      return;
+    }
+    this.loadLeaderboard({ forceNetwork: true });
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  private loadLeaderboard() {
+  private loadLeaderboard(options?: { forceNetwork?: boolean }) {
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
     this.eventShortName.set(eventShortNameParam ?? defaultConfig);
+    const eventShortName = this.eventShortName();
     this.selectedCategory.set(this.categories()?.[0] ?? null);
     this.selectedWod.set(0);
-    this.dataLoaded.set(false);
 
-    fromApi(
-      this.apiTeams.getTeamsTeamsGet({
-        event_short_name: this.eventShortName(),
-      })
-    )
-      .pipe(
-        pendingUntilComplete(this.pendingTasks),
-        finalize(() => this.dataLoaded.set(true))
-      )
-      .subscribe({
-        next: (data: apiTeamsOutputDetailModel[]) => {
-          this.teamsData.set(data);
-        },
-        error: (error: unknown) => {
+    if (!options?.forceNetwork && isArchivedEvent(eventShortName)) {
+      this.dataLoaded.set(true);
+    } else {
+      this.dataLoaded.set(false);
+    }
+
+    this.eventTeamsData.load(
+      'leaderboard',
+      eventShortName,
+      {
+        onData: (data) => this.teamsData.set(data),
+        onError: (error: unknown) => {
           console.error(error);
           this.teamsData.set([]);
           this.toastService.showError(
@@ -224,7 +221,10 @@ export class LeaderboardPage implements OnInit {
                 apiErrorStatusText(error, 'Check backend is running.'))
           );
         },
-      });
+        onSettled: () => this.dataLoaded.set(true),
+      },
+      options
+    );
   }
 
   onClickChangeCategory(event: CustomEvent) {
