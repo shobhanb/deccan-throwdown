@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
 import { SwUpdate } from '@angular/service-worker';
-import { firstValueFrom } from 'rxjs';
 import { apiNotificationsService } from '../api/services';
 import { environment } from '../../environments/environment';
 import { AppConfigService } from './app-config-service';
@@ -99,17 +98,15 @@ export class PushNotificationService {
         this.toastService.showError('Could not enable push notifications.');
         return false;
       }
-      await firstValueFrom(
-        this.apiNotifications.registerFcmTokenNotificationsTokensPost({
-          body: {
-            token,
-            event_short_name: this.appConfigService.eventShortName,
-            subscribe_event: true,
-            platform: 'web',
-            user_agent: navigator.userAgent,
-          },
-        })
-      );
+      await this.apiNotifications.registerFcmTokenNotificationsTokensPost({
+        body: {
+          token,
+          event_short_name: this.appConfigService.eventShortName,
+          subscribe_event: true,
+          platform: 'web',
+          user_agent: navigator.userAgent,
+        },
+      });
       localStorage.setItem('dt_fcm_token', token);
       this.persistSubscription(true);
       return true;
@@ -124,10 +121,10 @@ export class PushNotificationService {
     const token = localStorage.getItem('dt_fcm_token');
     if (token) {
       try {
-        await firstValueFrom(
-          this.apiNotifications.unregisterFcmTokenNotificationsTokensTokenDelete({
+        await this.apiNotifications.unregisterFcmTokenNotificationsTokensTokenDelete(
+          {
             token,
-          })
+          }
         );
       } catch (error) {
         console.error('FCM unregister failed', error);
@@ -151,17 +148,15 @@ export class PushNotificationService {
       return;
     }
     try {
-      await firstValueFrom(
-        this.apiNotifications.registerFcmTokenNotificationsTokensPost({
-          body: {
-            token,
-            event_short_name: this.appConfigService.eventShortName,
-            subscribe_event: true,
-            platform: 'web',
-            user_agent: navigator.userAgent,
-          },
-        })
-      );
+      await this.apiNotifications.registerFcmTokenNotificationsTokensPost({
+        body: {
+          token,
+          event_short_name: this.appConfigService.eventShortName,
+          subscribe_event: true,
+          platform: 'web',
+          user_agent: navigator.userAgent,
+        },
+      });
     } catch (error) {
       console.error('FCM token refresh failed', error);
     }

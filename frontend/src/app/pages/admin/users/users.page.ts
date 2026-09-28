@@ -25,6 +25,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
+import { apiErrorStatusText } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-users',
@@ -108,32 +109,26 @@ export class UsersPage implements OnInit {
     const result = await this.alertService.showAlert(alertText);
 
     if (result.role === 'confirm') {
-      this.apiFireAuth
-        .updateUserAdminRightsFireauthChangeAdminUidPost({
+      try {
+        await this.apiFireAuth.updateUserAdminRightsFireauthChangeAdminUidPost({
           uid: user.uid,
           admin: !admin,
-        })
-        .subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              `User ${user.display_name} is ${
-                admin ? 'no longer' : ''
-              } an admin`
-            );
-            const currentUser = this.authService.user();
-            if (currentUser && currentUser.uid === user.uid) {
-              this.authService.logout();
-            } else {
-              this.getData();
-            }
-          },
-          error: (err: any) => {
-            console.error(err);
-            this.toastService.showError(
-              `Error changing admin status: ${err.message}`
-            );
-          },
         });
+        this.toastService.showSuccess(
+          `User ${user.display_name} is ${admin ? 'no longer' : ''} an admin`
+        );
+        const currentUser = this.authService.user();
+        if (currentUser && currentUser.uid === user.uid) {
+          this.authService.logout();
+        } else {
+          this.getData();
+        }
+      } catch (err: unknown) {
+        console.error(err);
+        this.toastService.showError(
+          `Error changing admin status: ${apiErrorStatusText(err)}`
+        );
+      }
     }
   }
 
@@ -143,25 +138,21 @@ export class UsersPage implements OnInit {
     );
 
     if (result.role === 'confirm') {
-      this.apiFireAuth
-        .deleteUserFireauthUserUidDelete({ uid: user.uid })
-        .subscribe({
-          next: () => {
-            this.toastService.showSuccess(`User ${user.display_name} deleted`);
-            const currentUser = this.authService.user();
-            if (currentUser && currentUser.uid === user.uid) {
-              this.authService.logout();
-            } else {
-              this.getData();
-            }
-          },
-          error: (err: any) => {
-            console.error(err);
-            this.toastService.showError(
-              `Error deleting ${user.display_name}: ${err.message}`
-            );
-          },
-        });
+      try {
+        await this.apiFireAuth.deleteUserFireauthUserUidDelete({ uid: user.uid });
+        this.toastService.showSuccess(`User ${user.display_name} deleted`);
+        const currentUser = this.authService.user();
+        if (currentUser && currentUser.uid === user.uid) {
+          this.authService.logout();
+        } else {
+          this.getData();
+        }
+      } catch (err: unknown) {
+        console.error(err);
+        this.toastService.showError(
+          `Error deleting ${user.display_name}: ${apiErrorStatusText(err)}`
+        );
+      }
     }
   }
 
@@ -171,22 +162,23 @@ export class UsersPage implements OnInit {
     });
   }
 
-  private getData() {
-    this.apiFireAuth.getAllUsersFireauthAllGet().subscribe({
-      next: (data: apiFirebaseUserRecord[]) => {
-        this.allUsers.set(
-          data.sort((a: apiFirebaseUserRecord, b: apiFirebaseUserRecord) => {
-            return a.display_name?.localeCompare(b.display_name!) || 0;
-          })
-        );
-        this.dataLoaded.set(true);
-        console.log(this.allUsers());
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.toastService.showError(`Error fetching users: ${err.message}`);
-      },
-    });
+  private async getData() {
+    try {
+      const data = await this.apiFireAuth.getAllUsersFireauthAllGet();
+      this.allUsers.set(
+        data.sort((a: apiFirebaseUserRecord, b: apiFirebaseUserRecord) => {
+          return a.display_name?.localeCompare(b.display_name!) || 0;
+        })
+      );
+      console.log(this.allUsers());
+    } catch (err: unknown) {
+      console.error(err);
+      this.toastService.showError(
+        `Error fetching users: ${apiErrorStatusText(err)}`
+      );
+    } finally {
+      this.dataLoaded.set(true);
+    }
   }
 
   handleRefresh(event: CustomEvent) {

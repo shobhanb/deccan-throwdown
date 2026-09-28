@@ -10,7 +10,7 @@ import {
 } from '@ionic/angular';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { ApiModule } from './app/api/api.module';
+import { provideApiConfiguration } from './app/api/api-configuration';
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { httpInterceptor } from './app/providers/http.interceptor';
 import { AppConfigService } from './app/services/app-config-service';
@@ -31,8 +31,7 @@ bootstrapApplication(AppComponent, {
       swipeBackEnabled: true,
     }),
     provideRouter(routes, withComponentInputBinding()),
-    ...(ApiModule.forRoot({ rootUrl: appConfigService.apiBaseUrl }).providers ??
-      []),
+    provideApiConfiguration(appConfigService.apiBaseUrl),
     provideHttpClient(withXhr(), withInterceptors([httpInterceptor])),
     provideServiceWorker('firebase-messaging-sw.js', {
       enabled: !isDevMode(),

@@ -14,7 +14,6 @@ import {
   Auth,
   sendEmailVerification,
   signInWithEmailAndPassword,
-  UserCredential,
 } from '@angular/fire/auth';
 import { FirebaseError } from '@angular/fire/app';
 import { Router, RouterLink } from '@angular/router';
@@ -23,6 +22,7 @@ import { apiCreateUser } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { SignupFormModel } from 'src/app/shared/models/form-models';
+import { apiErrorDetail } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-signup',
@@ -83,48 +83,34 @@ export class SignupPage {
     const params = this.signupModel() as apiCreateUser;
 
     this.loadingService.showLoading('Signing up...');
-    this.apiAuth.createUserFireauthSignupPost({ body: params }).subscribe({
-        next: () => {
-          this.loadingService.showLoading('Signin in...');
-          signInWithEmailAndPassword(
-            this.fireAuth,
-            params.email,
-            params.password
-          )
-            .then((value: UserCredential) => {
-              this.loadingService.showLoading(
-                'Sending email for verification...'
-              );
-              sendEmailVerification(value.user)
-                .then(() => {
-                  this.toastService.showSuccess(
-                    'Check your email for verification link'
-                  );
-                  this.router.navigate(['/home'], { replaceUrl: true });
-                  this.loadingService.dismissLoading();
-                })
-                .catch((err: FirebaseError) => {
-                  console.error('Error sending verification email: ', err);
-                  this.toastService.showError(
-                    'Error sending verification email: ' + err.message
-                  );
-                  this.loadingService.dismissLoading();
-                  this.router.navigate(['/home'], { replaceUrl: true });
-                });
-            })
-            .catch((err: FirebaseError) => {
-              console.error('Error logging in: ', err);
-              this.toastService.showError('Error logging in: ' + err.message);
-              this.loadingService.dismissLoading();
-              this.router.navigate(['/home'], { replaceUrl: true });
-            });
-        },
-        error: (err: any) => {
-          console.error('Error signing up: ', err);
-          this.toastService.showError('Error signing up: ' + err.error.detail);
-          this.loadingService.dismissLoading();
-          this.router.navigate(['/home'], { replaceUrl: true });
-        },
-      });
+    try {
+      await this.apiAuth.createUserFireauthSignupPost({ body: params });
+      this.loadingService.showLoading('Signin in...');
+      const value = await signInWithEmailAndPassword(
+        this.fireAuth,
+        params.email,
+        params.password
+      );
+      this.loadingService.showLoading('Sending email for verification...');
+      try {
+        await sendEmailVerification(value.user);
+        this.toastService.showSuccess('Check your email for verification link');
+      } catch (err: unknown) {
+        const firebaseErr = err as FirebaseError;
+        console.error('Error sending verification email: ', firebaseErr);
+        this.toastService.showError(
+          'Error sending verification email: ' + firebaseErr.message
+        );
+      }
+      this.router.navigate(['/home'], { replaceUrl: true });
+      this.loadingService.dismissLoading();
+    } catch (err: unknown) {
+      console.error('Error signing up: ', err);
+      this.toastService.showError(
+        'Error signing up: ' + (apiErrorDetail(err) ?? 'Unknown error')
+      );
+      this.loadingService.dismissLoading();
+      this.router.navigate(['/home'], { replaceUrl: true });
+    }
   }
 }

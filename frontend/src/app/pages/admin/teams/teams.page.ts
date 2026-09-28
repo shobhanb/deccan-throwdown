@@ -28,6 +28,7 @@ import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { apiErrorStatusText } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-teams',
@@ -101,34 +102,33 @@ export class TeamsPage implements OnInit {
   }
 
   getData() {
+    void this.loadData();
+  }
+
+  private async loadData() {
     this.dataLoaded.set(false);
-    this.apiTeams
-      .getTeamsTeamsGet({
+    try {
+      const data = await this.apiTeams.getTeamsTeamsGet({
         event_short_name: this.eventShortName,
-      })
-      .subscribe({
-        next: (data: apiTeamsOutputDetailModel[]) => {
-          const sortedAthletes = data.map((team) => ({
-            ...team,
-            athletes: team.athletes.sort((a, b) => {
-              if (a.sex != b.sex) {
-                return a.sex.localeCompare(b.sex);
-              }
-              return a.first_name.localeCompare(b.first_name);
-            }),
-          }));
-          this.teamsData.set(sortedAthletes);
-        },
-        error: (error) => {
-          console.error(error);
-          this.toastService.showError(
-            'Failed to load team data ' + error.statusText
-          );
-        },
-        complete: () => {
-          this.dataLoaded.set(true);
-        },
       });
+      const sortedAthletes = data.map((team) => ({
+        ...team,
+        athletes: team.athletes.sort((a, b) => {
+          if (a.sex != b.sex) {
+            return a.sex.localeCompare(b.sex);
+          }
+          return a.first_name.localeCompare(b.first_name);
+        }),
+      }));
+      this.teamsData.set(sortedAthletes);
+    } catch (error: unknown) {
+      console.error(error);
+      this.toastService.showError(
+        'Failed to load team data ' + apiErrorStatusText(error)
+      );
+    } finally {
+      this.dataLoaded.set(true);
+    }
   }
 
   addTeam() {

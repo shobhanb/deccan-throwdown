@@ -25,6 +25,10 @@ import {
 } from '@ionic/angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { apiNotificationsService } from 'src/app/api/services';
+import {
+  apiErrorDetail,
+  fromApi,
+} from 'src/app/services/api-call.util';
 import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -114,8 +118,8 @@ export class NotificationsPage {
     }
 
     this.sending.set(true);
-    this.apiNotifications
-      .sendCustomNotificationNotificationsCustomPost({
+    fromApi(
+      this.apiNotifications.sendCustomNotificationNotificationsCustomPost({
         body: {
           title: title.trim(),
           body: body.trim(),
@@ -123,6 +127,7 @@ export class NotificationsPage {
           route: normalizedRoute,
         },
       })
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -133,11 +138,9 @@ export class NotificationsPage {
             route: '/home',
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.sending.set(false);
-          const detail =
-            error?.error?.detail ??
-            (typeof error?.error === 'string' ? error.error : null);
+          const detail = apiErrorDetail(error);
           this.toastService.showError(
             detail ? `Failed to send: ${detail}` : 'Failed to send notification'
           );

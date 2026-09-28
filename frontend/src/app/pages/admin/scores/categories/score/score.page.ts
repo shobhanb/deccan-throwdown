@@ -41,6 +41,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { ScoreFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-score',
@@ -134,8 +135,9 @@ export class ScorePage {
     );
     this.teamId.set(this.activatedRoute.snapshot.paramMap.get('teamId') || '');
 
-    this.apiTeams
-      .getTeamInfoTeamsTeamIdGet({ team_id: this.teamId() })
+    fromApi(
+      this.apiTeams.getTeamInfoTeamsTeamIdGet({ team_id: this.teamId() })
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: apiTeamsOutputDetailModel) => this.teamData.set(data),
@@ -145,12 +147,12 @@ export class ScorePage {
         },
       });
 
-    this.apiScores
-      .getScoresScoresGet({
+    fromApi(
+      this.apiScores.getScoresScoresGet({
         team_id: this.teamId(),
         wod_number: this.wodNumber(),
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    )
       .subscribe({
         next: (data: apiScoreOutputModel) => {
           this.scoreData.set(data);
@@ -193,11 +195,12 @@ export class ScorePage {
     };
 
     if (this.isEditing()) {
-      this.apiScores
-        .updateScoreScoresScoreIdPatch({
+      fromApi(
+        this.apiScores.updateScoreScoresScoreIdPatch({
           score_id: this.scoreData()!.id,
           body: scoreSubmission,
         })
+      )
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
@@ -206,35 +209,36 @@ export class ScorePage {
               relativeTo: this.activatedRoute,
             });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error updating score:', error);
             this.toastService.showError(
-              'Failed to update score: ' + error.statusText
+              'Failed to update score: ' + apiErrorStatusText(error)
             );
           },
         });
     } else {
-      this.apiScores
-        .createScoreScoresPost({
+      fromApi(
+        this.apiScores.createScoreScoresPost({
           body: {
             ...scoreSubmission,
             team_id: this.teamId(),
             wod_number: this.wodNumber(),
           },
         })
+      )
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: (data) => {
+          next: (data: apiScoreOutputModel) => {
             this.toastService.showSuccess('Score created successfully');
             this.router.navigate(['../'], {
               relativeTo: this.activatedRoute,
             });
             this.scoreData.set(data);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error creating score:', error);
             this.toastService.showError(
-              'Failed to create score: ' + error.statusText
+              'Failed to create score: ' + apiErrorStatusText(error)
             );
           },
         });
@@ -252,10 +256,11 @@ export class ScorePage {
 
     const confirmation = await this.alertService.showAlert('Delete score ?');
     if (confirmation.role === 'confirm') {
-      this.apiScores
-        .deleteScoreScoresScoreIdDelete({
+      fromApi(
+        this.apiScores.deleteScoreScoresScoreIdDelete({
           score_id: this.scoreData()!.id,
         })
+      )
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
@@ -264,10 +269,10 @@ export class ScorePage {
               relativeTo: this.activatedRoute,
             });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error deleting score:', error);
             this.toastService.showError(
-              'Failed to delete score: ' + error.statusText
+              'Failed to delete score: ' + apiErrorStatusText(error)
             );
           },
         });

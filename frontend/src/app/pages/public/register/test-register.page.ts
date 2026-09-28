@@ -21,6 +21,11 @@ import { apiTeamsService } from 'src/app/api/services';
 import { apiTeamRegistrationResponseModel } from 'src/app/api/models';
 import { SuccessComponent } from './success/success.component';
 import { createTestRegistrationPayload } from './test-registration-data';
+import {
+  apiErrorDetail,
+  apiErrorStatusText,
+  fromApi,
+} from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-test-register',
@@ -67,8 +72,7 @@ export class TestRegisterPage implements OnInit {
     this.teamName.set(payload.team_name);
     this.status.set('submitting');
 
-    this.apiTeams
-      .registerTeamTeamsRegisterPost({ body: payload })
+    fromApi(this.apiTeams.registerTeamTeamsRegisterPost({ body: payload }))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: apiTeamRegistrationResponseModel) => {
@@ -83,13 +87,12 @@ export class TestRegisterPage implements OnInit {
 
           await modal.present();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error registering test team:', error);
           this.status.set('error');
           this.errorMessage.set(
-            error?.error?.detail ||
-              error?.statusText ||
-              'Failed to register test team.'
+            apiErrorDetail(error) ||
+              apiErrorStatusText(error, 'Failed to register test team.')
           );
         },
       });

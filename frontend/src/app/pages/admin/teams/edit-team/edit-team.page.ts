@@ -54,6 +54,11 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 import { AdminTeamFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
+import {
+  apiErrorDetail,
+  apiErrorStatusText,
+  fromApi,
+} from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-edit-team',
@@ -160,8 +165,9 @@ export class EditTeamPage {
     if (teamId) {
       this.isEditing.set(true);
       this.dataLoaded.set(false);
-      this.apiTeams
-        .getTeamInfoTeamsTeamIdGet({ team_id: teamId })
+      fromApi(
+        this.apiTeams.getTeamInfoTeamsTeamIdGet({ team_id: teamId })
+      )
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (team) => {
@@ -173,7 +179,7 @@ export class EditTeamPage {
               verified: team.verified,
             });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error loading team:', error);
           },
           complete: () => {
@@ -229,8 +235,7 @@ export class EditTeamPage {
       event_short_name: this.eventShortName,
     };
 
-    this.apiTeams
-      .createTeamTeamsPost({ body: createModel })
+    fromApi(this.apiTeams.createTeamTeamsPost({ body: createModel }))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: apiTeamsOutputModel) => {
@@ -239,10 +244,10 @@ export class EditTeamPage {
             replaceUrl: true,
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error creating team:', error);
           this.toastService.showError(
-            'Failed to create team: ' + error.statusText
+            'Failed to create team: ' + apiErrorStatusText(error)
           );
         },
       });
@@ -258,11 +263,12 @@ export class EditTeamPage {
       event_short_name: this.eventShortName,
     };
 
-    this.apiTeams
-      .updateTeamTeamsTeamIdPatch({
+    fromApi(
+      this.apiTeams.updateTeamTeamsTeamIdPatch({
         team_id: this.editTeam()!.id,
         body: updateModel,
       })
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -271,10 +277,10 @@ export class EditTeamPage {
           });
           this.toastService.showSuccess('Team updated successfully');
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error updating team:', error);
           this.toastService.showError(
-            'Failed to update team: ' + error.statusText
+            'Failed to update team: ' + apiErrorStatusText(error)
           );
         },
       });
@@ -286,8 +292,9 @@ export class EditTeamPage {
         `Delete team "${this.editTeam()!.team_name}"?`
       );
       if (confirmation.role === 'confirm') {
-        this.apiTeams
-          .deleteTeamTeamsTeamIdDelete({ team_id: this.editTeam()!.id })
+        fromApi(
+          this.apiTeams.deleteTeamTeamsTeamIdDelete({ team_id: this.editTeam()!.id })
+        )
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
@@ -296,10 +303,11 @@ export class EditTeamPage {
               });
               this.toastService.showSuccess('Team deleted successfully');
             },
-            error: (error) => {
+            error: (error: unknown) => {
               console.error('Error deleting team:', error);
               this.toastService.showError(
-                'Failed to delete team: ' + error.error.detail
+                'Failed to delete team: ' +
+                  (apiErrorDetail(error) ?? apiErrorStatusText(error))
               );
             },
           });

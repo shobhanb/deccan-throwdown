@@ -39,6 +39,7 @@ import {
 } from 'src/app/api/models';
 import { apiTeamsService } from 'src/app/api/services';
 import { ToastService } from 'src/app/services/toast.service';
+import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -198,21 +199,23 @@ export class LeaderboardPage implements OnInit {
     this.selectedWod.set(0);
     this.dataLoaded.set(false);
 
-    this.apiTeams
-      .getTeamsTeamsGet({
+    fromApi(
+      this.apiTeams.getTeamsTeamsGet({
         event_short_name: this.eventShortName(),
       })
+    )
       .pipe(finalize(() => this.dataLoaded.set(true)))
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
           this.teamsData.set(data);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error(error);
           this.teamsData.set([]);
           this.toastService.showError(
             'Error loading leaderboard. ' +
-              (error.error?.detail || error.statusText || 'Check backend is running.')
+              (apiErrorDetail(error) ||
+                apiErrorStatusText(error, 'Check backend is running.'))
           );
         },
       });

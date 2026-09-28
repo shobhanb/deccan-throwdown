@@ -38,6 +38,7 @@ import {
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
+import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-teams',
@@ -124,10 +125,11 @@ export class TeamsPage implements OnInit {
     this.eventShortName.set(eventShortNameParam ?? defaultConfig);
     this.dataLoaded.set(false);
 
-    this.apiTeams
-      .getTeamsTeamsGet({
+    fromApi(
+      this.apiTeams.getTeamsTeamsGet({
         event_short_name: this.eventShortName(),
       })
+    )
       .pipe(finalize(() => this.dataLoaded.set(true)))
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
@@ -142,12 +144,13 @@ export class TeamsPage implements OnInit {
           }));
           this.teamsData.set(sortedAthletes);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error(error);
           this.teamsData.set([]);
           this.toastService.showError(
             'Failed to load team data. ' +
-              (error.error?.detail || error.statusText || 'Check backend is running.')
+              (apiErrorDetail(error) ||
+                apiErrorStatusText(error, 'Check backend is running.'))
           );
         },
       });

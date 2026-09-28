@@ -28,6 +28,7 @@ import {
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
+import { apiErrorStatusText } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-categories',
@@ -105,6 +106,10 @@ export class CategoriesPage implements OnInit {
   }
 
   getData() {
+    void this.loadData();
+  }
+
+  private async loadData() {
     this.dataLoaded.set(false);
     this.wodNumber.set(
       Number(this.activatedRoute.snapshot.paramMap.get('wodNumber') || '0')
@@ -114,23 +119,18 @@ export class CategoriesPage implements OnInit {
       this.activatedRoute.snapshot.data['verificationMode'] || false
     );
 
-    this.apiTeams
-      .getTeamsTeamsGet({
+    try {
+      const data = await this.apiTeams.getTeamsTeamsGet({
         event_short_name: this.eventShortName,
-      })
-      .subscribe({
-        next: (data: apiTeamsOutputDetailModel[]) => {
-          this.teamsData.set(data);
-        },
-        error: (error) => {
-          this.toastService.showError(
-            'Error loading teams: ' + error.statusText
-          );
-        },
-        complete: () => {
-          this.dataLoaded.set(true);
-        },
       });
+      this.teamsData.set(data);
+    } catch (error: unknown) {
+      this.toastService.showError(
+        'Error loading teams: ' + apiErrorStatusText(error)
+      );
+    } finally {
+      this.dataLoaded.set(true);
+    }
   }
 
   onVerificationCheckboxChange(event: CustomEvent, teamId: string) {
@@ -148,21 +148,19 @@ export class CategoriesPage implements OnInit {
         score_id: score?.id || '',
         verified: isChecked,
       })
-      .subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'Score verification updated for team ' + team?.team_name
-          );
-        },
-        error: (error) => {
-          this.toastService.showError(
-            'Error updating score verification: ' + error.statusText
-          );
-          // Revert the change in UI
-          if (team && score) {
-            score.verified = !isChecked;
-          }
-        },
+      .then(() => {
+        this.toastService.showSuccess(
+          'Score verification updated for team ' + team?.team_name
+        );
+      })
+      .catch((error: unknown) => {
+        this.toastService.showError(
+          'Error updating score verification: ' + apiErrorStatusText(error)
+        );
+        // Revert the change in UI
+        if (team && score) {
+          score.verified = !isChecked;
+        }
       });
   }
 

@@ -23,6 +23,7 @@ import {
   createOutline,
   fingerPrintOutline,
   homeOutline,
+  notificationsOutline,
   peopleOutline,
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
@@ -73,6 +74,7 @@ export class MenuComponent {
       fingerPrintOutline,
       cameraOutline,
       createOutline,
+      notificationsOutline,
     });
 
     this.router.events

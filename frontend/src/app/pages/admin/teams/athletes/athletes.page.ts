@@ -44,6 +44,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { AdminAthleteFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-athletes',
@@ -164,9 +165,9 @@ export class AthletesPage {
     } else if (athleteId) {
       this.isEditing.set(true);
       this.dataLoaded.set(false);
-      this.apiAthlete
-        .getAthleteAthletesAthleteIdGet({ athlete_id: athleteId })
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      fromApi(
+        this.apiAthlete.getAthleteAthletesAthleteIdGet({ athlete_id: athleteId })
+      )
         .subscribe({
           next: (data: apiAthleteOutputModel) => {
             this.editAthlete.set(data);
@@ -182,10 +183,10 @@ export class AthletesPage {
               city: data.city ?? '',
             });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error fetching athlete data:', error);
             this.toastService.showError(
-              'Failed to load athlete data: ' + error.statusText
+              'Failed to load athlete data: ' + apiErrorStatusText(error)
             );
           },
           complete: () => {
@@ -212,8 +213,8 @@ export class AthletesPage {
     };
 
     if (this.isEditing()) {
-      this.apiAthlete
-        .updateAthleteAthletesAthleteIdPatch({
+      fromApi(
+        this.apiAthlete.updateAthleteAthletesAthleteIdPatch({
           athlete_id: this.editAthlete()?.id!,
           body: {
             ...trimmedData,
@@ -224,7 +225,7 @@ export class AthletesPage {
             team_id: this.editAthlete()!.team_id,
           },
         })
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      )
         .subscribe({
           next: () => {
             this.toastService.showSuccess('Athlete updated successfully');
@@ -233,16 +234,16 @@ export class AthletesPage {
               { replaceUrl: true }
             );
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error updating athlete:', error);
             this.toastService.showError(
-              'Failed to update athlete: ' + error.statusText
+              'Failed to update athlete: ' + apiErrorStatusText(error)
             );
           },
         });
     } else {
-      this.apiAthlete
-        .createAthleteAthletesPost({
+      fromApi(
+        this.apiAthlete.createAthleteAthletesPost({
           body: {
             ...(trimmedData as apiAthleteCreateModel),
             email: trimmedData.email?.trim() || null,
@@ -250,7 +251,7 @@ export class AthletesPage {
             team_id: this.teamId(),
           },
         })
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      )
         .subscribe({
           next: () => {
             this.toastService.showSuccess('Athlete created successfully');
@@ -258,10 +259,10 @@ export class AthletesPage {
               replaceUrl: true,
             });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error creating athlete:', error);
             this.toastService.showError(
-              'Failed to create athlete: ' + error.statusText
+              'Failed to create athlete: ' + apiErrorStatusText(error)
             );
           },
         });
@@ -280,11 +281,11 @@ export class AthletesPage {
     );
 
     if (confirmation.role === 'confirm') {
-      this.apiAthlete
-        .deleteAthleteAthletesAthleteIdDelete({
+      fromApi(
+        this.apiAthlete.deleteAthleteAthletesAthleteIdDelete({
           athlete_id: this.editAthlete()!.id,
         })
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      )
         .subscribe({
           next: () => {
             this.toastService.showSuccess('Athlete deleted successfully');
@@ -293,10 +294,10 @@ export class AthletesPage {
               { replaceUrl: true }
             );
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error deleting athlete:', error);
             this.toastService.showError(
-              'Failed to delete athlete: ' + error.statusText
+              'Failed to delete athlete: ' + apiErrorStatusText(error)
             );
           },
         });

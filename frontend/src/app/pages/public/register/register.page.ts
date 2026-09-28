@@ -49,6 +49,7 @@ import { TeamFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
 
 @Component({
   selector: 'app-register',
@@ -223,8 +224,9 @@ export class RegisterPage {
       })),
     };
 
-    this.apiTeams
-      .registerTeamTeamsRegisterPost({ body: registrationData })
+    fromApi(
+      this.apiTeams.registerTeamTeamsRegisterPost({ body: registrationData })
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: apiTeamRegistrationResponseModel) => {
@@ -237,10 +239,10 @@ export class RegisterPage {
 
           await modal.present();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Error registering team:', error);
           this.toastService.showError(
-            'Failed to register team: ' + (error.statusText || 'Unknown error')
+            'Failed to register team: ' + apiErrorStatusText(error)
           );
         },
       });
