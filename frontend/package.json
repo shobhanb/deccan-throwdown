@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && node scripts/ensure-www-index.js",
+    "build": "node scripts/generate-sitemap.js && ng build && node scripts/ensure-www-index.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",

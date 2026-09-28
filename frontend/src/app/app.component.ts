@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { filter, map, merge, of, startWith } from 'rxjs';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { ToastComponent } from './shared/toast/toast.component';
 import { MenuComponent } from './shared/menu/menu.component';
@@ -17,6 +17,8 @@ import { IonSplitPane } from '@ionic/angular';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlertService } from './services/alert.service';
+import { SeoService } from './services/seo.service';
+import { SeoRouteData } from './config/seo.config';
 
 @Component({
   selector: 'app-root',
@@ -37,6 +39,7 @@ export class AppComponent {
   private router = inject(Router);
   private document = inject(DOCUMENT);
   private platformId = inject(PLATFORM_ID);
+  private seoService = inject(SeoService);
 
   /** iOS slide transitions render at viewport width and flash on centered desktop layout. */
   pageAnimationsEnabled = isPlatformBrowser(this.platformId)
@@ -55,6 +58,13 @@ export class AppComponent {
   );
 
   constructor() {
+    merge(
+      of(null),
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd))
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.applyRouteSeo());
+
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
         this.document.body.classList.toggle(
@@ -84,5 +94,14 @@ export class AppComponent {
           }
         });
     }
+  }
+
+  private applyRouteSeo(): void {
+    let route = this.router.routerState.root;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+    const seo = route.snapshot.data['seo'] as SeoRouteData | undefined;
+    this.seoService.applyForUrl(this.router.url, seo);
   }
 }

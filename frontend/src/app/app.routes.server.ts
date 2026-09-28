@@ -10,15 +10,15 @@ async function archiveEventParams(): Promise<Record<string, string>[]> {
 }
 
 export const serverRoutes: ServerRoute[] = [
-  { path: '', renderMode: RenderMode.Client },
+  { path: '', renderMode: RenderMode.Prerender },
   { path: 'home', renderMode: RenderMode.Prerender },
   { path: 'pics', renderMode: RenderMode.Prerender },
   { path: 'register', renderMode: RenderMode.Prerender },
   { path: 'register/test', renderMode: RenderMode.Client },
   { path: 'redirect', renderMode: RenderMode.Client },
-  { path: 'leaderboard', renderMode: RenderMode.Client },
-  { path: 'teams', renderMode: RenderMode.Client },
-  { path: 'wods', renderMode: RenderMode.Client },
+  { path: 'leaderboard', renderMode: RenderMode.Prerender },
+  { path: 'teams', renderMode: RenderMode.Prerender },
+  { path: 'wods', renderMode: RenderMode.Prerender },
   {
     path: 'leaderboard/:eventShortName',
     renderMode: RenderMode.Prerender,

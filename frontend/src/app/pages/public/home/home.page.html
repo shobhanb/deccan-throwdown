@@ -21,16 +21,35 @@
   </div>
   }
 
-  <section class="dt-hero">
+  <section
+    class="dt-hero"
+    itemscope
+    itemtype="https://schema.org/SportsEvent"
+  >
+    <meta itemprop="url" [attr.content]="eventPageUrl" />
+    <meta itemprop="startDate" [attr.content]="eventStartDate" />
+    <meta itemprop="endDate" [attr.content]="eventEndDate" />
+    <meta itemprop="sport" content="CrossFit" />
+    <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization">
+      <meta itemprop="name" [attr.content]="venueName" />
+    </span>
+    <span itemprop="location" itemscope itemtype="https://schema.org/Place">
+      <meta itemprop="name" [attr.content]="venueName" />
+      <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+        <meta itemprop="addressLocality" [attr.content]="venueLocality" />
+        <meta itemprop="addressRegion" [attr.content]="venueRegion" />
+        <meta itemprop="addressCountry" [attr.content]="venueCountry" />
+      </span>
+    </span>
     <img
       src="assets/brand/fortress-mark.svg"
       alt=""
       class="dt-hero-watermark"
       aria-hidden="true"
     />
-    <img src="icons/logo_192.jpg" alt="" class="hero-logo" />
-    <h1 class="hero-title text-display">{{ eventName }}</h1>
-    <p class="hero-tagline">{{ tagline }}</p>
+    <img src="icons/logo_192.jpg" alt="Deccan Throwdown logo" class="hero-logo" />
+    <h1 class="hero-title text-display" itemprop="name">{{ eventName }}</h1>
+    <p class="hero-tagline" itemprop="description">{{ tagline }}</p>
     @switch (registrationStatus) {
       @case ('open') {
         <span class="dt-pill hero-chip">Registration Open</span>
@@ -43,6 +62,21 @@
       }
     }
     <p class="hero-date">{{ eventDates }}</p>
+  </section>
+
+  <section class="hero-intro card-elevated" aria-label="About Deccan Throwdown">
+    <p>
+      <strong>Deccan Throwdown</strong> is a CrossFit team competition hosted at
+      <strong>CrossFit Monkey Flag</strong> in Pune. Athletes compete across team workouts
+      (WODs), with divisions for different skill levels — follow the
+      <a routerLink="/leaderboard">live leaderboard</a>, browse
+      <a routerLink="/wods">workouts</a>, and
+      @if (registrationOpen) {
+        <a routerLink="/register">register your team</a> for the next event.
+      } @else {
+        check back for registration when the next event opens.
+      }
+    </p>
   </section>
 
   <div class="action-grid">

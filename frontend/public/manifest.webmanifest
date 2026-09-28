@@ -1,8 +1,8 @@
 {
-  "name": "Deccan Throwdown",
-  "short_name": "DT Teams",
+  "name": "Deccan Throwdown — CrossFit Competition",
+  "short_name": "Deccan TD",
   "id": "deccan-throwdown",
-  "description": "Deccan Throwdown",
+  "description": "Deccan Throwdown CrossFit team competition at CrossFit Monkey Flag — WODs, registration, teams, and leaderboard.",
   "categories": ["fitness", "sports"],
   "display": "standalone",
   "orientation": "portrait",
