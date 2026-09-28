@@ -121,6 +121,19 @@ resolve_ssh_target() {
     fi
 }
 
+ensure_www_index() {
+    local www="${REPO_ROOT}/frontend/www"
+    if [[ -f "${www}/index.html" ]]; then
+        return 0
+    fi
+    if [[ -f "${www}/index.csr.html" ]]; then
+        log "Creating www/index.html from index.csr.html (Angular hybrid static output)"
+        cp "${www}/index.csr.html" "${www}/index.html"
+        return 0
+    fi
+    return 1
+}
+
 build_frontend() {
     log "Building Angular frontend for production"
     cd "${REPO_ROOT}/frontend"
@@ -132,7 +145,7 @@ build_frontend() {
 
     run npm run build
 
-    if [[ ! -f www/index.html ]]; then
+    if ! ensure_www_index; then
         echo "Error: frontend build failed; ${REPO_ROOT}/frontend/www/index.html not found" >&2
         exit 1
     fi
@@ -213,7 +226,7 @@ main() {
     if [[ "${SKIP_FRONTEND}" == false ]]; then
         if [[ "${SKIP_BUILD}" == false ]]; then
             build_frontend
-        elif [[ ! -f "${REPO_ROOT}/frontend/www/index.html" ]]; then
+        elif ! ensure_www_index; then
             echo "Error: --skip-build was set but frontend/www is missing. Run a build first." >&2
             exit 1
         fi
