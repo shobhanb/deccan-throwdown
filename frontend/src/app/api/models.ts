@@ -7,6 +7,8 @@ export type { apiAthleteOutputModel } from './models/api-athlete-output-model';
 export type { apiAthleteRegistrationModel } from './models/api-athlete-registration-model';
 export type { apiAthleteUpdateModel } from './models/api-athlete-update-model';
 export type { apiCreateUser } from './models/api-create-user';
+export type { apiCustomNotificationSendModel } from './models/api-custom-notification-send-model';
+export type { apiCustomNotificationSendResponseModel } from './models/api-custom-notification-send-response-model';
 export type { apiFcmTokenRegisterModel } from './models/api-fcm-token-register-model';
 export type { apiFcmTokenRegisterResponseModel } from './models/api-fcm-token-register-response-model';
 export type { apiFirebaseCustomClaims } from './models/api-firebase-custom-claims';

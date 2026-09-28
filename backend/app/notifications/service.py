@@ -96,3 +96,18 @@ class NotificationService:
             event_short_name=event_short_name,
             route=f"/leaderboard/{event_short_name}",
         )
+
+    @staticmethod
+    def send_custom_event_notification(
+        event_short_name: str,
+        title: str,
+        body: str,
+        route: str,
+    ) -> None:
+        NotificationService.send_to_topic(
+            event_topic(event_short_name),
+            title,
+            body,
+            event_short_name=event_short_name,
+            route=route,
+        )

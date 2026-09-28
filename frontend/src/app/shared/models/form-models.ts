@@ -56,3 +56,9 @@ export interface ScoreFormModel {
   tiebreak_seconds: number | null;
   score_detail: string;
 }
+
+export interface AdminCustomNotificationFormModel {
+  title: string;
+  body: string;
+  route: string;
+}

@@ -11,8 +11,11 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 import { registerFcmTokenNotificationsTokensPost } from '../fn/notifications/register-fcm-token-notifications-tokens-post';
 import { RegisterFcmTokenNotificationsTokensPost$Params } from '../fn/notifications/register-fcm-token-notifications-tokens-post';
+import { sendCustomNotificationNotificationsCustomPost } from '../fn/notifications/send-custom-notification-notifications-custom-post';
+import { SendCustomNotificationNotificationsCustomPost$Params } from '../fn/notifications/send-custom-notification-notifications-custom-post';
 import { unregisterFcmTokenNotificationsTokensTokenDelete } from '../fn/notifications/unregister-fcm-token-notifications-tokens-token-delete';
 import { UnregisterFcmTokenNotificationsTokensTokenDelete$Params } from '../fn/notifications/unregister-fcm-token-notifications-tokens-token-delete';
+import { apiCustomNotificationSendResponseModel } from '../models/api-custom-notification-send-response-model';
 import { apiFcmTokenRegisterResponseModel } from '../models/api-fcm-token-register-response-model';
 
 @Injectable({ providedIn: 'root' })
@@ -63,5 +66,32 @@ export class apiNotificationsService extends BaseService {
       params,
       context
     ).pipe(map((r: StrictHttpResponse<void>) => r.body));
+  }
+
+  sendCustomNotificationNotificationsCustomPost$Response(
+    params: SendCustomNotificationNotificationsCustomPost$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<apiCustomNotificationSendResponseModel>> {
+    return sendCustomNotificationNotificationsCustomPost(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
+  }
+
+  sendCustomNotificationNotificationsCustomPost(
+    params: SendCustomNotificationNotificationsCustomPost$Params,
+    context?: HttpContext
+  ): Observable<apiCustomNotificationSendResponseModel> {
+    return this.sendCustomNotificationNotificationsCustomPost$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (r: StrictHttpResponse<apiCustomNotificationSendResponseModel>) =>
+          r.body
+      )
+    );
   }
 }

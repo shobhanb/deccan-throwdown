@@ -14,6 +14,13 @@ export const routes: Routes = [
     loadComponent: () => import('./users/users.page').then((m) => m.UsersPage),
   },
   {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./notifications/notifications.page').then(
+        (m) => m.NotificationsPage
+      ),
+  },
+  {
     path: '',
     redirectTo: 'teams',
     pathMatch: 'full',

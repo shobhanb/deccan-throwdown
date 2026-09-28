@@ -3,10 +3,16 @@ from datetime import UTC, datetime
 from fastapi import APIRouter, status
 
 from app.database.dependencies import db_dependency
+from app.firebase_auth.dependencies import admin_user_dependency
 
 from .dependencies import optional_firebase_user_dependency
 from .models import FcmToken
-from .schemas import FcmTokenRegisterModel, FcmTokenRegisterResponseModel
+from .schemas import (
+    CustomNotificationSendModel,
+    CustomNotificationSendResponseModel,
+    FcmTokenRegisterModel,
+    FcmTokenRegisterResponseModel,
+)
 from .service import NotificationService
 from .topics import admin_topic, event_topic
 
@@ -85,3 +91,21 @@ async def unregister_fcm_token(
         NotificationService.unsubscribe_token(record.token, admin_topic())
 
     await record.delete(async_session=db_session)
+
+
+@notifications_router.post(
+    "/custom",
+    status_code=status.HTTP_200_OK,
+    response_model=CustomNotificationSendResponseModel,
+)
+async def send_custom_notification(
+    _: admin_user_dependency,
+    body: CustomNotificationSendModel,
+) -> CustomNotificationSendResponseModel:
+    NotificationService.send_custom_event_notification(
+        body.event_short_name,
+        body.title,
+        body.body,
+        body.route,
+    )
+    return CustomNotificationSendResponseModel()

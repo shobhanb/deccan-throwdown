@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Notifications</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-admin-page-header
+    title="Send Custom Notification"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  <p class="audience-note ion-padding-horizontal">
+    Sent to users who enabled Event updates for this event.
+  </p>
+
+  <form novalidate (submit)="onSubmit(); $event.preventDefault()">
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Title"
+          labelPlacement="stacked"
+          [formField]="notificationForm.title"
+          placeholder="Notification title"
+          maxlength="120"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-textarea
+          label="Message"
+          labelPlacement="stacked"
+          [formField]="notificationForm.body"
+          placeholder="Notification message"
+          [autoGrow]="true"
+          maxlength="500"
+          rows="4"
+        ></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="text"
+          label="Open page (optional)"
+          labelPlacement="stacked"
+          [formField]="notificationForm.route"
+          placeholder="/home or /leaderboard"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      class="ion-margin"
+      type="submit"
+      [disabled]="!formValid() || sending()"
+    >
+      {{ sending() ? 'Sending…' : 'Send notification' }}
+    </ion-button>
+  </form>
+</ion-content>
