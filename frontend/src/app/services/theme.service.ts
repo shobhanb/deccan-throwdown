@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 
 @Injectable({
@@ -7,6 +7,7 @@ import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 export class ThemeService {
   private readonly THEME_KEY = 'dt-theme';
   private platformId = inject(PLATFORM_ID);
+  private document = inject(DOCUMENT);
   themeToggle = signal<boolean>(false);
 
   constructor() {
@@ -40,7 +41,7 @@ export class ThemeService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    document.body.classList.toggle('dark', shouldAdd);
-    document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
+    this.document.body.classList.toggle('dark', shouldAdd);
+    this.document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
   }
 }

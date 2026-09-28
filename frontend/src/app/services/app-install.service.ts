@@ -1,4 +1,5 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { InstallAppModalComponent } from '../shared/install-app-modal/install-app-modal.component';
 import { Platform } from '@ionic/angular';
@@ -9,11 +10,16 @@ import { Platform } from '@ionic/angular';
 export class AppInstallService {
   private modalController = inject(ModalController);
   private platform = inject(Platform);
+  private platformId = inject(PLATFORM_ID);
   private readonly STORAGE_KEY = 'dt-install-prompt-hidden';
 
   readonly showInstallButton = signal(false);
 
   constructor() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     if (this.platform.is('pwa')) {
       this.showInstallButton.set(false);
     } else if (this.platform.is('ios') || this.platform.is('android')) {

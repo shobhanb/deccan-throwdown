@@ -1,11 +1,12 @@
 import {
-  Component,
-  inject,
   ChangeDetectionStrategy,
+  Component,
+  PLATFORM_ID,
   computed,
   effect,
+  inject,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
@@ -45,6 +46,7 @@ export class TabBarComponent {
   private router = inject(Router);
   private menuController = inject(MenuController);
   private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -84,12 +86,14 @@ export class TabBarComponent {
       menuOutline,
     });
 
-    effect(() => {
-      this.document.body.classList.toggle(
-        'tab-bar-visible',
-        this.tabBarVisible()
-      );
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      effect(() => {
+        this.document.body.classList.toggle(
+          'tab-bar-visible',
+          this.tabBarVisible()
+        );
+      });
+    }
   }
 
   async openMenu() {

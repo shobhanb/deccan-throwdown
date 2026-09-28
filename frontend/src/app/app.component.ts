@@ -55,12 +55,14 @@ export class AppComponent {
   );
 
   constructor() {
-    effect(() => {
-      this.document.body.classList.toggle(
-        'admin-banner-visible',
-        this.showAdminBanner()
-      );
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      effect(() => {
+        this.document.body.classList.toggle(
+          'admin-banner-visible',
+          this.showAdminBanner()
+        );
+      });
+    }
 
     if (this.swUpdate?.isEnabled) {
       this.swUpdate.versionUpdates
@@ -78,7 +80,7 @@ export class AppComponent {
             'Later'
           );
           if (shouldReload) {
-            document.location.reload();
+            this.document.defaultView?.location.reload();
           }
         });
     }
