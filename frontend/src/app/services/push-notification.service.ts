@@ -39,8 +39,10 @@ export class PushNotificationService {
       environment.notificationsEnabled
     ) {
       onMessage(this.messaging, (payload) => {
-        const title = payload.notification?.title ?? 'Deccan Throwdown';
-        const body = payload.notification?.body ?? '';
+        const data = payload.data ?? {};
+        const title =
+          data['title'] ?? payload.notification?.title ?? 'Deccan Throwdown';
+        const body = data['body'] ?? payload.notification?.body ?? '';
         this.toastService.showToast(`${title}: ${body}`, 'primary', null, 3000);
       });
     }

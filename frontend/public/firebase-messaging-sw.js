@@ -14,10 +14,17 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+function pushDisplayFields(payload) {
+  const data = payload.data || {};
+  return {
+    title: data.title || payload.notification?.title || 'Deccan Throwdown',
+    body: data.body || payload.notification?.body || '',
+    route: data.route || '/',
+  };
+}
+
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title ?? 'Deccan Throwdown';
-  const body = payload.notification?.body ?? '';
-  const route = payload.data?.route ?? '/';
+  const { title, body, route } = pushDisplayFields(payload);
   self.registration.showNotification(title, {
     body,
     data: { route },

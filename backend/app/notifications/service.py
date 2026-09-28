@@ -27,10 +27,13 @@ class NotificationService:
             log.info("Notifications disabled; skipped topic %s", topic)
             return
         try:
+            # Data-only payload: web clients show one notification themselves.
+            # A `notification` block would also auto-display in the service worker.
             messaging.send(
                 messaging.Message(
-                    notification=messaging.Notification(title=title, body=body),
                     data={
+                        "title": title,
+                        "body": body,
                         "event_short_name": event_short_name,
                         "route": route,
                     },
