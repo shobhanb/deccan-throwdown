@@ -1,4 +1,4 @@
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformServer } from '@angular/common';
 import {
   inject,
   Injectable,
@@ -16,8 +16,8 @@ import { pendingUntilComplete } from './ssr-pending-task.util';
 
 export type EventTeamsLoadScope = 'leaderboard' | 'teams';
 
-/** `transfer` = hydrated from TransferState; `static` = prerendered archive (no API); `network` = HTTP */
-export type EventTeamsLoadResult = 'transfer' | 'static' | 'network';
+/** `transfer` = hydrated from TransferState; `network` = HTTP */
+export type EventTeamsLoadResult = 'transfer' | 'network';
 
 @Injectable({
   providedIn: 'root',
@@ -49,15 +49,9 @@ export class EventTeamsDataService {
     }
 
     const archived = isArchivedEvent(eventShortName);
-    const onBrowser = isPlatformBrowser(this.platformId);
 
     const storeForTransfer =
       isPlatformServer(this.platformId) && archived && !forceNetwork;
-
-    if (archived && onBrowser && !forceNetwork) {
-      handlers.onSettled?.();
-      return 'static';
-    }
 
     fromApi(
       this.apiTeams.getTeamsTeamsGet({

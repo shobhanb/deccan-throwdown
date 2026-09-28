@@ -201,11 +201,7 @@ export class LeaderboardPage implements OnInit {
     this.selectedCategory.set(this.categories()?.[0] ?? null);
     this.selectedWod.set(0);
 
-    if (!options?.forceNetwork && isArchivedEvent(eventShortName)) {
-      this.dataLoaded.set(true);
-    } else {
-      this.dataLoaded.set(false);
-    }
+    this.dataLoaded.set(false);
 
     this.eventTeamsData.load(
       'leaderboard',

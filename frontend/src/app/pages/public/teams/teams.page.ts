@@ -124,11 +124,7 @@ export class TeamsPage implements OnInit {
     this.eventShortName.set(eventShortNameParam ?? defaultConfig);
     const eventShortName = this.eventShortName();
 
-    if (!options?.forceNetwork && isArchivedEvent(eventShortName)) {
-      this.dataLoaded.set(true);
-    } else {
-      this.dataLoaded.set(false);
-    }
+    this.dataLoaded.set(false);
 
     this.eventTeamsData.load(
       'teams',
