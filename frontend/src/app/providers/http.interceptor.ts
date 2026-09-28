@@ -4,7 +4,10 @@ import { Auth } from '@angular/fire/auth';
 import { catchError, from, switchMap } from 'rxjs';
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(Auth);
+  const auth = inject(Auth, { optional: true });
+  if (!auth) {
+    return next(req);
+  }
 
   const tokenPromise = auth.currentUser
     ? auth.currentUser.getIdToken().catch(() => null)

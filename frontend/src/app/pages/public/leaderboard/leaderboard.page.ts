@@ -5,6 +5,7 @@ import {
   inject,
   linkedSignal,
   OnInit,
+  PendingTasks,
   signal,
   ChangeDetectionStrategy
 } from '@angular/core';
@@ -43,6 +44,7 @@ import { apiErrorDetail, apiErrorStatusText, fromApi } from 'src/app/services/ap
 import { appConfig, defaultConfig } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
+import { pendingUntilComplete } from 'src/app/services/ssr-pending-task.util';
 
 @Component({
   selector: 'app-leaderboard',
@@ -73,6 +75,7 @@ export class LeaderboardPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private platform = inject(Platform);
   private destroyRef = inject(DestroyRef);
+  private pendingTasks = inject(PendingTasks);
 
   selectInterface =  'popover';
   wodSelectOptions = { side: 'bottom', alignment: 'start' };
@@ -204,7 +207,10 @@ export class LeaderboardPage implements OnInit {
         event_short_name: this.eventShortName(),
       })
     )
-      .pipe(finalize(() => this.dataLoaded.set(true)))
+      .pipe(
+        pendingUntilComplete(this.pendingTasks),
+        finalize(() => this.dataLoaded.set(true))
+      )
       .subscribe({
         next: (data: apiTeamsOutputDetailModel[]) => {
           this.teamsData.set(data);
