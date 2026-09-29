@@ -159,10 +159,6 @@ ion-item {
   border-radius: 10px;
 }
 
-.auth-content {
-  --background: var(--ion-background-color);
-}
-
 .auth-container {
   max-width: 440px;
   margin: 0 auto;
@@ -212,19 +208,20 @@ ion-item {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .auth-subtitle {
   text-align: center;
   margin: var(--dt-space-xs) 0 0;
-  color: var(--ion-color-medium);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.9rem;
 }
 
 .auth-description {
   text-align: center;
   margin: var(--dt-space-sm) 0 var(--dt-space-lg);
-  color: var(--ion-color-medium);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.85rem;
 }
 
@@ -237,6 +234,7 @@ ion-item {
 .auth-link-button {
   align-self: flex-start;
   margin: 0;
+  --color: #ffffff;
 }
 
 .text-display {
@@ -510,5 +508,7 @@ ion-skeleton-text {
 
 .auth-content {
   --background: transparent;
+  --color: #ffffff;
   background: var(--dt-gradient-hero);
+  color: #ffffff;
 }

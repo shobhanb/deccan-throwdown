@@ -77,6 +77,16 @@ class NotificationService:
         )
 
     @staticmethod
+    def send_new_admin_signup(display_name: str, email: str) -> None:
+        NotificationService.send_to_topic(
+            admin_topic(),
+            "New Admin Signup",
+            f"{display_name} ({email}) signed up — review and grant admin access if approved",
+            event_short_name="admin",
+            route="/admin/users",
+        )
+
+    @staticmethod
     def send_team_verified(
         event_short_name: str,
         team_name: str,

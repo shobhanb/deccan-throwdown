@@ -1,10 +1,11 @@
 import logging
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, BackgroundTasks, status
 from firebase_admin import auth as fireauth
 from firebase_admin.auth import ListUsersPage, UserRecord
 from firebase_admin.exceptions import FirebaseError
 
+from app.notifications.service import NotificationService
 from app.settings import admin_user_settings
 
 from .dependencies import admin_user_dependency
@@ -19,6 +20,7 @@ firebase_auth_router = APIRouter(prefix="/fireauth", tags=["fireauth"])
 @firebase_auth_router.post("/signup", status_code=status.HTTP_201_CREATED)
 async def create_user(
     user_info: CreateUser,
+    background_tasks: BackgroundTasks,
 ) -> None:
     try:
         user: UserRecord = fireauth.create_user(
@@ -44,6 +46,12 @@ async def create_user(
             raise invalid_input_exception(msg) from e
         except FirebaseError as e:
             raise firebase_error(e) from e
+
+    background_tasks.add_task(
+        NotificationService.send_new_admin_signup,
+        user_info.display_name,
+        user_info.email,
+    )
 
 
 @firebase_auth_router.post("/change-admin/{uid}", status_code=status.HTTP_202_ACCEPTED)
