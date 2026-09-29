@@ -39,11 +39,14 @@ Options:
   -h, --help        Show this help message
 
 Examples:
-  $0 push dt.cfgames.site
-  $0 pull root@dt.cfgames.site
-  $0 push -y dt.cfgames.site
+  $0 push 139.59.44.130
+  $0 pull root@139.59.44.130
+  $0 push -y 139.59.44.130
 
 Notes:
+  - Use the droplet's public IP (or a DNS-only SSH hostname), not a
+    Cloudflare-proxied name like dt.cfgames.site. Proxied records do not
+    route SSH/rsync to the server.
   - Creates a timestamped backup of the destination file before overwriting it.
   - push overwrites production data on the droplet.
   - pull overwrites your local database.db.
@@ -179,6 +182,38 @@ backup_local_db() {
     run cp "${LOCAL_DB}" "${backup_path}"
 }
 
+ensure_remote_db_dir() {
+    local remote_dir
+    remote_dir="$(dirname "${REMOTE_DB}")"
+
+    if [[ "${DRY_RUN}" == true ]]; then
+        echo "[dry-run] ssh ${SSH_TARGET} mkdir -p '${remote_dir}'"
+        return 0
+    fi
+
+    "${SSH_CMD[@]}" "${SSH_TARGET}" "mkdir -p '${remote_dir}'"
+}
+
+assert_remote_db_not_directory() {
+    local remote_cmd
+    remote_cmd=$(cat <<EOF
+set -euo pipefail
+if [[ -d '${REMOTE_DB}' && ! -f '${REMOTE_DB}' ]]; then
+    echo 'Error: remote path is a directory, not a file: ${REMOTE_DB}' >&2
+    echo 'Remove it on the server (e.g. rm -rf) and run push again.' >&2
+    exit 1
+fi
+EOF
+)
+
+    if [[ "${DRY_RUN}" == true ]]; then
+        echo "[dry-run] ssh ${SSH_TARGET} verify remote db is not a directory"
+        return 0
+    fi
+
+    "${SSH_CMD[@]}" "${SSH_TARGET}" "${remote_cmd}"
+}
+
 backup_remote_db() {
     local remote_cmd
     remote_cmd=$(cat <<EOF
@@ -209,12 +244,18 @@ sync_push() {
     fi
 
     confirm_sync "${LOCAL_DB}" "${SSH_TARGET}:${REMOTE_DB}"
+    ensure_remote_db_dir
+    assert_remote_db_not_directory
     backup_remote_db
 
+    local remote_dir
+    remote_dir="$(dirname "${REMOTE_DB}")"
     log "Pushing ${LOCAL_DB} to ${SSH_TARGET}:${REMOTE_DB}"
+    # Rsync to the parent directory (trailing slash). If the parent is missing,
+    # rsync treats a non-existent destination path as a new directory name.
     run rsync "${RSYNC_FLAGS[@]}" -e "${RSYNC_SSH}" \
         "${LOCAL_DB}" \
-        "${SSH_TARGET}:${REMOTE_DB}"
+        "${SSH_TARGET}:${remote_dir}/"
 }
 
 sync_pull() {
