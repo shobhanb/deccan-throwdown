@@ -30,9 +30,7 @@
         <ion-item slot="header">
           <ion-label>{{ team.team_name }}</ion-label>
           <div class="team-header-badges" slot="end">
-            @if (team.verified) {
-            <span class="dt-pill dt-pill-gold">Verified</span>
-            } @else {
+            @if (team.verified === false) {
             <span class="dt-pill dt-pill-warning">Pending</span>
             }
           </div>
