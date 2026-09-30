@@ -201,7 +201,9 @@ restart_containers() {
     remote_cmd=$(cat <<EOF
 set -euo pipefail
 cd '${DEPLOY_PATH}'
-docker compose up -d --build
+docker compose down
+docker compose build
+docker compose up -d
 docker compose ps
 EOF
 )
