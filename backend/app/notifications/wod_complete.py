@@ -1,11 +1,19 @@
+import logging
 from datetime import UTC, datetime
 
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.scores.models import Score
 from app.teams.models import Team
 
 from .models import WodLeaderboardNotification
 from .service import NotificationService
+
+log = logging.getLogger("uvicorn.error")
+
+# score.verified is stored as text ("0"/"1") in SQLite; avoid ORM relationship caches.
+_SCORE_VERIFIED = or_(Score.verified == "1", Score.verified.is_(True))
 
 
 async def is_wod_fully_verified(
@@ -13,19 +21,31 @@ async def is_wod_fully_verified(
     event_short_name: str,
     wod_number: int,
 ) -> bool:
-    teams = await Team.find_all(
-        async_session=async_session,
-        select_relationships=[Team.scores],
-        event_short_name=event_short_name,
+    team_count = await async_session.scalar(
+        select(func.count()).select_from(Team).where(Team.event_short_name == event_short_name),
     )
-    if not teams:
+    if not team_count:
         return False
 
-    for team in teams:
-        score = next((s for s in team.scores if s.wod_number == wod_number), None)
-        if score is None or not score.verified:
-            return False
-    return True
+    verified_team_count = await async_session.scalar(
+        select(func.count(func.distinct(Team.id)))
+        .select_from(Team)
+        .join(Score, Team.id == Score.team_id)
+        .where(
+            Team.event_short_name == event_short_name,
+            Score.wod_number == wod_number,
+            _SCORE_VERIFIED,
+        ),
+    )
+    verified = verified_team_count == team_count
+    log.info(
+        "WOD %s verification for %s: %s/%s teams",
+        wod_number,
+        event_short_name,
+        verified_team_count,
+        team_count,
+    )
+    return verified
 
 
 async def sync_wod_leaderboard_notification(

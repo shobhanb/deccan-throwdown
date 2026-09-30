@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.even_scoring_tables.models import EvenScoringTable
+from app.notifications.wod_complete import sync_wod_leaderboard_notification
 from app.teams.models import Team
 
 from .models import Score
@@ -14,6 +15,7 @@ async def update_ranks(
 ) -> None:
     await update_score_ranks(async_session, event_short_name, wod_number)
     await update_overall_ranks(async_session, event_short_name)
+    await sync_wod_leaderboard_notification(async_session, event_short_name, wod_number)
 
 
 async def update_score_ranks(

@@ -5,7 +5,6 @@ from fastapi import APIRouter, status
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
-from app.notifications.wod_complete import sync_wod_leaderboard_notification
 
 from .models import Score
 from .schemas import ScoreCreateModel, ScoreOutputModel, ScoreUpdateModel
@@ -74,7 +73,9 @@ async def update_score(
     score_id: UUID,
     update_data: ScoreUpdateModel,
 ) -> Score:
-    score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
+    score = await Score.find_or_raise(
+        async_session=db_session, select_relationships=[Score.team], id=score_id
+    )
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump()
@@ -83,7 +84,6 @@ async def update_score(
 
     db_session.add(score)
     await db_session.commit()
-    await db_session.refresh(score)
 
     await update_ranks(
         async_session=db_session,
@@ -105,24 +105,21 @@ async def update_score_verification(
     score_id: UUID,
     verified: bool,  # noqa: FBT001
 ) -> Score:
-    score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
+    score = await Score.find_or_raise(
+        async_session=db_session, select_relationships=[Score.team], id=score_id
+    )
 
     score.verified = verified
 
     db_session.add(score)
     await db_session.commit()
-    await db_session.refresh(score)
 
     await update_ranks(
         async_session=db_session,
         event_short_name=score.team.event_short_name,
         wod_number=score.wod_number,
     )
-    await sync_wod_leaderboard_notification(
-        db_session,
-        score.team.event_short_name,
-        score.wod_number,
-    )
+    await db_session.refresh(score)
 
     return score
 
@@ -136,7 +133,9 @@ async def delete_score(
     _: admin_user_dependency,
     score_id: UUID,
 ) -> None:
-    score = await Score.find_or_raise(async_session=db_session, select_relationships=[Score.team], id=score_id)
+    score = await Score.find_or_raise(
+        async_session=db_session, select_relationships=[Score.team], id=score_id
+    )
     event_short_name = score.team.event_short_name
     wod_number = score.wod_number
     await score.delete(async_session=db_session)
@@ -146,7 +145,6 @@ async def delete_score(
         event_short_name=event_short_name,
         wod_number=wod_number,
     )
-    await sync_wod_leaderboard_notification(db_session, event_short_name, wod_number)
 
 
 @scores_router.put("/update-ranks", status_code=status.HTTP_200_OK)
@@ -156,4 +154,8 @@ async def update_event_ranks(
     event_short_name: str,
     wod_number: int,
 ) -> None:
-    await update_ranks(async_session=db_session, event_short_name=event_short_name, wod_number=wod_number)
+    await update_ranks(
+        async_session=db_session,
+        event_short_name=event_short_name,
+        wod_number=wod_number,
+    )
