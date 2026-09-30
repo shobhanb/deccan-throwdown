@@ -57,7 +57,21 @@ export class HomePage {
   registrationOpen = this.appConfigService.registrationStatus === 'open';
   leaderboardEnabled = this.appConfigService.leaderboardEnabled;
 
-  readonly eventPageUrl = `${environment.siteUrl.replace(/\/$/, '')}/home`;
+  private readonly siteUrl = environment.siteUrl.replace(/\/$/, '');
+
+  readonly eventPageUrl = `${this.siteUrl}/home`;
+  readonly eventImageUrl = `${this.siteUrl}/icons/logo_512.jpg`;
+  readonly organizerUrl = this.siteUrl;
+  readonly offerUrl = `${this.siteUrl}/register`;
+  readonly offerPrice = String(
+    this.appConfigService.registrationPricing?.standard ?? 0
+  );
+  readonly offerAvailability =
+    this.registrationStatus === 'open'
+      ? 'https://schema.org/InStock'
+      : this.registrationStatus === 'coming-soon'
+        ? 'https://schema.org/PreOrder'
+        : 'https://schema.org/SoldOut';
   readonly venueName = SEO_VENUE.name;
   readonly venueLocality = SEO_VENUE.addressLocality;
   readonly venueRegion = SEO_VENUE.addressRegion;

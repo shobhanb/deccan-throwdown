@@ -29,9 +29,21 @@
     <meta itemprop="url" [attr.content]="eventPageUrl" />
     <meta itemprop="startDate" [attr.content]="eventStartDate" />
     <meta itemprop="endDate" [attr.content]="eventEndDate" />
+    <meta itemprop="eventStatus" content="https://schema.org/EventScheduled" />
+    <meta itemprop="image" [attr.content]="eventImageUrl" />
     <meta itemprop="sport" content="CrossFit" />
     <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization">
       <meta itemprop="name" [attr.content]="venueName" />
+      <meta itemprop="url" [attr.content]="organizerUrl" />
+    </span>
+    <span itemprop="performer" itemscope itemtype="https://schema.org/PerformingGroup">
+      <meta itemprop="name" content="Deccan Throwdown athletes" />
+    </span>
+    <span itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+      <meta itemprop="url" [attr.content]="offerUrl" />
+      <meta itemprop="price" [attr.content]="offerPrice" />
+      <meta itemprop="priceCurrency" content="INR" />
+      <meta itemprop="availability" [attr.content]="offerAvailability" />
     </span>
     <span itemprop="location" itemscope itemtype="https://schema.org/Place">
       <meta itemprop="name" [attr.content]="venueName" />
