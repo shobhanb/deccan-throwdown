@@ -207,7 +207,9 @@ async def delete_team(
         id=team_id,
     )
     if len(team.scores) > 0:
-        raise conflict_exception(detail="Cannot delete team with associated scores.")
+        raise conflict_exception(
+            detail="Cannot delete this team because it has scores.",
+        )
     await team.delete(async_session=db_session)
 
 

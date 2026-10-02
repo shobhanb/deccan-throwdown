@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { catchError, from, switchMap } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth, { optional: true });
@@ -23,10 +23,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           })
         : req;
       return next(request);
-    }),
-    catchError((error) => {
-      console.error('HTTP interceptor error', error);
-      return next(req);
     })
   );
 };
