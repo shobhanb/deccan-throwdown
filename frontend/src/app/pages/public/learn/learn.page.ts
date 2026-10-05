@@ -4,9 +4,9 @@ import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.comp
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import {
   browserLessonStore,
+  drawLesson,
   finishLesson,
   Lesson,
-  resolveLesson,
 } from './lesson.model';
 import { lessons } from './lessons';
 
@@ -35,11 +35,19 @@ export class LearnPage implements OnInit, ViewWillEnter {
   }
 
   start(): void {
+    this.draw();
+  }
+
+  reroll(): void {
+    this.draw(this.lesson()?.id ?? null);
+  }
+
+  private draw(avoidId?: string | null): void {
     const store = browserLessonStore();
     if (!store) {
       return;
     }
-    this.lesson.set(resolveLesson(lessons, store));
+    this.lesson.set(drawLesson(lessons, store, { avoidId }));
     this.step.set('teach');
     this.picks.set([null, null]);
     this.started.set(true);

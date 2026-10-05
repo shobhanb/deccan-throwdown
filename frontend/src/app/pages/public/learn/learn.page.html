@@ -9,8 +9,9 @@
 
     <section class="learn-card">
       <p class="learn-body">
-        Open this when you have a minute. You get one small idea, two questions,
-        and then the answer. Nothing is scored.
+        Open this when you have a minute. Start draws a random card: one small
+        idea, two questions, and then the answer. Nothing is scored. Re-roll
+        if you want a different card.
       </p>
       <ul class="snippets">
         <li>
@@ -66,6 +67,7 @@
       @switch (step()) {
         @case ('teach') {
           <ion-button expand="block" (click)="toQuestions()">Continue</ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
         }
         @case ('ask') {
           @for (question of card.questions; track question.prompt; let qi = $index) {
@@ -88,6 +90,7 @@
           <ion-button expand="block" [disabled]="!bothAnswered()" (click)="showAnswers()">
             See the answers
           </ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
         }
         @case ('reveal') {
           @for (question of card.questions; track question.prompt; let qi = $index) {
@@ -106,6 +109,7 @@
             </ul>
           }
           <ion-button expand="block" (click)="done()">Done</ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
         }
       }
     </section>

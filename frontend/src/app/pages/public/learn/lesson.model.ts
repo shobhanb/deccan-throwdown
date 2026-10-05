@@ -28,44 +28,28 @@ export interface LessonStore {
   setCurrent(id: string | null): void;
 }
 
-const KIND_ORDER: LessonKind[] = ['movement', 'methodology', 'benchmark'];
+export function drawLesson(
+  lessons: Lesson[],
+  store: LessonStore,
+  options: { avoidId?: string | null; random?: () => number } = {},
+): Lesson {
+  const random = options.random ?? Math.random;
+  const avoidId = options.avoidId ?? null;
+  const known = new Set(lessons.map((lesson) => lesson.id));
+  let seen = store.getSeen().filter((id) => known.has(id));
 
-export function nextLesson(lessons: Lesson[], seenIds: string[]): Lesson {
-  const lastId = seenIds[seenIds.length - 1];
-  const last = lessons.find((lesson) => lesson.id === lastId);
-  let pool = lessons.filter((lesson) => !seenIds.includes(lesson.id));
+  let pool = lessons.filter((lesson) => !seen.includes(lesson.id) && lesson.id !== avoidId);
   if (pool.length === 0) {
-    pool = lastId ? lessons.filter((lesson) => lesson.id !== lastId) : lessons;
+    seen = [];
+    store.setSeen([]);
+    pool = lessons.filter((lesson) => lesson.id !== avoidId);
   }
   if (pool.length === 0) {
     pool = lessons;
   }
-  const start = last ? (KIND_ORDER.indexOf(last.kind) + 1) % KIND_ORDER.length : 0;
-  for (let offset = 0; offset < KIND_ORDER.length; offset++) {
-    const kind = KIND_ORDER[(start + offset) % KIND_ORDER.length];
-    const match = pool.find((lesson) => lesson.kind === kind);
-    if (match) {
-      return match;
-    }
-  }
-  return pool[0];
-}
 
-export function resolveLesson(lessons: Lesson[], store: LessonStore): Lesson {
-  const current = lessons.find((lesson) => lesson.id === store.getCurrent());
-  if (current) {
-    return current;
-  }
-
-  const known = new Set(lessons.map((lesson) => lesson.id));
-  const seen = store.getSeen().filter((id) => known.has(id));
-  const finishedAll = lessons.every((lesson) => seen.includes(lesson.id));
-  const workingSeen = finishedAll ? seen.slice(-1) : seen;
-  if (workingSeen.length !== store.getSeen().length || finishedAll) {
-    store.setSeen(workingSeen);
-  }
-
-  const lesson = nextLesson(lessons, workingSeen);
+  const index = Math.min(pool.length - 1, Math.floor(random() * pool.length));
+  const lesson = pool[index];
   store.setCurrent(lesson.id);
   return lesson;
 }

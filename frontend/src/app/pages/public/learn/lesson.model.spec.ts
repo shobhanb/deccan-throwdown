@@ -1,5 +1,4 @@
-import { Lesson, finishLesson, nextLesson, resolveLesson } from './lesson.model';
-import { LessonStore } from './lesson.model';
+import { Lesson, LessonStore, drawLesson, finishLesson } from './lesson.model';
 
 function memoryStore(seen: string[] = [], current: string | null = null): LessonStore {
   return {
@@ -38,23 +37,32 @@ function lesson(id: string, kind: Lesson['kind']): Lesson {
 }
 
 describe('lesson picker', () => {
-  it('rotates kind and skips cards already seen', () => {
-    expect(nextLesson(deck, []).kind).toBe('movement');
-    expect(nextLesson(deck, ['m1']).id).toBe('y1');
-    expect(nextLesson(deck, ['m1', 'y1']).id).toBe('b1');
-    expect(nextLesson(deck, ['m1', 'y1', 'b1']).id).toBe('m2');
+  it('draws a random card that has not been finished', () => {
+    const store = memoryStore(['m1']);
+    const drawn = drawLesson(deck, store, { random: () => 0 });
+    expect(drawn.id).toBe('y1');
+    expect(store.getCurrent()).toBe('y1');
   });
 
-  it('keeps the in-progress card, then advances after it is finished', () => {
-    const store = memoryStore([], 'y1');
-    expect(resolveLesson(deck, store).id).toBe('y1');
-    finishLesson('y1', store);
-    expect(resolveLesson(deck, store).id).toBe('b1');
+  it('re-roll skips the card on screen', () => {
+    const store = memoryStore([], 'm1');
+    const drawn = drawLesson(deck, store, { avoidId: 'm1', random: () => 0 });
+    expect(drawn.id).not.toBe('m1');
+    expect(drawn.id).toBe('y1');
   });
 
-  it('starts a new cycle without repeating the last card', () => {
+  it('starts a new cycle once every card has been finished', () => {
     const store = memoryStore(['m1', 'y1', 'b1', 'm2']);
-    expect(resolveLesson(deck, store).id).not.toBe('m2');
-    expect(store.getSeen()).toEqual(['m2']);
+    const drawn = drawLesson(deck, store, { avoidId: 'm2', random: () => 0 });
+    expect(store.getSeen()).toEqual([]);
+    expect(drawn.id).not.toBe('m2');
+  });
+
+  it('keeps a finished card out of the next draw', () => {
+    const store = memoryStore();
+    finishLesson('y1', store);
+    const drawn = drawLesson(deck, store, { random: () => 0 });
+    expect(drawn.id).toBe('m1');
+    expect(drawn.id).not.toBe('y1');
   });
 });
