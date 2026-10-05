@@ -1,0 +1,113 @@
+<app-page-toolbar title="While you wait"></app-page-toolbar>
+
+<ion-content class="page-with-tabs">
+  @if (!started()) {
+    <app-page-header
+      title="While you wait"
+      subtitle="One CrossFit idea between heats."
+    ></app-page-header>
+
+    <section class="learn-card">
+      <p class="learn-body">
+        Open this when you have a minute. You get one small idea, two questions,
+        and then the answer. Nothing is scored.
+      </p>
+      <ul class="snippets">
+        <li>
+          <strong>Movement.</strong>
+          One standard, such as squat depth or how a jerk is caught. A link
+          opens the demonstration on CrossFit’s site.
+        </li>
+        <li>
+          <strong>Methodology.</strong>
+          One training rule, such as what intensity means or how to scale a
+          workout without changing what it is for.
+        </li>
+        <li>
+          <strong>Benchmark.</strong>
+          One named workout: how it is scored, how long it should take, and
+          the first thing to change.
+        </li>
+      </ul>
+      <h2 class="question-prompt">Sources</h2>
+      <ul class="snippets">
+        <li>
+          The wording is ours. The ideas follow the CrossFit Level 1 model of
+          fitness, movement, and programming.
+        </li>
+        <li>
+          Named workouts are the Girls, a set of Heroes, and other benchmarks,
+          including Fran, Cindy, DT, and Murph.
+        </li>
+        <li>
+          Movement cards link to the essentials pages on crossfit.com. Those
+          clips stay on their site.
+        </li>
+      </ul>
+      <ion-button expand="block" (click)="start()">Start</ion-button>
+    </section>
+  } @else if (lesson(); as card) {
+    <app-page-header [title]="card.title" [subtitle]="kindLabel(card.kind)"></app-page-header>
+
+    <section class="learn-card">
+      <p class="learn-body">{{ card.body }}</p>
+
+      @if (card.link) {
+        <a
+          class="learn-link"
+          [href]="card.link.href"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ card.link.label }}
+        </a>
+      }
+
+      @switch (step()) {
+        @case ('teach') {
+          <ion-button expand="block" (click)="toQuestions()">Continue</ion-button>
+        }
+        @case ('ask') {
+          @for (question of card.questions; track question.prompt; let qi = $index) {
+            <h2 class="question-prompt">{{ question.prompt }}</h2>
+            <div class="choices" role="radiogroup" [attr.aria-label]="question.prompt">
+              @for (choice of question.choices; track choice; let ci = $index) {
+                <button
+                  type="button"
+                  class="choice"
+                  role="radio"
+                  [attr.aria-checked]="picks()[qi] === ci"
+                  [class.selected]="picks()[qi] === ci"
+                  (click)="choose(qi, ci)"
+                >
+                  {{ choice }}
+                </button>
+              }
+            </div>
+          }
+          <ion-button expand="block" [disabled]="!bothAnswered()" (click)="showAnswers()">
+            See the answers
+          </ion-button>
+        }
+        @case ('reveal') {
+          @for (question of card.questions; track question.prompt; let qi = $index) {
+            <h2 class="question-prompt">{{ question.prompt }}</h2>
+            <p class="answer-line">
+              <span class="answer-label">Answer.</span>
+              {{ question.choices[question.answer] }}
+            </p>
+            <ul class="notes">
+              @for (note of question.notes; track note; let ni = $index) {
+                <li [class.is-answer]="ni === question.answer">
+                  <span class="note-choice">{{ question.choices[ni] }}</span>
+                  {{ note }}
+                </li>
+              }
+            </ul>
+          }
+          <ion-button expand="block" (click)="done()">Done</ion-button>
+        }
+      }
+    </section>
+  }
+</ion-content>

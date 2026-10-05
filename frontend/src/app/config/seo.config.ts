@@ -28,6 +28,7 @@ export const SEO_SITEMAP_STATIC_PATHS = [
   '/teams',
   '/leaderboard',
   '/pics',
+  '/learn',
   '/register',
 ] as const;
 

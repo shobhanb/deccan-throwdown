@@ -19,6 +19,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'leaderboard', renderMode: RenderMode.Prerender },
   { path: 'teams', renderMode: RenderMode.Prerender },
   { path: 'wods', renderMode: RenderMode.Prerender },
+  { path: 'learn', renderMode: RenderMode.Prerender },
   {
     path: 'leaderboard/:eventShortName',
     renderMode: RenderMode.Prerender,

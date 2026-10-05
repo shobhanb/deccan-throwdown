@@ -2,62 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://dt.cfgames.site/home</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/wods</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/teams</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/leaderboard</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/pics</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://dt.cfgames.site/learn</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/register</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/wods/dtteams2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/teams/dtteams2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/leaderboard/dtteams2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/wods/dtpairs2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/teams/dtpairs2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://dt.cfgames.site/leaderboard/dtpairs2025</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

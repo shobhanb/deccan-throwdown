@@ -31,6 +31,12 @@ const picsSeo: SeoRouteData = {
     'Photos from Deccan Throwdown CrossFit competitions at CrossFit Monkey Flag.',
 };
 
+const learnSeo: SeoRouteData = {
+  title: 'While You Wait — CrossFit Fundamentals — Deccan Throwdown',
+  description:
+    'A short CrossFit lesson while you wait: one movement, idea, or benchmark, two questions, then the answer.',
+};
+
 const registerSeo: SeoRouteData = {
   title: 'Register — Deccan Throwdown Team Registration',
   description:
@@ -74,6 +80,11 @@ export const routes: Routes = [
     path: 'wods/:eventShortName',
     loadComponent: () => import('./wods/wods.page').then((m) => m.WodsPage),
     data: { seo: wodsSeo },
+  },
+  {
+    path: 'learn',
+    loadComponent: () => import('./learn/learn.page').then((m) => m.LearnPage),
+    data: { seo: learnSeo },
   },
   {
     path: 'pics',

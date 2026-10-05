@@ -14,6 +14,7 @@ import { AppInstallService } from 'src/app/services/app-install.service';
 import { addIcons } from 'ionicons';
 import {
   barbellOutline,
+  bookOutline,
   cameraOutline,
   closeOutline,
   createOutline,
@@ -90,6 +91,7 @@ export class HomePage {
       closeOutline,
       downloadOutline,
       barbellOutline,
+      bookOutline,
       peopleOutline,
       trophyOutline,
       cameraOutline,

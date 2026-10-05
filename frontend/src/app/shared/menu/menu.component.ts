@@ -17,6 +17,7 @@ import { addIcons } from 'ionicons';
 import {
   barbellOutline,
   barChartOutline,
+  bookOutline,
   calculatorOutline,
   cameraOutline,
   checkmarkCircleOutline,
@@ -69,6 +70,7 @@ export class MenuComponent {
       barChartOutline,
       peopleOutline,
       barbellOutline,
+      bookOutline,
       calculatorOutline,
       checkmarkCircleOutline,
       fingerPrintOutline,
