@@ -17,6 +17,8 @@ export interface Lesson {
   kind: LessonKind;
   title: string;
   body: string;
+  /** Movement cards name the points of performance for that lift. */
+  points?: string[];
   link?: LessonLink;
   questions: [LessonQuestion, LessonQuestion];
 }
@@ -31,18 +33,26 @@ export interface LessonStore {
 export function drawLesson(
   lessons: Lesson[],
   store: LessonStore,
-  options: { avoidId?: string | null; random?: () => number } = {},
+  options: { avoidId?: string | null; kind?: LessonKind | null; random?: () => number } = {},
 ): Lesson {
   const random = options.random ?? Math.random;
   const avoidId = options.avoidId ?? null;
+  const kind = options.kind ?? null;
+  const inCategory = (lesson: Lesson) => !kind || lesson.kind === kind;
   const known = new Set(lessons.map((lesson) => lesson.id));
   let seen = store.getSeen().filter((id) => known.has(id));
 
-  let pool = lessons.filter((lesson) => !seen.includes(lesson.id) && lesson.id !== avoidId);
+  let pool = lessons.filter(
+    (lesson) => inCategory(lesson) && !seen.includes(lesson.id) && lesson.id !== avoidId,
+  );
   if (pool.length === 0) {
-    seen = [];
-    store.setSeen([]);
-    pool = lessons.filter((lesson) => lesson.id !== avoidId);
+    const categoryIds = new Set(lessons.filter(inCategory).map((lesson) => lesson.id));
+    seen = seen.filter((id) => !categoryIds.has(id));
+    store.setSeen(seen);
+    pool = lessons.filter((lesson) => inCategory(lesson) && lesson.id !== avoidId);
+  }
+  if (pool.length === 0) {
+    pool = lessons.filter(inCategory);
   }
   if (pool.length === 0) {
     pool = lessons;

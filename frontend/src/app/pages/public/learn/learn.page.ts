@@ -7,10 +7,12 @@ import {
   drawLesson,
   finishLesson,
   Lesson,
+  LessonKind,
 } from './lesson.model';
 import { lessons } from './lessons';
 
 type Step = 'teach' | 'ask' | 'reveal';
+type Category = LessonKind | 'random';
 
 @Component({
   selector: 'app-learn',
@@ -22,6 +24,7 @@ type Step = 'teach' | 'ask' | 'reveal';
 })
 export class LearnPage implements OnInit, ViewWillEnter {
   readonly started = signal(false);
+  readonly category = signal<Category>('random');
   readonly lesson = signal<Lesson | null>(null);
   readonly step = signal<Step>('teach');
   readonly picks = signal<(number | null)[]>([null, null]);
@@ -34,7 +37,8 @@ export class LearnPage implements OnInit, ViewWillEnter {
     this.showIntro();
   }
 
-  start(): void {
+  start(category: Category): void {
+    this.category.set(category);
     this.draw();
   }
 
@@ -47,7 +51,13 @@ export class LearnPage implements OnInit, ViewWillEnter {
     if (!store) {
       return;
     }
-    this.lesson.set(drawLesson(lessons, store, { avoidId }));
+    const category = this.category();
+    this.lesson.set(
+      drawLesson(lessons, store, {
+        avoidId,
+        kind: category === 'random' ? null : category,
+      }),
+    );
     this.step.set('teach');
     this.picks.set([null, null]);
     this.started.set(true);

@@ -13,6 +13,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Air squat depth',
     body: 'A squat is at depth when the crease of the hip passes below the top of the knee. Thighs level with the floor are not there yet. Heels rising, or looking at the floor, are different faults. They do not decide this one.',
+    points: [
+      'Depth. The crease of the hip passes below the top of the knee. Thighs level with the floor are not there yet.',
+      'Heels. They stay down. Rising onto the toes is a different fault, not a way to get depth.',
+      'Knees. They track over the feet and do not collapse inside them.',
+      'Lumbar curve. The lower back keeps a natural arch at the bottom. It does not round to get lower.',
+      'Finish. Hips and knees open fully so you stand tall before the next rep.',
+    ],
     link: watch('the-air-squat', 'Watch the air squat'),
     questions: [
       {
@@ -50,6 +57,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Air squat lumbar curve',
     body: 'At the bottom of a squat the lower back keeps a natural arch. Rounding it to get lower is the fault this card is about. A little less arch than standing is not the same as the back collapsing.',
+    points: [
+      'Lumbar curve. At the bottom the lower back keeps a natural arch. Rounding it to reach depth is the fault.',
+      'Depth. The hip crease still has to pass below the knee. A pretty arch with a high squat is not the whole rep.',
+      'Midline. The trunk stays tight so the hips can push. A collapsed torso is not extra range.',
+      'Heels. Weight stays toward the heels, which helps the back stay organized.',
+      'Finish. Stand tall with the hips and knees open. The arch is held on the way up too.',
+    ],
     link: watch('the-air-squat', 'Watch the air squat'),
     questions: [
       {
@@ -87,6 +101,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Air squat knees',
     body: 'In the squat the knees travel in the same direction as the feet. They should not collapse inside the feet. Pressure stays toward the heels, not the toes.',
+    points: [
+      'Knees. They travel in the same direction as the feet. Collapsing inside the feet is a miss even if the squat is deep.',
+      'Heels. Pressure stays toward the heels, not the toes.',
+      'Depth. Hip crease below the top of the knee.',
+      'Lumbar curve. Natural arch at the bottom, not a rounded back.',
+      'Finish. Hips and knees fully open at the top.',
+    ],
     link: watch('the-air-squat', 'Watch the air squat'),
     questions: [
       {
@@ -120,6 +141,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Finishing the air squat',
     body: 'The squat ends standing tall, with the hips and knees fully open. Stopping short of that, even after a deep bottom, leaves the rep unfinished.',
+    points: [
+      'Finish. The rep ends standing tall, hips and knees fully open. Stopping short leaves it unfinished.',
+      'Depth. The bottom still has to pass below the knee before you stand.',
+      'Path. You rise on the same line you descended. No lean forward to get out of the bottom.',
+      'Knees. They stay over the feet on the way up.',
+      'Lumbar curve. The lower back does not round as you stand.',
+    ],
     link: watch('the-air-squat', 'Watch the air squat'),
     questions: [
       {
@@ -157,6 +185,14 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Front squat rack',
     body: 'The front squat is an air squat with the load on the front of the shoulders. The elbows stay up so the bar or ball stays in that rack. Dropping the elbows to survive the bottom lets the load fall forward.',
+    points: [
+      'Rack. The bar or ball sits on the front of the shoulders. Elbows stay up so it does not fall forward.',
+      'Depth. Hip crease below the top of the knee, same as the air squat.',
+      'Heels. Weight stays toward the heels.',
+      'Knees. They track over the feet.',
+      'Lumbar curve. Natural arch. Dropping the elbows to survive the bottom is not a fix.',
+      'Finish. Stand tall with hips and knees open, elbows still up.',
+    ],
     link: watch('the-front-squat', 'Watch the front squat'),
     questions: [
       {
@@ -194,6 +230,14 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Overhead squat',
     body: 'In the overhead squat the load stays over the middle of the foot while you squat to depth and stand tall. The shoulders stay active so the bar does not drift forward. A bar that walks out in front is not a personal style. It is a miss.',
+    points: [
+      'Bar position. The load stays over the middle of the foot. A bar that drifts forward is a miss, not a style.',
+      'Shoulders. They stay active so the bar has a shelf overhead.',
+      'Depth. Hip crease below the knee while the bar stays overhead.',
+      'Heels and knees. Heels down, knees tracking over the feet.',
+      'Lumbar curve. The lower back keeps its arch. Do not chase depth by rounding.',
+      'Finish. Hips and knees open, bar still over the middle of the foot.',
+    ],
     link: watch('the-overhead-squat', 'Watch the overhead squat'),
     questions: [
       {
@@ -231,6 +275,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Shoulder press',
     body: 'The shoulder press drives the bar from the shoulders to overhead with the arms only. There is no dip of the knees. The ribs stay down, and the bar finishes locked out over the body.',
+    points: [
+      'Strict. The legs do not dip. A knee bend turns it into a push press.',
+      'Ribs. They stay down. Flaring the ribs to lean back is not the press.',
+      'Bar path. The bar travels straight up, close to the face, and finishes over the body.',
+      'Lockout. Elbows are straight and the shoulders are active at the top.',
+      'Stance. Heels stay down. The torso does not become the engine.',
+    ],
     link: watch('the-shoulder-press', 'Watch the shoulder press'),
     questions: [
       {
@@ -268,6 +319,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Push press',
     body: 'The push press starts with a shallow dip and a drive. The torso stays vertical. The legs launch the bar, then the arms finish the lockout overhead. A forward lean is not the dip. Pressing the bar with no leg drive is a strict press.',
+    points: [
+      'Dip. A short bend of the knees and hips. The torso stays vertical. A forward lean is not the dip.',
+      'Drive. The legs and hips launch the bar. The arms do not start the lift.',
+      'Heels. They stay down through the dip and the drive.',
+      'Lockout. After the drive, the arms finish with the bar overhead and the elbows straight.',
+      'No receive. You do not drop under the bar. That receive is a jerk.',
+    ],
     link: watch('the-push-press', 'Watch the push press'),
     questions: [
       {
@@ -305,6 +363,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Push jerk',
     body: 'The push jerk uses the same dip and drive as a push press. The difference is the catch. After the drive, you drop into a partial squat and receive the bar overhead instead of pressing it out with the arms.',
+    points: [
+      'Dip and drive. Same vertical dip as the push press. The hips and legs throw the bar up.',
+      'Receive. After the drive you drop into a partial squat and catch the bar overhead. Pressing it out while staying tall is a push press.',
+      'Lockout. Elbows straight and the bar over the body before you stand.',
+      'Finish. Stand tall out of the receive with the bar still overhead.',
+      'Heels. The dip stays on the heels, torso upright.',
+    ],
     link: watch('the-push-jerk', 'Watch the push jerk'),
     questions: [
       {
@@ -338,6 +403,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Deadlift',
     body: 'The deadlift stands a bar up from the floor. The hips and shoulders rise together while the bar is below the knees. The bar stays against the legs. The lower back stays neutral, and the arms stay straight.',
+    points: [
+      'Setup. The bar starts over the middle of the foot, against the legs. Arms are straight.',
+      'Back. The lumbar spine stays neutral. It does not round to reach the bar.',
+      'Rise. Hips and shoulders rise together while the bar is below the knees. Hips shooting up first is a miss.',
+      'Bar path. The bar stays on the legs. Swinging it out in front is a miss.',
+      'Finish. Hips and knees open. You stand tall. The arms do not curl the bar to get there.',
+    ],
     link: watch('the-deadlift', 'Watch the deadlift'),
     questions: [
       {
@@ -375,6 +447,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Sumo deadlift high pull',
     body: 'The sumo deadlift high pull opens the hips before the arms bend. The legs and hips throw the bar up. An early arm pull, while the hips are still closed, skips the part that moves the bar.',
+    points: [
+      'Hips first. The hips finish opening before the elbows bend. An early arm pull skips the movement.',
+      'Stance. A wide sumo stance, knees tracking out over the feet.',
+      'Bar path. The bar stays close and is thrown upward by the hips, not curled.',
+      'Back. Lumbar curve stays neutral. Do not round to start the pull.',
+      'Finish. Hips and knees are open at the top of the pull. The arms rise because the hips moved.',
+    ],
     link: watch('the-sumo-deadlift-high-pull', 'Watch the sumo deadlift high pull'),
     questions: [
       {
@@ -412,6 +491,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Medicine-ball clean',
     body: 'The medicine-ball clean is a teaching clean. The hips throw the ball up, and you catch it on the shoulders. It is not a biceps curl. The ball does not travel up the body by the arms alone.',
+    points: [
+      'Hips. The ball is thrown by the hips opening, not lifted by the arms.',
+      'Arms. They stay long until the hips finish. Curling the ball is not a clean.',
+      'Catch. The ball lands on the shoulders, in a rack, with the elbows up.',
+      'Catch position. You meet the ball in a partial squat rather than reverse-curling it up the body.',
+      'Finish. Stand tall with the ball secure on the shoulders.',
+    ],
     link: watch('the-medicine-ball-clean', 'Watch the medicine-ball clean'),
     questions: [
       {
@@ -445,6 +531,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Pull-up',
     body: 'A pull-up counts when the chin clears the bar. A kip, if you use one, starts at the hips. A knee whip that never gets the chin over the bar is not a rep.',
+    points: [
+      'Chin. It has to clear the bar. Stopping underneath is a no-rep no matter how hard the kip was.',
+      'Kip. If you kip, it starts at the hips. A knee whip with a quiet torso is not the kip.',
+      'Control. You only count the rep once the chin has cleared. A swing that never gets there is nothing.',
+      'Finish. The chin is over the bar before you drop into the next rep.',
+    ],
     link: watch('the-pull-up', 'Watch the pull-up'),
     questions: [
       {
@@ -478,6 +570,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Thruster',
     body: 'A thruster is a front squat that drives straight into a push press. The bottom of the squat sends the bar overhead in one motion. A squat, a pause, and a separate press is two exercises, not a thruster.',
+    points: [
+      'Bottom. It is a front squat: hip crease below the knee, elbows up, bar on the shoulders.',
+      'One motion. The bottom drives straight into the press. A squat, a pause, and a separate press is two exercises.',
+      'Drive. The legs and hips send the bar overhead. The arms finish the lockout.',
+      'Torso. The dip of the press stays vertical, the way a push press does.',
+      'Finish. Elbows locked overhead, hips and knees open.',
+    ],
     link: watch('the-thruster', 'Watch the thruster'),
     questions: [
       {
@@ -515,6 +614,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Scaling the muscle-up',
     body: 'Until the transition of a muscle-up is real, the substitute is a pull plus a dip. That keeps both jobs the muscle-up asks for. Skipping the pull, or skipping the dip, leaves half of the movement out.',
+    points: [
+      'Pull. The scale still includes a pulling movement. Skipping it drops half the muscle-up.',
+      'Dip. The scale still includes a pressing lockout. Dips alone are not enough.',
+      'Order. Pull, then dip. That is the pattern until the transition is one movement.',
+      'Keep the pattern. Air squats, or any unrelated movement, do not stand in for the pull and the dip.',
+    ],
     link: watch('the-muscle-up', 'Watch the muscle-up'),
     questions: [
       {
@@ -1540,6 +1645,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Snatch',
     body: 'In the snatch the bar stays close and the hips finish opening before you pull yourself under it. The catch is overhead, arms locked, in a squat. It is one pull from the floor or the hang to overhead, not a clean that you then press.',
+    points: [
+      'Bar close. The bar stays against the body. A bar that loops out in front is a miss.',
+      'Hips. They finish opening before you pull yourself under the bar.',
+      'Pull under. You meet the bar overhead. You do not clean it to the shoulders and press.',
+      'Catch. Arms locked, bar over the middle of the foot, in a squat.',
+      'Finish. Stand tall with the bar still overhead and the elbows straight.',
+    ],
     link: watch('the-snatch', 'Watch the snatch'),
     questions: [
       {
@@ -1577,6 +1689,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Wall ball',
     body: 'A wall ball is a squat to depth, then a throw that hits the target. The ball comes back to the chest and you go again. Missing the target, or stopping the squat above the knee, means the rep did not happen.',
+    points: [
+      'Squat. Hip crease below the top of the knee before the throw. A quarter squat does not count.',
+      'Target. The ball has to hit the target. Depth without the hit is a no-rep.',
+      'Throw. The hips drive the ball. The arms guide it. It is not a press from a high squat.',
+      'Catch. The ball returns to the chest so the next squat can start.',
+      'Heels. Stay down in the squat, the same as an air squat.',
+    ],
     link: watch('the-wall-ball-shot', 'Watch the wall ball'),
     questions: [
       {
@@ -1614,6 +1733,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Handstand push-up',
     body: 'A handstand push-up lowers until the head touches the floor, then presses back to a locked-out handstand. The head has to actually touch. Stopping short, or never locking the elbows at the top, leaves the rep unfinished.',
+    points: [
+      'Bottom. The head touches the floor between the hands. Stopping short is a no-rep.',
+      'Lockout. The elbows finish straight in the handstand. Leaving the floor is not the end of the rep.',
+      'Line. The body stays stacked. A deep pike or a sag changes the press.',
+      'Range. Both the touch and the lockout are required. One without the other does not count.',
+    ],
     link: watch('the-handstand-push-up', 'Watch the handstand push-up'),
     questions: [
       {
@@ -1651,6 +1776,13 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Kettlebell swing',
     body: 'The CrossFit kettlebell swing is thrown by the hips, not lifted by the shoulders. The arms stay long until the bell floats. The finish is overhead, arms straight, hips and knees open. A front raise with bent elbows is a different exercise.',
+    points: [
+      'Hips. The bell is thrown by the hips opening, not raised by the shoulders.',
+      'Arms. They stay long until the bell floats. A curl or a front raise is a different exercise.',
+      'Finish. Overhead, arms straight, hips and knees open. Chest height with bent elbows is short.',
+      'Back. The lumbar spine stays neutral. Do not round to hike the bell.',
+      'Heels. The hike and the stand keep the weight toward the heels.',
+    ],
     link: watch('the-kettlebell-swing', 'Watch the kettlebell swing'),
     questions: [
       {
@@ -1684,6 +1816,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Push-up',
     body: 'In a push-up the body stays in one line. The chest reaches the floor, then the elbows lock out at the top. A sagging hip, or a rep that never gets the chest down, does not count.',
+    points: [
+      'Line. The body stays one piece from shoulders to heels. Sagging hips are a miss.',
+      'Bottom. The chest reaches the floor. A half bend is not depth.',
+      'Lockout. Elbows finish straight, body still in a line.',
+      'No pike. Hips popped up to make the press easier change the movement.',
+    ],
     link: watch('the-push-up', 'Watch the push-up'),
     questions: [
       {
@@ -1721,6 +1859,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Box jump',
     body: 'A box jump lands you on the box, then you stand up to full hip and knee extension. Stepping down is fine. A step-up, where you never leave the ground, is a scale, not the jump itself.',
+    points: [
+      'Jump. Both feet leave the ground. Stepping up is a scale, not the jump.',
+      'Land. You arrive on the box, not just touch it.',
+      'Stand. Hips and knees open fully on top. Staying in a squat does not finish the rep.',
+      'Step down. Stepping off is allowed. The standard is the jump and the stand, not how you get down.',
+    ],
     link: watch('the-box-jump', 'Watch the box jump'),
     questions: [
       {
@@ -1758,6 +1902,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Double-under',
     body: 'A double-under is one jump with the rope passing under the feet twice. Two single-unders are two jumps and two passes, and they are not one double-under. The rope has to clear twice before you land.',
+    points: [
+      'One jump. Both feet leave the ground once.',
+      'Two passes. The rope goes under the feet twice before you land.',
+      'Singles do not add up. Two rope passes in two jumps are two single-unders, which is zero double-unders.',
+      'A trip is a miss. The rope hitting you is not a rep.',
+    ],
     link: watch('the-double-under', 'Watch the double-under'),
     questions: [
       {
@@ -1791,6 +1941,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Ring dip',
     body: 'A ring dip starts with the elbows locked and the shoulders down. You lower until the shoulders pass below the elbows, then press back to lockout. A short bend of the elbows is not the bottom.',
+    points: [
+      'Start. Elbows locked and shoulders down, rings stable enough to press.',
+      'Bottom. Shoulders pass below the elbows. A small bend is not depth.',
+      'Lockout. Elbows straight again at the top, shoulders settled down.',
+      'Rings. They stay under the shoulders. A wild swing that skips the bottom does not count.',
+    ],
     link: watch('the-ring-dip', 'Watch the ring dip'),
     questions: [
       {
@@ -1828,6 +1984,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'AbMat sit-up',
     body: 'An AbMat sit-up goes from the shoulder blades on the ground to sitting up until the hands reach the feet. A crunch that never gets the shoulder blades down, or never sits up, is not the rep.',
+    points: [
+      'Bottom. The shoulder blades touch the ground. Stopping halfway is not the bottom.',
+      'Top. You sit up until the hands reach the feet. Lifting the shoulder blades a few inches is a crunch, not the sit-up.',
+      'Knees. They stay put. Pulling them in does not finish the rep.',
+      'Range. Both the touch-down and the sit-up are required.',
+    ],
     link: watch('the-abmat-sit-up', 'Watch the AbMat sit-up'),
     questions: [
       {
@@ -1865,6 +2027,12 @@ export const lessons: Lesson[] = [
     kind: 'movement',
     title: 'Muscle-up',
     body: 'A muscle-up connects a pull and a dip in one motion on the rings. You pull until you are over the rings, transition, and press to a locked-out dip. A pull-up, a pause, and a separate dip is the scale, not the muscle-up.',
+    points: [
+      'Pull. You pull until the shoulders are over the rings. A chin over the rings is only a pull-up.',
+      'Transition. The pull passes straight into the dip. A pause, a drop, and a separate dip is the scale, not the muscle-up.',
+      'Dip. Elbows lock out in support. That lockout is the top.',
+      'Connection. The two halves are one rep. Doing them apart does not count as one.',
+    ],
     link: watch('the-muscle-up', 'Watch the muscle-up'),
     questions: [
       {

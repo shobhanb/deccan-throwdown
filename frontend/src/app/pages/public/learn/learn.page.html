@@ -9,15 +9,15 @@
 
     <section class="learn-card">
       <p class="learn-body">
-        Open this when you have a minute. Start draws a random card: one small
-        idea, two questions, and then the answer. Nothing is scored. Re-roll
-        if you want a different card.
+        Pick a category. You get one card from that set: the idea, two
+        questions, and then the answer. Nothing is scored. Re-roll stays in
+        the category you chose.
       </p>
       <ul class="snippets">
         <li>
-          <strong>Movement.</strong>
-          One standard, such as squat depth or how a jerk is caught. A link
-          opens the demonstration on CrossFit’s site.
+          <strong>CrossFit Movements.</strong>
+          The points of performance for that movement, each one explained
+          for the rep. A link opens the demonstration on CrossFit’s site.
         </li>
         <li>
           <strong>Methodology.</strong>
@@ -45,13 +45,27 @@
           clips stay on their site.
         </li>
       </ul>
-      <ion-button expand="block" (click)="start()">Start</ion-button>
+      <h2 class="question-prompt">Choose a category</h2>
+      <ion-button expand="block" (click)="start('movement')">CrossFit Movements</ion-button>
+      <ion-button expand="block" (click)="start('methodology')">Methodology</ion-button>
+      <ion-button expand="block" (click)="start('benchmark')">Benchmarks</ion-button>
+      <ion-button expand="block" fill="outline" (click)="start('random')">Surprise me!</ion-button>
     </section>
   } @else if (lesson(); as card) {
     <app-page-header [title]="card.title" [subtitle]="kindLabel(card.kind)"></app-page-header>
 
     <section class="learn-card">
       <p class="learn-body">{{ card.body }}</p>
+
+      @if (card.points?.length) {
+        <h2 class="question-prompt">Points of performance</h2>
+        <p class="learn-body">A rep counts when these are met.</p>
+        <ul class="snippets">
+          @for (point of card.points; track point) {
+            <li>{{ point }}</li>
+          }
+        </ul>
+      }
 
       @if (card.link) {
         <a

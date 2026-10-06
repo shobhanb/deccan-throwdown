@@ -65,4 +65,18 @@ describe('lesson picker', () => {
     expect(drawn.id).toBe('m1');
     expect(drawn.id).not.toBe('y1');
   });
+
+  it('draws only inside the chosen category', () => {
+    const store = memoryStore();
+    const drawn = drawLesson(deck, store, { kind: 'benchmark', random: () => 0.99 });
+    expect(drawn.kind).toBe('benchmark');
+    expect(drawn.id).toBe('b1');
+  });
+
+  it('reshuffles one category without erasing the others', () => {
+    const store = memoryStore(['m1', 'm2', 'y1']);
+    const drawn = drawLesson(deck, store, { kind: 'movement', random: () => 0 });
+    expect(drawn.kind).toBe('movement');
+    expect(store.getSeen()).toEqual(['y1']);
+  });
 });
