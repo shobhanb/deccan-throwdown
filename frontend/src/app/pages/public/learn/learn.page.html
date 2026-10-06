@@ -8,11 +8,7 @@
     ></app-page-header>
 
     <section class="learn-card">
-      <p class="learn-body">
-        Pick a category. You get one card from that set: the idea, two
-        questions, and then the answer. Nothing is scored. Re-roll stays in
-        the category you chose.
-      </p>
+      <p class="learn-body">Learn something new about CrossFit. No, this won't get you points for Deccan Throwdown. But it will help you understand the sport better.</p>
       <ul class="snippets">
         <li>
           <strong>CrossFit Movements.</strong>
@@ -30,21 +26,7 @@
           the first thing to change.
         </li>
       </ul>
-      <h2 class="question-prompt">Sources</h2>
-      <ul class="snippets">
-        <li>
-          The wording is ours. The ideas follow the CrossFit Level 1 model of
-          fitness, movement, and programming.
-        </li>
-        <li>
-          Named workouts are the Girls, a set of Heroes, and other benchmarks,
-          including Fran, Cindy, DT, and Murph.
-        </li>
-        <li>
-          Movement cards link to the essentials pages on crossfit.com. Those
-          clips stay on their site.
-        </li>
-      </ul>
+      
       <h2 class="question-prompt">Choose a category</h2>
       <ion-button expand="block" (click)="start('movement')">CrossFit Movements</ion-button>
       <ion-button expand="block" (click)="start('methodology')">Methodology</ion-button>
@@ -81,7 +63,7 @@
       @switch (step()) {
         @case ('teach') {
           <ion-button expand="block" (click)="toQuestions()">Continue</ion-button>
-          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Next card</ion-button>
         }
         @case ('ask') {
           @for (question of card.questions; track question.prompt; let qi = $index) {
@@ -104,7 +86,7 @@
           <ion-button expand="block" [disabled]="!bothAnswered()" (click)="showAnswers()">
             See the answers
           </ion-button>
-          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Next card</ion-button>
         }
         @case ('reveal') {
           @for (question of card.questions; track question.prompt; let qi = $index) {
@@ -123,7 +105,7 @@
             </ul>
           }
           <ion-button expand="block" (click)="done()">Done</ion-button>
-          <ion-button expand="block" fill="outline" (click)="reroll()">Re-roll</ion-button>
+          <ion-button expand="block" fill="outline" (click)="reroll()">Next card</ion-button>
         }
       }
     </section>
