@@ -30,6 +30,13 @@ export interface LessonStore {
   setCurrent(id: string | null): void;
 }
 
+export function findLesson(lessons: Lesson[], id: string | null | undefined): Lesson | null {
+  if (!id) {
+    return null;
+  }
+  return lessons.find((lesson) => lesson.id === id) ?? null;
+}
+
 export function drawLesson(
   lessons: Lesson[],
   store: LessonStore,

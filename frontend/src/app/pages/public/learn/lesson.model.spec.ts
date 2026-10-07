@@ -1,4 +1,4 @@
-import { Lesson, LessonStore, drawLesson, finishLesson } from './lesson.model';
+import { Lesson, LessonStore, drawLesson, findLesson, finishLesson } from './lesson.model';
 
 function memoryStore(seen: string[] = [], current: string | null = null): LessonStore {
   return {
@@ -78,5 +78,16 @@ describe('lesson picker', () => {
     const drawn = drawLesson(deck, store, { kind: 'movement', random: () => 0 });
     expect(drawn.kind).toBe('movement');
     expect(store.getSeen()).toEqual(['y1']);
+  });
+});
+
+describe('findLesson', () => {
+  it('returns the card with that id', () => {
+    expect(findLesson(deck, 'b1')?.id).toBe('b1');
+  });
+
+  it('returns null when the id is missing or unknown', () => {
+    expect(findLesson(deck, null)).toBeNull();
+    expect(findLesson(deck, 'nope')).toBeNull();
   });
 });

@@ -87,6 +87,11 @@ export const routes: Routes = [
     data: { seo: learnSeo },
   },
   {
+    path: 'learn/:lessonId',
+    loadComponent: () => import('./learn/learn.page').then((m) => m.LearnPage),
+    data: { seo: learnSeo },
+  },
+  {
     path: 'pics',
     loadComponent: () => import('./pics/pics.page').then((m) => m.PicsPage),
     data: { seo: picsSeo },
