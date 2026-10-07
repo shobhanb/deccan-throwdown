@@ -1,6 +1,11 @@
 @if (tabBarVisible()) {
 <ion-tab-bar class="dt-tab-bar" slot="bottom">
-  <ion-tab-button tab="home" routerLink="/home" routerLinkActive="tab-selected">
+  <ion-tab-button
+    tab="home"
+    routerLink="/"
+    routerLinkActive="tab-selected"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     <ion-icon name="home-outline"></ion-icon>
     <ion-label>Home</ion-label>
   </ion-tab-button>

@@ -49,12 +49,11 @@ const archivePaths = archiveEvents.flatMap((event) => [
 ]);
 
 const paths = [...new Set([...staticPaths, ...archivePaths])];
-const lastmod = new Date().toISOString().slice(0, 10);
 
 const urls = paths
   .map(
     (p) =>
-      `  <url>\n    <loc>${siteUrl}${p}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}${p}</loc>\n  </url>`
   )
   .join('\n');
 

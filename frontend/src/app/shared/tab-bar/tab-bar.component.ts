@@ -26,7 +26,7 @@ import {
   peopleOutline,
 } from 'ionicons/icons';
 
-const TAB_ROUTES = ['/home', '/wods', '/leaderboard', '/teams'];
+const TAB_ROUTES = ['/', '/home', '/wods', '/leaderboard', '/teams'];
 
 @Component({
   selector: 'app-tab-bar',

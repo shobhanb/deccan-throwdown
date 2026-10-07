@@ -23,7 +23,7 @@ export interface SeoRouteData {
 
 /** Paths included in sitemap.xml (no trailing slash). */
 export const SEO_SITEMAP_STATIC_PATHS = [
-  '/home',
+  '/',
   '/wods',
   '/teams',
   '/leaderboard',

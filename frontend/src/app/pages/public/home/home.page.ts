@@ -60,7 +60,7 @@ export class HomePage {
 
   private readonly siteUrl = environment.siteUrl.replace(/\/$/, '');
 
-  readonly eventPageUrl = `${this.siteUrl}/home`;
+  readonly eventPageUrl = `${this.siteUrl}/`;
   readonly eventImageUrl = `${this.siteUrl}/icons/logo_512.jpg`;
   readonly organizerUrl = this.siteUrl;
   readonly offerUrl = `${this.siteUrl}/register`;

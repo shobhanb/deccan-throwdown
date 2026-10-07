@@ -45,9 +45,15 @@ const registerSeo: SeoRouteData = {
 
 export const routes: Routes = [
   {
-    path: 'home',
+    path: '',
+    pathMatch: 'full',
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     data: { seo: homeSeo },
+  },
+  {
+    path: 'home',
+    redirectTo: '/',
+    pathMatch: 'full',
   },
   {
     path: 'leaderboard',
@@ -113,13 +119,8 @@ export const routes: Routes = [
       import('./redirect/redirect.page').then((m) => m.RedirectPage),
   },
   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
-  },
-  {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: '/',
     pathMatch: 'full',
   },
 ];

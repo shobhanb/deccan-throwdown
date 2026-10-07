@@ -50,7 +50,7 @@ export class SeoService {
   }
 
   private applyIndexableMeta(seo: SeoRouteData, path: string): void {
-    const canonicalUrl = `${this.siteUrl}${path === '/' ? '/home' : path}`;
+    const canonicalUrl = `${this.siteUrl}${path}`;
 
     this.title.setTitle(seo.title);
     this.setNamedMeta('description', seo.description);
@@ -113,7 +113,7 @@ export class SeoService {
   private normalizePath(url: string): string {
     const path = url.split('?')[0].split('#')[0];
     if (!path || path === '/') {
-      return '/home';
+      return '/';
     }
     return path.endsWith('/') && path.length > 1
       ? path.slice(0, -1)
