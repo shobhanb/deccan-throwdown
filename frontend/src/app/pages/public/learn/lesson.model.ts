@@ -3,6 +3,8 @@ export type LessonKind = 'movement' | 'methodology' | 'benchmark';
 export interface LessonLink {
   label: string;
   href: string;
+  /** Looping demonstration shown above the link. */
+  image?: string;
 }
 
 export interface LessonQuestion {
