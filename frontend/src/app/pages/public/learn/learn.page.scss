@@ -21,6 +21,15 @@
   line-height: 1.55;
 }
 
+.learn-demo {
+  display: block;
+  width: min(100%, 20rem);
+  height: auto;
+  margin: 0 0 var(--dt-space-sm);
+  border-radius: var(--ion-border-radius);
+  background: #fff;
+}
+
 .learn-link {
   display: inline-block;
   margin-bottom: var(--dt-space-md);

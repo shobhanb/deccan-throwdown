@@ -1,9 +1,10 @@
 import { Lesson, LessonLink } from './lesson.model';
 
-function watch(slug: string, label: string): LessonLink {
+function watch(slug: string, label: string, image?: string): LessonLink {
   return {
     label,
     href: `https://www.crossfit.com/essentials/${slug}`,
+    ...(image ? { image } : {}),
   };
 }
 
@@ -370,7 +371,7 @@ export const lessons: Lesson[] = [
       'Finish. Stand tall out of the receive with the bar still overhead.',
       'Heels. The dip stays on the heels, torso upright.',
     ],
-    link: watch('the-push-jerk', 'Watch the push jerk'),
+    link: watch('the-push-jerk', 'Watch the push jerk', 'assets/learn/push-jerk.gif'),
     questions: [
       {
         prompt: 'The athlete dip-drives and presses the bar out while staying tall. What was that?',

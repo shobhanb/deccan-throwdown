@@ -50,6 +50,15 @@
       }
 
       @if (card.link) {
+        @if (card.link.image) {
+          <img
+            class="learn-demo"
+            [src]="card.link.image"
+            [alt]="card.title + ' demonstration'"
+            width="400"
+            height="512"
+          />
+        }
         <a
           class="learn-link"
           [href]="card.link.href"

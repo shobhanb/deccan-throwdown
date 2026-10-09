@@ -2,6 +2,8 @@
 # http://git-scm.com/docs/gitignore
 
 /src/assets/*
+!/src/assets/learn/
+!/src/assets/learn/**
 
 *~
 *.sw[mnpcod]
