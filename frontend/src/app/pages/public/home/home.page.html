@@ -21,38 +21,7 @@
   </div>
   }
 
-  <section
-    class="dt-hero"
-    itemscope
-    itemtype="https://schema.org/SportsEvent"
-  >
-    <meta itemprop="url" [attr.content]="eventPageUrl" />
-    <meta itemprop="startDate" [attr.content]="eventStartDate" />
-    <meta itemprop="endDate" [attr.content]="eventEndDate" />
-    <meta itemprop="eventStatus" content="https://schema.org/EventScheduled" />
-    <meta itemprop="image" [attr.content]="eventImageUrl" />
-    <meta itemprop="sport" content="CrossFit" />
-    <span itemprop="organizer" itemscope itemtype="https://schema.org/Organization">
-      <meta itemprop="name" [attr.content]="venueName" />
-      <meta itemprop="url" [attr.content]="organizerUrl" />
-    </span>
-    <span itemprop="performer" itemscope itemtype="https://schema.org/PerformingGroup">
-      <meta itemprop="name" content="Deccan Throwdown athletes" />
-    </span>
-    <span itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-      <meta itemprop="url" [attr.content]="offerUrl" />
-      <meta itemprop="price" [attr.content]="offerPrice" />
-      <meta itemprop="priceCurrency" content="INR" />
-      <meta itemprop="availability" [attr.content]="offerAvailability" />
-    </span>
-    <span itemprop="location" itemscope itemtype="https://schema.org/Place">
-      <meta itemprop="name" [attr.content]="venueName" />
-      <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-        <meta itemprop="addressLocality" [attr.content]="venueLocality" />
-        <meta itemprop="addressRegion" [attr.content]="venueRegion" />
-        <meta itemprop="addressCountry" [attr.content]="venueCountry" />
-      </span>
-    </span>
+  <section class="dt-hero">
     <img
       src="assets/brand/fortress-mark.svg"
       alt=""
@@ -60,8 +29,8 @@
       aria-hidden="true"
     />
     <img src="icons/logo_192.jpg" alt="Deccan Throwdown logo" class="hero-logo" />
-    <h1 class="hero-title text-display" itemprop="name">{{ eventName }}</h1>
-    <p class="hero-tagline" itemprop="description">{{ tagline }}</p>
+    <h1 class="hero-title text-display">{{ eventName }}</h1>
+    <p class="hero-tagline">{{ tagline }}</p>
     @switch (registrationStatus) {
       @case ('open') {
         <span class="dt-pill hero-chip">Registration Open</span>
@@ -78,8 +47,8 @@
 
   <section class="hero-intro card-elevated" aria-label="About Deccan Throwdown">
     <p>
-      <strong>Deccan Throwdown</strong> is a CrossFit team competition hosted at
-      <strong>CrossFit Monkey Flag</strong> in Pune. Athletes compete across team workouts
+      <strong>Deccan Throwdown</strong> is a CrossFit competition in Pune, hosted at
+      <strong>CrossFit Monkey Flag</strong>. Athletes compete across team workouts
       (WODs), with divisions for different skill levels — follow the
       <a routerLink="/leaderboard">live leaderboard</a>, browse
       <a routerLink="/wods">workouts</a>, and
@@ -88,6 +57,19 @@
       } @else {
         check back for registration when the next event opens.
       }
+    </p>
+  </section>
+
+  <section class="hero-intro card-elevated" aria-label="CrossFit competition in Pune">
+    <h2>CrossFit competition in Pune</h2>
+    <p>
+      {{ eventName }} is at
+      <a [href]="venue.url" rel="noopener noreferrer">{{ venue.name }}</a>,
+      {{ venue.streetAddress }}, {{ venue.addressLocality }}
+      {{ venue.postalCode }}. Dates: {{ eventDates }}.
+      <a [href]="'tel:' + venue.telephone">{{ venue.telephone }}</a>.
+      Train at the host gym, then follow the
+      <a routerLink="/leaderboard">leaderboard</a> on event weekend.
     </p>
   </section>
 

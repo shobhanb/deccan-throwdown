@@ -25,8 +25,7 @@ import {
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { RouterLink } from '@angular/router';
-import { eventIsoDateRange, SEO_VENUE } from 'src/app/config/seo.config';
-import { environment } from 'src/environments/environment';
+import { SEO_VENUE } from 'src/app/config/seo.config';
 
 @Component({
   selector: 'app-home',
@@ -57,34 +56,7 @@ export class HomePage {
   registrationStatus = this.appConfigService.registrationStatus;
   registrationOpen = this.appConfigService.registrationStatus === 'open';
   leaderboardEnabled = this.appConfigService.leaderboardEnabled;
-
-  private readonly siteUrl = environment.siteUrl.replace(/\/$/, '');
-
-  readonly eventPageUrl = `${this.siteUrl}/`;
-  readonly eventImageUrl = `${this.siteUrl}/icons/logo_512.jpg`;
-  readonly organizerUrl = this.siteUrl;
-  readonly offerUrl = `${this.siteUrl}/register`;
-  readonly offerPrice = String(
-    this.appConfigService.registrationPricing?.standard ?? 0
-  );
-  readonly offerAvailability =
-    this.registrationStatus === 'open'
-      ? 'https://schema.org/InStock'
-      : this.registrationStatus === 'coming-soon'
-        ? 'https://schema.org/PreOrder'
-        : 'https://schema.org/SoldOut';
-  readonly venueName = SEO_VENUE.name;
-  readonly venueLocality = SEO_VENUE.addressLocality;
-  readonly venueRegion = SEO_VENUE.addressRegion;
-  readonly venueCountry = SEO_VENUE.addressCountry;
-  readonly eventStartDate = eventIsoDateRange(
-    this.appConfigService.eventShortName,
-    this.eventDates
-  ).startDate;
-  readonly eventEndDate = eventIsoDateRange(
-    this.appConfigService.eventShortName,
-    this.eventDates
-  ).endDate;
+  readonly venue = SEO_VENUE;
 
   constructor() {
     addIcons({

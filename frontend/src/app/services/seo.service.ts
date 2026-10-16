@@ -3,8 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { AppConfigService } from './app-config-service';
 import {
+  buildSportsEventJsonLd,
   SEO_DEFAULT_KEYWORDS,
+  SEO_HOME,
   SEO_VENUE,
+  seoForPublicPath,
   SeoRouteData,
 } from '../config/seo.config';
 import { environment } from '../../environments/environment';
@@ -29,17 +32,19 @@ export class SeoService {
 
     if (noindex) {
       this.applyNoIndex(normalizedPath);
+      this.setJsonLd(normalizedPath);
       return;
     }
 
-    const seo = routeSeo ?? this.defaultPublicSeo();
+    const seo =
+      seoForPublicPath(normalizedPath, routeSeo) ?? this.defaultPublicSeo();
     this.applyIndexableMeta(seo, normalizedPath);
-
+    this.setJsonLd(normalizedPath);
   }
 
   private defaultPublicSeo(): SeoRouteData {
     return {
-      title: 'Deccan Throwdown — CrossFit Team Competition',
+      title: SEO_HOME.title,
       description: this.homeDescription(),
     };
   }
@@ -108,6 +113,37 @@ export class SeoService {
 
   private removeLinkCanonical(): void {
     this.document.querySelector('link[rel="canonical"]')?.remove();
+  }
+
+  /** SportsEvent JSON-LD belongs on the homepage only. */
+  private setJsonLd(path: string): void {
+    const existing = this.document.getElementById('dt-jsonld');
+    if (path !== '/') {
+      existing?.remove();
+      return;
+    }
+
+    const { eventName, eventDates, registrationStatus, registrationPricing } =
+      this.appConfig.config;
+    const data = buildSportsEventJsonLd({
+      siteUrl: this.siteUrl,
+      eventShortName: this.appConfig.eventShortName,
+      eventName,
+      eventDates,
+      description: SEO_HOME.description,
+      price: registrationPricing?.standard ?? 0,
+      registrationStatus,
+    });
+
+    const script =
+      (existing as HTMLScriptElement | null) ??
+      this.document.createElement('script');
+    script.id = 'dt-jsonld';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(data);
+    if (!existing) {
+      this.document.head.appendChild(script);
+    }
   }
 
   private normalizePath(url: string): string {

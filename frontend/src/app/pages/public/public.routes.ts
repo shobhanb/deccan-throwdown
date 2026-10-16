@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
-import { SeoRouteData } from '../../config/seo.config';
+import { SEO_HOME, SeoRouteData } from '../../config/seo.config';
 
 const homeSeo: SeoRouteData = {
-  title: 'Deccan Throwdown — CrossFit Team Competition at CrossFit Monkey Flag',
-  description:
-    'Deccan Throwdown is a CrossFit team competition hosted at CrossFit Monkey Flag in Pune. View WODs, register your team, follow the leaderboard, and event updates.',
+  title: SEO_HOME.title,
+  description: SEO_HOME.description,
 };
 
 const wodsSeo: SeoRouteData = {
