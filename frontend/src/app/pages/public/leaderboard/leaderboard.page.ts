@@ -24,9 +24,8 @@ import {
   IonRefresher,
   IonList,
   IonSkeletonText,
-  IonToggle,
 } from '@ionic/angular';
-import { PushNotificationService } from 'src/app/services/push-notification.service';
+import { EventUpdatesOptInComponent } from 'src/app/shared/event-updates-opt-in/event-updates-opt-in.component';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
@@ -65,13 +64,12 @@ import { EventTeamsDataService } from 'src/app/services/event-teams-data.service
     IonRefresher,
     IonContent,
     IonSkeletonText,
-    IonToggle,
+    EventUpdatesOptInComponent,
   ],
 })
 export class LeaderboardPage implements OnInit {
   private eventTeamsData = inject(EventTeamsDataService);
   private toastService = inject(ToastService);
-  private pushNotificationService = inject(PushNotificationService);
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -231,15 +229,4 @@ export class LeaderboardPage implements OnInit {
     this.selectedWod.set(event.detail.value);
   }
 
-  pushSubscribed = this.pushNotificationService.subscribed;
-
-  async onPushToggle(event: CustomEvent) {
-    const enabled = event.detail.checked;
-    await this.pushNotificationService.setSubscribed(enabled);
-    if (!enabled) {
-      (event.target as HTMLIonToggleElement).checked = false;
-    } else if (!this.pushNotificationService.subscribed()) {
-      (event.target as HTMLIonToggleElement).checked = false;
-    }
-  }
 }

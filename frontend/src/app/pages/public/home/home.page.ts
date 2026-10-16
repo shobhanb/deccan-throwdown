@@ -11,6 +11,8 @@ import {
 } from '@ionic/angular';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { AppInstallService } from 'src/app/services/app-install.service';
+import { PushNotificationService } from 'src/app/services/push-notification.service';
+import { EventUpdatesOptInComponent } from 'src/app/shared/event-updates-opt-in/event-updates-opt-in.component';
 import { addIcons } from 'ionicons';
 import {
   barbellOutline,
@@ -44,11 +46,13 @@ import { RouterLink } from '@angular/router';
     IonButton,
     IonContent,
     RouterLink,
+    EventUpdatesOptInComponent,
   ],
 })
 export class HomePage {
   private appConfigService = inject(AppConfigService);
   appInstallService = inject(AppInstallService);
+  pushNotificationService = inject(PushNotificationService);
 
   eventName = this.appConfigService.eventName;
   tagline = this.appConfigService.tagline;

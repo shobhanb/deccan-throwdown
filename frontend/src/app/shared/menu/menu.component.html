@@ -105,6 +105,9 @@
             <ion-label>Register</ion-label>
           </ion-item>
           }
+          @if (pushNotificationService.eventUpdatesAvailable()) {
+            <app-event-updates-opt-in variant="menu" />
+          }
         </ion-list>
 
         @if (adminUser()) {

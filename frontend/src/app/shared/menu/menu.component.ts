@@ -30,6 +30,8 @@ import {
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { AuthService } from 'src/app/services/auth.service';
+import { PushNotificationService } from 'src/app/services/push-notification.service';
+import { EventUpdatesOptInComponent } from 'src/app/shared/event-updates-opt-in/event-updates-opt-in.component';
 
 @Component({
   selector: 'app-menu',
@@ -47,11 +49,13 @@ import { AuthService } from 'src/app/services/auth.service';
     RouterLink,
     IonRouterLink,
     RouterLinkActive,
+    EventUpdatesOptInComponent,
   ],
 })
 export class MenuComponent {
   private appConfigService = inject(AppConfigService);
   private authService = inject(AuthService);
+  pushNotificationService = inject(PushNotificationService);
   private router = inject(Router);
   private menuController = inject(MenuController);
 

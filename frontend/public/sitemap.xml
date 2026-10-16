@@ -4,6 +4,9 @@
     <loc>https://dt.cfgames.site/</loc>
   </url>
   <url>
+    <loc>https://dt.cfgames.site/about</loc>
+  </url>
+  <url>
     <loc>https://dt.cfgames.site/wods</loc>
   </url>
   <url>
@@ -31,6 +34,9 @@
     <loc>https://dt.cfgames.site/leaderboard/dtteams2025</loc>
   </url>
   <url>
+    <loc>https://dt.cfgames.site/pics/dtteams2025</loc>
+  </url>
+  <url>
     <loc>https://dt.cfgames.site/wods/dtpairs2025</loc>
   </url>
   <url>
@@ -38,5 +44,8 @@
   </url>
   <url>
     <loc>https://dt.cfgames.site/leaderboard/dtpairs2025</loc>
+  </url>
+  <url>
+    <loc>https://dt.cfgames.site/pics/dtpairs2025</loc>
   </url>
 </urlset>
