@@ -11,7 +11,7 @@ from fastapi import APIRouter, BackgroundTasks, status
 
 from app.apikey_auth.dependencies import api_key_admin_dependency
 from app.athletes.models import Athlete
-from app.athletes.schemas import AthleteRegistrationModel
+from app.athletes.schemas import AthleteBaseModel
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
@@ -87,25 +87,19 @@ async def get_team_waiver_links(
         team_name=team_name,
         event_short_name=event_short_name,
     )
-    team_registration = TeamRegistrationModel(
-        team_name=team.team_name,
-        category=team.category,
-        athletes=[
-            AthleteRegistrationModel(
-                first_name=athlete.first_name,
-                last_name=athlete.last_name,
-                email=athlete.email,
-                phone_number=athlete.phone_number,
-                date_of_birth=athlete.date_of_birth,
-                gym=athlete.gym,
-                sex=athlete.sex if athlete.sex in ("M", "F") else "M",
-            )
-            for athlete in team.athletes
-        ],
-        event_short_name=team.event_short_name,
-    )
-
-    return get_waiver_links(team_registration)
+    athletes = [
+        AthleteBaseModel(
+            first_name=athlete.first_name,
+            last_name=athlete.last_name,
+            email=athlete.email,
+            phone_number=athlete.phone_number,
+            date_of_birth=athlete.date_of_birth,
+            gym=athlete.gym,
+            sex=athlete.sex if athlete.sex in ("M", "F") else "M",
+        )
+        for athlete in team.athletes
+    ]
+    return get_waiver_links_for_athletes(team.team_name, athletes)
 
 
 @teams_router.get(
@@ -308,10 +302,17 @@ def get_payment_link(team: TeamRegistrationModel) -> str:
 
 
 def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | None:
+    return get_waiver_links_for_athletes(team.team_name, team.athletes)
+
+
+def get_waiver_links_for_athletes(
+    team_name: str,
+    athletes: Sequence[AthleteBaseModel],
+) -> list[WaiverLinkModel] | None:
     waiver_links = []
-    for athlete in team.athletes:
+    for athlete in athletes:
         if athlete.gym and athlete.gym != "CFMF":
-            waiver_link = add_domain_redirect(get_waiver_link(athlete, team.team_name))
+            waiver_link = add_domain_redirect(get_waiver_link(athlete, team_name))
             waiver_links.append(
                 WaiverLinkModel(
                     athlete_name=f"{athlete.first_name} {athlete.last_name}",
@@ -321,7 +322,7 @@ def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | Non
     return waiver_links if waiver_links else None
 
 
-def get_waiver_link(athlete: AthleteRegistrationModel, team_name: str) -> str:
+def get_waiver_link(athlete: AthleteBaseModel, team_name: str) -> str:
     if athlete.gym == "CFMF":
         return ""
 
