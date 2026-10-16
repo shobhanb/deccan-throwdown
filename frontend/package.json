@@ -10,7 +10,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "generate-images": "node scripts/generate-image-list.js"
+    "generate-images": "node scripts/generate-image-list.js",
+    "generate-learn-gifs": "../.venv-ytdlp/bin/python scripts/generate-learn-gifs.py",
+    "learn-gif": "../.venv-ytdlp/bin/python scripts/learn_gif_from_youtube.py"
   },
   "private": true,
   "dependencies": {

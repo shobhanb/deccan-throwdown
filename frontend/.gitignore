@@ -4,6 +4,7 @@
 /src/assets/*
 !/src/assets/learn/
 !/src/assets/learn/**
+!/src/assets/learn/*.gif
 
 *~
 *.sw[mnpcod]
