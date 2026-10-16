@@ -4,20 +4,13 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * Script to generate a JSON file containing all image filenames from src/assets/images
+ * Scan src/assets/images/<eventShortName>/ and generate
+ * src/assets/image-list-<eventShortName>.json per event.
  */
 
-// Configuration
-const IMAGES_DIR = path.join(__dirname, "..", "src", "assets", "images");
-const OUTPUT_FILE = path.join(
-  __dirname,
-  "..",
-  "src",
-  "assets",
-  "image-list.json"
-);
+const ASSETS_DIR = path.join(__dirname, "..", "src", "assets");
+const IMAGES_DIR = path.join(ASSETS_DIR, "images");
 
-// Supported image file extensions
 const IMAGE_EXTENSIONS = [
   ".jpg",
   ".jpeg",
@@ -28,21 +21,11 @@ const IMAGE_EXTENSIONS = [
   ".svg",
 ];
 
-/**
- * Check if a file is an image based on its extension
- * @param {string} filename - The filename to check
- * @returns {boolean} - True if the file is an image
- */
 function isImageFile(filename) {
   const ext = path.extname(filename).toLowerCase();
   return IMAGE_EXTENSIONS.includes(ext);
 }
 
-/**
- * Get file size in bytes
- * @param {string} filePath - Path to the file
- * @returns {number} - File size in bytes
- */
 function getFileSize(filePath) {
   try {
     const stats = fs.statSync(filePath);
@@ -53,11 +36,6 @@ function getFileSize(filePath) {
   }
 }
 
-/**
- * Format file size in human readable format
- * @param {number} bytes - Size in bytes
- * @returns {string} - Formatted size string
- */
 function formatFileSize(bytes) {
   if (bytes === 0) return "0 B";
   const k = 1024;
@@ -66,13 +44,25 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
+function imageTypeForRelativePath(relativePath) {
+  if (relativePath.includes("square")) {
+    return "square";
+  }
+  if (relativePath.includes("horizontal")) {
+    return "horizontal";
+  }
+  if (relativePath === "") {
+    return "general";
+  }
+  return relativePath.split("/")[0];
+}
+
 /**
- * Recursively scan a directory for images
- * @param {string} dirPath - Directory to scan
- * @param {string} relativePath - Relative path from images root
- * @returns {Array} - Array of image objects
+ * @param {string} dirPath - Absolute path under the event folder
+ * @param {string} eventShortName
+ * @param {string} relativePath - Path relative to the event folder
  */
-function scanDirectory(dirPath, relativePath = "") {
+function scanDirectory(dirPath, eventShortName, relativePath = "") {
   const images = [];
 
   try {
@@ -85,37 +75,26 @@ function scanDirectory(dirPath, relativePath = "") {
         : entry.name;
 
       if (entry.isDirectory()) {
-        // Recursively scan subdirectory
-        const subImages = scanDirectory(fullPath, relativeFilePath);
+        const subImages = scanDirectory(
+          fullPath,
+          eventShortName,
+          relativeFilePath
+        );
         images.push(...subImages);
       } else if (entry.isFile() && isImageFile(entry.name)) {
-        // Process image file
         const fileSize = getFileSize(fullPath);
         const stats = fs.statSync(fullPath);
 
-        // Determine type based on subfolder
-        let imageType = "unknown";
-        if (relativePath.includes("square")) {
-          imageType = "square";
-        } else if (relativePath.includes("horizontal")) {
-          imageType = "horizontal";
-        } else if (relativePath === "") {
-          // Files in root images directory
-          imageType = "general";
-        } else {
-          // Use folder name as type
-          imageType = relativePath.split("/")[0];
-        }
-
         images.push({
           filename: entry.name,
-          path: `assets/images/${relativeFilePath}`,
+          path: `assets/images/${eventShortName}/${relativeFilePath}`,
           size: fileSize,
           sizeFormatted: formatFileSize(fileSize),
           extension: path.extname(entry.name).toLowerCase(),
           lastModified: stats.mtime.toISOString(),
-          type: imageType,
+          type: imageTypeForRelativePath(relativePath),
           folder: relativePath || "root",
+          eventShortName,
         });
       }
     });
@@ -128,148 +107,116 @@ function scanDirectory(dirPath, relativePath = "") {
   return images;
 }
 
-/**
- * Scan the images directory and generate the image list
- */
+function buildMetadata(images, eventShortName) {
+  let totalSize = 0;
+  images.forEach((image) => {
+    totalSize += image.size;
+  });
+
+  const metadata = {
+    eventShortName,
+    generatedAt: new Date().toISOString(),
+    totalImages: images.length,
+    totalSize,
+    totalSizeFormatted: formatFileSize(totalSize),
+    directory: `src/assets/images/${eventShortName}`,
+    supportedExtensions: IMAGE_EXTENSIONS,
+    stats: {
+      byExtension: {},
+      byType: {},
+      byFolder: {},
+    },
+  };
+
+  images.forEach((image) => {
+    const ext = image.extension;
+    if (!metadata.stats.byExtension[ext]) {
+      metadata.stats.byExtension[ext] = { count: 0, size: 0 };
+    }
+    metadata.stats.byExtension[ext].count++;
+    metadata.stats.byExtension[ext].size += image.size;
+
+    const type = image.type;
+    if (!metadata.stats.byType[type]) {
+      metadata.stats.byType[type] = { count: 0, size: 0 };
+    }
+    metadata.stats.byType[type].count++;
+    metadata.stats.byType[type].size += image.size;
+
+    const folder = image.folder;
+    if (!metadata.stats.byFolder[folder]) {
+      metadata.stats.byFolder[folder] = { count: 0, size: 0 };
+    }
+    metadata.stats.byFolder[folder].count++;
+    metadata.stats.byFolder[folder].size += image.size;
+  });
+
+  ["byExtension", "byType", "byFolder"].forEach((key) => {
+    Object.keys(metadata.stats[key]).forEach((item) => {
+      metadata.stats[key][item].sizeFormatted = formatFileSize(
+        metadata.stats[key][item].size
+      );
+    });
+  });
+
+  return metadata;
+}
+
+function writeEventImageList(eventShortName, images) {
+  images.sort((a, b) => a.filename.localeCompare(b.filename));
+  const metadata = buildMetadata(images, eventShortName);
+  const outputFile = path.join(ASSETS_DIR, `image-list-${eventShortName}.json`);
+  const imageListData = { metadata, images };
+
+  fs.writeFileSync(outputFile, JSON.stringify(imageListData, null, 2), "utf8");
+  return { outputFile, metadata };
+}
+
 function generateImageList() {
-  console.log("🖼️  Scanning images directory and subfolders...");
+  console.log("🖼️  Scanning event image folders...");
   console.log(`📁 Directory: ${IMAGES_DIR}`);
 
   try {
-    // Check if the images directory exists
     if (!fs.existsSync(IMAGES_DIR)) {
       console.error(`❌ Images directory does not exist: ${IMAGES_DIR}`);
       process.exit(1);
     }
 
-    // Recursively scan all directories and subdirectories
-    const images = scanDirectory(IMAGES_DIR);
-    let totalSize = 0;
+    const eventDirs = fs
+      .readdirSync(IMAGES_DIR, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory());
 
-    // Calculate total size
-    images.forEach((image) => {
-      totalSize += image.size;
-    });
-
-    // Sort images by filename for consistent ordering
-    images.sort((a, b) => a.filename.localeCompare(b.filename));
-
-    // Generate metadata
-    const metadata = {
-      generatedAt: new Date().toISOString(),
-      totalImages: images.length,
-      totalSize: totalSize,
-      totalSizeFormatted: formatFileSize(totalSize),
-      directory: "src/assets/images",
-      supportedExtensions: IMAGE_EXTENSIONS,
-      stats: {
-        byExtension: {},
-        byType: {},
-        byFolder: {},
-      },
-    };
-
-    // Calculate stats by extension, type, and folder
-    images.forEach((image) => {
-      // By extension
-      const ext = image.extension;
-      if (!metadata.stats.byExtension[ext]) {
-        metadata.stats.byExtension[ext] = { count: 0, size: 0 };
-      }
-      metadata.stats.byExtension[ext].count++;
-      metadata.stats.byExtension[ext].size += image.size;
-
-      // By type
-      const type = image.type;
-      if (!metadata.stats.byType[type]) {
-        metadata.stats.byType[type] = { count: 0, size: 0 };
-      }
-      metadata.stats.byType[type].count++;
-      metadata.stats.byType[type].size += image.size;
-
-      // By folder
-      const folder = image.folder;
-      if (!metadata.stats.byFolder[folder]) {
-        metadata.stats.byFolder[folder] = { count: 0, size: 0 };
-      }
-      metadata.stats.byFolder[folder].count++;
-      metadata.stats.byFolder[folder].size += image.size;
-    });
-
-    // Format all stats
-    Object.keys(metadata.stats.byExtension).forEach((ext) => {
-      metadata.stats.byExtension[ext].sizeFormatted = formatFileSize(
-        metadata.stats.byExtension[ext].size
+    if (eventDirs.length === 0) {
+      console.warn(
+        "⚠️  No event folders found. Create src/assets/images/<eventShortName>/ and re-run."
       );
-    });
+      process.exit(0);
+    }
 
-    Object.keys(metadata.stats.byType).forEach((type) => {
-      metadata.stats.byType[type].sizeFormatted = formatFileSize(
-        metadata.stats.byType[type].size
+    let grandTotal = 0;
+
+    eventDirs.forEach((eventDir) => {
+      const eventShortName = eventDir.name;
+      const eventPath = path.join(IMAGES_DIR, eventShortName);
+      const images = scanDirectory(eventPath, eventShortName);
+      const { outputFile, metadata } = writeEventImageList(
+        eventShortName,
+        images
       );
+      grandTotal += images.length;
+
+      console.log(`\n✅ ${eventShortName}`);
+      console.log(`   📄 ${outputFile}`);
+      console.log(`   🖼️  ${images.length} images (${metadata.totalSizeFormatted})`);
     });
 
-    Object.keys(metadata.stats.byFolder).forEach((folder) => {
-      metadata.stats.byFolder[folder].sizeFormatted = formatFileSize(
-        metadata.stats.byFolder[folder].size
-      );
-    });
-
-    // Create the final JSON structure
-    const imageListData = {
-      metadata,
-      images,
-    };
-
-    // Write the JSON file
-    fs.writeFileSync(
-      OUTPUT_FILE,
-      JSON.stringify(imageListData, null, 2),
-      "utf8"
-    );
-
-    // Success message
-    console.log("✅ Image list generated successfully!");
-    console.log(`📄 Output file: ${OUTPUT_FILE}`);
-    console.log(`🖼️  Total images: ${images.length}`);
-    console.log(`📦 Total size: ${formatFileSize(totalSize)}`);
-
-    // Show breakdown by extension
-    console.log("\n📊 Breakdown by extension:");
-    Object.entries(metadata.stats.byExtension).forEach(([ext, stats]) => {
-      console.log(`   ${ext}: ${stats.count} files (${stats.sizeFormatted})`);
-    });
-
-    // Show breakdown by type
-    console.log("\n🎨 Breakdown by type:");
-    Object.entries(metadata.stats.byType).forEach(([type, stats]) => {
-      console.log(`   ${type}: ${stats.count} files (${stats.sizeFormatted})`);
-    });
-
-    // Show breakdown by folder
-    console.log("\n📂 Breakdown by folder:");
-    Object.entries(metadata.stats.byFolder).forEach(([folder, stats]) => {
-      console.log(
-        `   ${folder}: ${stats.count} files (${stats.sizeFormatted})`
-      );
-    });
-
-    console.log(`\n🎯 You can now import the image list in your Angular app:`);
-    console.log(`   import imageList from '../assets/image-list.json';`);
-    console.log(`   const images = imageList.images.map(img => img.path);`);
-    console.log(
-      `   const squareImages = imageList.images.filter(img => img.type === 'square');`
-    );
-    console.log(
-      `   const horizontalImages = imageList.images.filter(img => img.type === 'horizontal');`
-    );
+    console.log(`\n🎯 Generated lists for ${eventDirs.length} event(s), ${grandTotal} images total.`);
   } catch (error) {
     console.error("❌ Error generating image list:", error.message);
     process.exit(1);
   }
 }
 
-// Run the script
 if (require.main === module) {
   generateImageList();
 }

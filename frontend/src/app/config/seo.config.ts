@@ -74,6 +74,7 @@ const ARCHIVE_SECTION_LABELS = {
   wods: 'WODs',
   teams: 'Teams',
   leaderboard: 'Leaderboard',
+  pics: 'Gallery',
 } as const;
 
 /**
@@ -84,7 +85,7 @@ export function seoForPublicPath(
   path: string,
   routeSeo?: SeoRouteData
 ): SeoRouteData | undefined {
-  const match = path.match(/^\/(wods|teams|leaderboard)\/([a-z0-9]+)$/);
+  const match = path.match(/^\/(wods|teams|leaderboard|pics)\/([a-z0-9]+)$/);
   if (!match) {
     return routeSeo;
   }

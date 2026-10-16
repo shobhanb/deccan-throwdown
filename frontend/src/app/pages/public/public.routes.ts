@@ -113,6 +113,11 @@ export const routes: Routes = [
     data: { seo: picsSeo },
   },
   {
+    path: 'pics/:eventShortName',
+    loadComponent: () => import('./pics/pics.page').then((m) => m.PicsPage),
+    data: { seo: picsSeo },
+  },
+  {
     path: 'register/test',
     loadComponent: () =>
       import('./register/test-register.page').then((m) => m.TestRegisterPage),

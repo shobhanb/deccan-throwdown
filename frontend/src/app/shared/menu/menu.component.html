@@ -192,6 +192,14 @@
             <ion-icon name="barbell-outline" slot="start"></ion-icon>
             <ion-label>WODs</ion-label>
           </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [href]="'/pics/' + event.shortName"
+          >
+            <ion-icon name="camera-outline" slot="start"></ion-icon>
+            <ion-label>Image Gallery</ion-label>
+          </ion-item>
         </ion-list>
         }
       </div>

@@ -1,11 +1,89 @@
 <app-page-toolbar title="Gallery"></app-page-toolbar>
 
 <ion-content>
+  @if (!showEventPicker()) {
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+  }
 
-  <app-page-header title="Image Gallery" subtitle="Event Photos"></app-page-header>
+  @if (showEventPicker()) {
+  <div class="gallery-hub">
+    <app-page-header
+      title="Image Gallery"
+      subtitle="Photos from past Deccan Throwdown events"
+    ></app-page-header>
+
+    <div class="gallery-hub-grid">
+      @if (hubLoading()) {
+        @for (skeleton of [1, 2]; track skeleton) {
+        <div class="gallery-hub-card gallery-hub-card-skeleton card-elevated">
+          <ion-skeleton-text
+            [animated]="true"
+            class="gallery-hub-cover-skeleton"
+          ></ion-skeleton-text>
+          <div class="gallery-hub-body">
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 4rem; height: 1.25rem; border-radius: 999px"
+            ></ion-skeleton-text>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 85%; height: 1.25rem; margin-top: 0.75rem"
+            ></ion-skeleton-text>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 45%; height: 1rem; margin-top: 0.5rem"
+            ></ion-skeleton-text>
+          </div>
+        </div>
+        }
+      } @else {
+        @for (event of hubEvents(); track event.shortName) {
+        <a
+          class="gallery-hub-card card-elevated"
+          [routerLink]="['/pics', event.shortName]"
+        >
+          <div class="gallery-hub-cover">
+            @if (event.coverPath) {
+            <img
+              [src]="event.coverPath"
+              alt=""
+              class="gallery-hub-cover-image"
+              loading="lazy"
+            />
+            } @else {
+            <div class="gallery-hub-cover-placeholder" aria-hidden="true">
+              <ion-icon name="camera-outline"></ion-icon>
+            </div>
+            }
+            <span
+              class="gallery-hub-count"
+              [class.gallery-hub-count-muted]="event.photoCount === 0"
+            >
+              {{ photoCountLabel(event.photoCount) }}
+            </span>
+          </div>
+          <div class="gallery-hub-body">
+            <span class="dt-pill gallery-hub-type">{{ event.eventTypeLabel }}</span>
+            <h2 class="gallery-hub-title">{{ event.eventName }}</h2>
+            <p class="gallery-hub-dates">{{ event.eventDates }}</p>
+          </div>
+          <ion-icon
+            name="chevron-forward-outline"
+            class="gallery-hub-chevron"
+            aria-hidden="true"
+          ></ion-icon>
+        </a>
+        }
+      }
+    </div>
+  </div>
+  } @else {
+  <app-page-header
+    title="Image Gallery"
+    [subtitle]="eventName() + ' · ' + eventDates()"
+  ></app-page-header>
 
   @if (dataLoaded() && imageData().length === 0) {
   <app-empty-state
@@ -41,8 +119,10 @@
     }
   </div>
   }
+  }
 </ion-content>
 
+@if (!showEventPicker()) {
 <ion-modal
   [isOpen]="selectedImageIndex() !== null"
   (didDismiss)="closeLightbox()"
@@ -94,3 +174,4 @@
     </ion-content>
   </ng-template>
 </ion-modal>
+}

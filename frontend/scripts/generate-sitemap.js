@@ -46,6 +46,7 @@ const archivePaths = archiveEvents.flatMap((event) => [
   `/wods/${event}`,
   `/teams/${event}`,
   `/leaderboard/${event}`,
+  `/pics/${event}`,
 ]);
 
 const paths = [...new Set([...staticPaths, ...archivePaths])];

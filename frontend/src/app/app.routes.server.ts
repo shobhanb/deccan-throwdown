@@ -40,6 +40,12 @@ export const serverRoutes: ServerRoute[] = [
     getPrerenderParams: archiveEventParams,
     fallback: PrerenderFallback.Client,
   },
+  {
+    path: 'pics/:eventShortName',
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: archiveEventParams,
+    fallback: PrerenderFallback.Client,
+  },
   { path: 'auth/**', renderMode: RenderMode.Client },
   { path: 'admin/**', renderMode: RenderMode.Client },
   { path: '**', renderMode: RenderMode.Client },

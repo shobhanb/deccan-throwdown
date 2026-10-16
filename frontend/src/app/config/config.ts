@@ -470,6 +470,12 @@ export const archiveEventShortNames: string[] = [
   'dtpairs2025',
 ];
 
+/** Events with photo galleries under src/assets/images/<eventShortName>/. */
+export const galleryEventShortNames: string[] = [
+  'dtteams2025',
+  'dtpairs2025',
+];
+
 export function isArchivedEvent(eventShortName: string): boolean {
   return archiveEventShortNames.includes(eventShortName);
 }
