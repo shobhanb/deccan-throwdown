@@ -1,36 +1,9 @@
 import { Lesson, LessonLink } from './lesson.model';
 
-/** Looping demos from CrossFit movement videos; keyed by essentials slug. */
-const LEARN_DEMO_GIFS: Record<string, string> = {
-  'the-air-squat': 'assets/learn/air-squat.gif',
-  'the-front-squat': 'assets/learn/front-squat.gif',
-  'the-overhead-squat': 'assets/learn/overhead-squat.gif',
-  'the-shoulder-press': 'assets/learn/shoulder-press.gif',
-  'the-push-press': 'assets/learn/push-press.gif',
-  'the-push-jerk': 'assets/learn/push-jerk.gif',
-  'the-deadlift': 'assets/learn/deadlift.gif',
-  'the-sumo-deadlift-high-pull': 'assets/learn/sumo-deadlift-high-pull.gif',
-  'the-medicine-ball-clean': 'assets/learn/medicine-ball-clean.gif',
-  'the-pull-up': 'assets/learn/pull-up.gif',
-  'the-thruster': 'assets/learn/thruster.gif',
-  'the-muscle-up': 'assets/learn/muscle-up.gif',
-  'the-snatch': 'assets/learn/snatch.gif',
-  'the-wall-ball-shot': 'assets/learn/wall-ball-shot.gif',
-  'the-handstand-push-up': 'assets/learn/handstand-push-up.gif',
-  'the-kettlebell-swing': 'assets/learn/kettlebell-swing.gif',
-  'the-push-up': 'assets/learn/push-up.gif',
-  'the-box-jump': 'assets/learn/box-jump.gif',
-  'the-double-under': 'assets/learn/double-under.gif',
-  'the-ring-dip': 'assets/learn/ring-dip.gif',
-  'the-abmat-sit-up': 'assets/learn/abmat-sit-up.gif',
-};
-
 function watch(slug: string, label: string): LessonLink {
-  const image = LEARN_DEMO_GIFS[slug];
   return {
     label,
     href: `https://www.crossfit.com/essentials/${slug}`,
-    ...(image ? { image } : {}),
   };
 }
 
