@@ -30,6 +30,12 @@ const picsSeo: SeoRouteData = {
     'Photos from Deccan Throwdown CrossFit competitions at CrossFit Monkey Flag.',
 };
 
+const aboutSeo: SeoRouteData = {
+  title: 'About — Deccan Throwdown',
+  description:
+    'Deccan Throwdown is a CrossFit team competition in Pune at CrossFit Monkey Flag. Event dates, venue, and how to follow WODs, teams, and the live leaderboard.',
+};
+
 const learnSeo: SeoRouteData = {
   title: 'While You Wait — CrossFit Fundamentals — Deccan Throwdown',
   description:
@@ -85,6 +91,11 @@ export const routes: Routes = [
     path: 'wods/:eventShortName',
     loadComponent: () => import('./wods/wods.page').then((m) => m.WodsPage),
     data: { seo: wodsSeo },
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./about/about.page').then((m) => m.AboutPage),
+    data: { seo: aboutSeo },
   },
   {
     path: 'learn',

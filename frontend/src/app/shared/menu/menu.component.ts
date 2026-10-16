@@ -24,6 +24,7 @@ import {
   createOutline,
   fingerPrintOutline,
   homeOutline,
+  informationCircleOutline,
   notificationsOutline,
   peopleOutline,
 } from 'ionicons/icons';
@@ -67,6 +68,7 @@ export class MenuComponent {
   constructor() {
     addIcons({
       homeOutline,
+      informationCircleOutline,
       barChartOutline,
       peopleOutline,
       barbellOutline,

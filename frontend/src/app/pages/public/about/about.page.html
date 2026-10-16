@@ -1,0 +1,36 @@
+<app-page-toolbar title="About"></app-page-toolbar>
+
+<ion-content class="page-with-tabs">
+  <app-page-header
+    title="About Deccan Throwdown"
+    [subtitle]="eventName + ' · ' + eventDates"
+  ></app-page-header>
+
+  <section class="about-summary card-elevated" aria-label="About Deccan Throwdown">
+    <p>
+      <strong>Deccan Throwdown</strong> is a CrossFit team competition in Pune,
+      hosted at
+      <a [href]="venue.url" rel="noopener noreferrer">{{ venue.name }}</a>
+      (<a [href]="venue.mapsUrl" rel="noopener noreferrer"
+        >{{ venue.streetAddress }}, {{ venue.addressLocality }}
+        {{ venue.postalCode }}</a
+      >). Athletes compete across team workouts (WODs), with
+      divisions for different skill levels.
+      <strong>{{ eventName }}</strong> runs {{ eventDates }}. Questions?
+      <a [href]="'tel:' + venue.telephone">{{ venue.telephone }}</a>.
+      Browse <a routerLink="/wods">workouts</a>, see
+      <a routerLink="/teams">registered teams</a>, and follow the
+      <a routerLink="/leaderboard">live leaderboard</a>
+      @if (registrationOpen) {
+        — or <a routerLink="/register">register your team</a> while spots are open.
+      } @else if (registrationStatus === 'coming-soon') {
+        — registration opens soon; check back here or on
+        <a href="https://www.instagram.com/deccanthrowdown" rel="noopener noreferrer"
+          >Instagram</a
+        >.
+      } @else {
+        — check back when registration opens for the next event.
+      }
+    </p>
+  </section>
+</ion-content>

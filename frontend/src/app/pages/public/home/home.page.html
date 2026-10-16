@@ -45,34 +45,6 @@
     <p class="hero-date">{{ eventDates }}</p>
   </section>
 
-  <section class="hero-intro card-elevated" aria-label="About Deccan Throwdown">
-    <p>
-      <strong>Deccan Throwdown</strong> is a CrossFit competition in Pune, hosted at
-      <strong>CrossFit Monkey Flag</strong>. Athletes compete across team workouts
-      (WODs), with divisions for different skill levels — follow the
-      <a routerLink="/leaderboard">live leaderboard</a>, browse
-      <a routerLink="/wods">workouts</a>, and
-      @if (registrationOpen) {
-        <a routerLink="/register">register your team</a> for the next event.
-      } @else {
-        check back for registration when the next event opens.
-      }
-    </p>
-  </section>
-
-  <section class="hero-intro card-elevated" aria-label="CrossFit competition in Pune">
-    <h2>CrossFit competition in Pune</h2>
-    <p>
-      {{ eventName }} is at
-      <a [href]="venue.url" rel="noopener noreferrer">{{ venue.name }}</a>,
-      {{ venue.streetAddress }}, {{ venue.addressLocality }}
-      {{ venue.postalCode }}. Dates: {{ eventDates }}.
-      <a [href]="'tel:' + venue.telephone">{{ venue.telephone }}</a>.
-      Train at the host gym, then follow the
-      <a routerLink="/leaderboard">leaderboard</a> on event weekend.
-    </p>
-  </section>
-
   <div class="action-grid">
     <a class="action-tile" routerLink="/wods">
       <div class="action-icon-wrap"><ion-icon name="barbell-outline"></ion-icon></div>
@@ -104,6 +76,13 @@
     </ion-item>
   </ion-list>
   }
+
+  <ion-list [inset]="true" class="card-elevated links-list">
+    <ion-item routerLink="/about" detail>
+      <ion-icon name="information-circle-outline" slot="start" color="secondary"></ion-icon>
+      <ion-label>About the event</ion-label>
+    </ion-item>
+  </ion-list>
 
   <ion-list [inset]="true" class="card-elevated links-list">
     <ion-item routerLink="/learn" detail>

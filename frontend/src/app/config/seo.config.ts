@@ -4,12 +4,13 @@ import { appConfig } from './config';
 export const SEO_VENUE = {
   name: 'CrossFit Monkey Flag',
   url: 'https://monkeyflagfitness.com/',
+  mapsUrl: 'https://maps.app.goo.gl/V8D3KpMABjgb15147',
   streetAddress: 'Futsal 5, Centro Mall, opposite Garware College',
   addressLocality: 'Pune',
   addressRegion: 'Maharashtra',
   postalCode: '411004',
   addressCountry: 'IN',
-  telephone: '+91 9767755419',
+  telephone: '+91 9325928630',
 };
 
 export const SEO_ORGANIZER = {
@@ -42,6 +43,7 @@ export interface SeoRouteData {
 /** Paths included in sitemap.xml (no trailing slash). */
 export const SEO_SITEMAP_STATIC_PATHS = [
   '/',
+  '/about',
   '/wods',
   '/teams',
   '/leaderboard',
@@ -133,6 +135,7 @@ export function buildSportsEventJsonLd(options: {
       '@type': 'Place',
       name: SEO_VENUE.name,
       url: SEO_VENUE.url,
+      hasMap: SEO_VENUE.mapsUrl,
       telephone: SEO_VENUE.telephone,
       address: {
         '@type': 'PostalAddress',

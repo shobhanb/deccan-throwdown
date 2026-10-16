@@ -19,13 +19,13 @@ import {
   closeOutline,
   createOutline,
   downloadOutline,
+  informationCircleOutline,
   logoInstagram,
   peopleOutline,
   trophyOutline,
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { RouterLink } from '@angular/router';
-import { SEO_VENUE } from 'src/app/config/seo.config';
 
 @Component({
   selector: 'app-home',
@@ -56,12 +56,12 @@ export class HomePage {
   registrationStatus = this.appConfigService.registrationStatus;
   registrationOpen = this.appConfigService.registrationStatus === 'open';
   leaderboardEnabled = this.appConfigService.leaderboardEnabled;
-  readonly venue = SEO_VENUE;
 
   constructor() {
     addIcons({
       closeOutline,
       downloadOutline,
+      informationCircleOutline,
       barbellOutline,
       bookOutline,
       peopleOutline,

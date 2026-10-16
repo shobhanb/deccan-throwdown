@@ -35,6 +35,16 @@
           <ion-item
             button
             detail="false"
+            [routerLink]="['/about']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+            <ion-label>About</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
             [routerLink]="['/teams']"
             routerLinkActive="menu-active-item"
             [routerLinkActiveOptions]="{ exact: true }"

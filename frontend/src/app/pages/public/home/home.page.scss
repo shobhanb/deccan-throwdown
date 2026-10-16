@@ -55,29 +55,6 @@
   font-size: 0.9rem;
 }
 
-.hero-intro {
-  margin: 0 var(--dt-space-md) var(--dt-space-md);
-  padding: var(--dt-space-md);
-  line-height: 1.55;
-  font-size: 0.95rem;
-
-  h2 {
-    margin: 0 0 var(--dt-space-sm);
-    font-size: 1.15rem;
-    line-height: 1.3;
-  }
-
-  p {
-    margin: 0;
-  }
-
-  a {
-    color: var(--ion-color-secondary);
-    font-weight: 600;
-    text-decoration: none;
-  }
-}
-
 .action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
