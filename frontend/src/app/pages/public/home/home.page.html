@@ -5,10 +5,6 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  @if (pushNotificationService.showEventUpdatesPrompt()) {
-    <app-event-updates-opt-in variant="banner" />
-  }
-
   @if (appInstallService.showInstallButton()) {
   <div class="install-banner card-elevated">
     <ion-icon name="download-outline" class="install-icon"></ion-icon>

@@ -25,7 +25,6 @@ import {
   IonList,
   IonSkeletonText,
 } from '@ionic/angular';
-import { EventUpdatesOptInComponent } from 'src/app/shared/event-updates-opt-in/event-updates-opt-in.component';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { EmptyStateComponent } from 'src/app/shared/empty-state/empty-state.component';
@@ -64,7 +63,6 @@ import { EventTeamsDataService } from 'src/app/services/event-teams-data.service
     IonRefresher,
     IonContent,
     IonSkeletonText,
-    EventUpdatesOptInComponent,
   ],
 })
 export class LeaderboardPage implements OnInit {

@@ -31,7 +31,7 @@
   color: var(--ion-text-color);
   background: var(--dt-surface);
   overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s, box-shadow 0.15s;
 
   &:active {
     transform: scale(0.98);
@@ -99,10 +99,8 @@
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
   background: rgba(0, 0, 0, 0.65);
   color: #fff;
-  backdrop-filter: blur(6px);
 }
 
 .gallery-hub-count-muted {
@@ -189,11 +187,6 @@
   object-fit: cover;
   cursor: pointer;
   border-radius: var(--ion-border-radius);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.02);
-  }
 }
 
 .skeleton-image {
@@ -202,7 +195,6 @@
   border-radius: var(--ion-border-radius);
 }
 
-// Modal styles
 .modal-content {
   --background: #000;
 }
@@ -239,15 +231,15 @@
   font-size: 24px;
   height: 60px;
   width: 60px;
-  
+
   &.prev-button {
     left: 10px;
   }
-  
+
   &.next-button {
     right: 10px;
   }
-  
+
   &:disabled {
     opacity: 0.3;
   }
@@ -262,39 +254,38 @@
   color: white;
   padding: 20px;
   text-align: center;
-  
+
   p {
     margin: 4px 0;
-    
+
     &:first-child {
       font-size: 1.1rem;
     }
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .image-viewer {
     padding: 0 40px;
   }
-  
+
   .nav-button {
     height: 50px;
     width: 50px;
     font-size: 20px;
-    
+
     &.prev-button {
       left: 5px;
     }
-    
+
     &.next-button {
       right: 5px;
     }
   }
-  
+
   .image-info {
     padding: 15px;
-    
+
     p {
       font-size: 0.9rem;
     }

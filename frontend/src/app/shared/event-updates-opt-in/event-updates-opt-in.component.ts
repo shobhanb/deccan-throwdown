@@ -2,19 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  input,
-  signal,
 } from '@angular/core';
 import {
-  IonButton,
   IonIcon,
   IonItem,
   IonLabel,
-  IonList,
   IonToggle,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { closeOutline, notificationsOutline } from 'ionicons/icons';
+import { notificationsOutline } from 'ionicons/icons';
 import { PushNotificationService } from 'src/app/services/push-notification.service';
 
 @Component({
@@ -23,35 +19,15 @@ import { PushNotificationService } from 'src/app/services/push-notification.serv
   styleUrls: ['./event-updates-opt-in.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonButton, IonIcon, IonItem, IonLabel, IonList, IonToggle],
+  imports: [IonIcon, IonItem, IonLabel, IonToggle],
 })
 export class EventUpdatesOptInComponent {
   private pushNotificationService = inject(PushNotificationService);
 
-  /** `banner` for Home; `menu` for side menu row; `inline` for page toggle list. */
-  variant = input<'banner' | 'inline' | 'menu'>('inline');
-
   subscribed = this.pushNotificationService.subscribed;
-  enabling = signal(false);
 
   constructor() {
-    addIcons({ closeOutline, notificationsOutline });
-  }
-
-  dismissBanner(): void {
-    this.pushNotificationService.dismissEventUpdatesPrompt();
-  }
-
-  async enableFromBanner(): Promise<void> {
-    if (this.enabling()) {
-      return;
-    }
-    this.enabling.set(true);
-    try {
-      await this.pushNotificationService.setSubscribed(true);
-    } finally {
-      this.enabling.set(false);
-    }
+    addIcons({ notificationsOutline });
   }
 
   async onPushToggle(event: CustomEvent): Promise<void> {

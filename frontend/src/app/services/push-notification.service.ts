@@ -16,7 +16,6 @@ import { AuthService } from './auth.service';
 import { ToastService } from './toast.service';
 
 const STORAGE_KEY = 'dt_fcm_subscribed';
-const PROMPT_HIDDEN_KEY = 'dt_push_prompt_hidden';
 
 @Injectable({
   providedIn: 'root',
@@ -31,11 +30,10 @@ export class PushNotificationService {
   private swUpdate = inject(SwUpdate, { optional: true });
 
   readonly subscribed = signal(this.readStoredSubscription());
-  readonly showEventUpdatesPrompt = signal(false);
   readonly eventUpdatesAvailable = signal(false);
 
   constructor() {
-    this.refreshEventUpdatesPrompt();
+    this.refreshEventUpdatesAvailability();
     if (
       isPlatformBrowser(this.platformId) &&
       this.messaging &&
@@ -70,32 +68,19 @@ export class PushNotificationService {
       localStorage.setItem(STORAGE_KEY, value ? 'true' : 'false');
     }
     this.subscribed.set(value);
-    this.refreshEventUpdatesPrompt();
   }
 
-  dismissEventUpdatesPrompt(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(PROMPT_HIDDEN_KEY, 'true');
-    }
-    this.refreshEventUpdatesPrompt();
-  }
-
-  private refreshEventUpdatesPrompt(): void {
+  private refreshEventUpdatesAvailability(): void {
     if (!isPlatformBrowser(this.platformId)) {
-      this.showEventUpdatesPrompt.set(false);
       this.eventUpdatesAvailable.set(false);
       return;
     }
-    const hidden = localStorage.getItem(PROMPT_HIDDEN_KEY) === 'true';
     const available =
       environment.notificationsEnabled &&
       !!environment.firebaseVapidKey &&
       'Notification' in window &&
       !!this.messaging;
-    const canPrompt =
-      available && !isDevMode() && !this.subscribed() && !hidden;
     this.eventUpdatesAvailable.set(available);
-    this.showEventUpdatesPrompt.set(canPrompt);
   }
 
   private async getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration | null> {

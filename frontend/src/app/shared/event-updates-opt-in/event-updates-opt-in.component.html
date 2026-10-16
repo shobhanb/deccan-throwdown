@@ -1,47 +1,12 @@
-@if (variant() === 'banner') {
-  <div class="event-updates-banner card-elevated">
-    <ion-icon name="notifications-outline" class="event-updates-icon"></ion-icon>
-    <div class="event-updates-text">
-      <strong>Event updates</strong>
-      <p>Get push alerts when results are final or the roster changes</p>
-    </div>
-    <ion-button
-      size="small"
-      color="secondary"
-      [disabled]="enabling()"
-      (click)="enableFromBanner()"
-    >
-      Enable
-    </ion-button>
-    <ion-button fill="clear" size="small" (click)="dismissBanner()">
-      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
-} @else if (variant() === 'menu') {
-  <ion-item class="event-updates-menu" detail="false">
-    <ion-icon name="notifications-outline" slot="start"></ion-icon>
-    <ion-label>
-      <h2>Event updates</h2>
-      <p>Leaderboard and roster alerts</p>
-    </ion-label>
-    <ion-toggle
-      slot="end"
-      [checked]="subscribed()"
-      (ionChange)="onPushToggle($event)"
-    ></ion-toggle>
-  </ion-item>
-} @else {
-  <ion-list [inset]="true" class="event-updates-inline">
-    <ion-item>
-      <ion-label>
-        <h3>Event updates</h3>
-        <p>Push notifications for leaderboard and roster changes</p>
-      </ion-label>
-      <ion-toggle
-        slot="end"
-        [checked]="subscribed()"
-        (ionChange)="onPushToggle($event)"
-      ></ion-toggle>
-    </ion-item>
-  </ion-list>
-}
+<ion-item class="event-updates-menu" detail="false">
+  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+  <ion-label>
+    <h2>Event updates</h2>
+    <p>Leaderboard and roster alerts</p>
+  </ion-label>
+  <ion-toggle
+    slot="end"
+    [checked]="subscribed()"
+    (ionChange)="onPushToggle($event)"
+  ></ion-toggle>
+</ion-item>
