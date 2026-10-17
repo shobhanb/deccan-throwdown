@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Emails</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <app-admin-page-header
+    title="Athlete Emails"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  <p class="audience-note ion-padding-horizontal">
+    Registered athletes for this event, as Name &lt;email&gt;. Paste them into
+    the To or Bcc field of a new message. Open in email app puts them in Bcc.
+  </p>
+
+  @if (dataLoaded()) {
+    @if (recipients().length === 0) {
+      <p class="audience-note ion-padding-horizontal">No athlete emails yet.</p>
+    } @else {
+      <ion-list [inset]="true">
+        <ion-item>
+          <ion-textarea
+            [label]="recipients().length + ' addresses'"
+            labelPlacement="stacked"
+            [readonly]="true"
+            [autoGrow]="true"
+            [value]="emailText()"
+          ></ion-textarea>
+        </ion-item>
+      </ion-list>
+
+      <ion-button expand="block" class="ion-margin" (click)="copyEmails()">
+        <ion-icon slot="start" name="copy-outline"></ion-icon>
+        Copy addresses
+      </ion-button>
+
+      @if (mailtoUrl()) {
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="ion-margin"
+          (click)="openMailClient()"
+        >
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          Open in email app
+        </ion-button>
+      } @else {
+        <p class="audience-note ion-padding-horizontal">
+          This list is too long to open in an email app. Copy the addresses and
+          paste them into a new message.
+        </p>
+      }
+    }
+  } @else {
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-skeleton-text
+          [animated]="true"
+          style="width: 100%; height: 120px"
+        ></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  }
+</ion-content>

@@ -21,6 +21,16 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'emails',
+    loadComponent: () =>
+      import('./emails/emails.page').then((m) => m.EmailsPage),
+  },
+  {
+    path: 'phones',
+    loadComponent: () =>
+      import('./phones/phones.page').then((m) => m.PhonesPage),
+  },
+  {
     path: '',
     redirectTo: 'teams',
     pathMatch: 'full',

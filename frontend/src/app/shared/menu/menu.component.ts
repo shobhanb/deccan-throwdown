@@ -19,12 +19,14 @@ import {
   barChartOutline,
   bookOutline,
   calculatorOutline,
+  callOutline,
   cameraOutline,
   checkmarkCircleOutline,
   createOutline,
   fingerPrintOutline,
   homeOutline,
   informationCircleOutline,
+  mailOutline,
   notificationsOutline,
   peopleOutline,
 } from 'ionicons/icons';
@@ -83,6 +85,8 @@ export class MenuComponent {
       cameraOutline,
       createOutline,
       notificationsOutline,
+      mailOutline,
+      callOutline,
     });
 
     this.router.events

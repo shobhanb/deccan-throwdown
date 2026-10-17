@@ -2,6 +2,7 @@ import base64
 import html
 import json
 import logging
+import re
 import urllib.parse as urlparse
 from collections.abc import Sequence
 from urllib.parse import quote
@@ -15,7 +16,11 @@ from app.athletes.models import Athlete
 from app.athletes.schemas import AthleteBaseModel, AthleteOutputModel
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
-from app.firebase_auth.dependencies import admin_user_dependency, optional_admin_user_dependency
+from app.firebase_auth.dependencies import (
+    admin_user_dependency,
+    admin_user_or_api_key_dependency,
+    optional_admin_user_dependency,
+)
 from app.notifications.service import NotificationService
 from app.scores.models import Score, score_is_verified
 from app.scores.schemas import ScoreOutputModel
@@ -98,25 +103,44 @@ async def get_teams(
     return [serialize_team(team, include_private=include_private) for team in teams]
 
 
+def format_mailbox(name: str, email: str) -> str:
+    """Format an address as `Name <email>`, quoted when the name has special characters."""
+    cleaned = " ".join(name.split())
+    if not cleaned:
+        return f"<{email}>"
+    if re.search(r'[,;<>@"]', cleaned):
+        escaped = cleaned.replace("\\", "\\\\").replace('"', '\\"')
+        return f'"{escaped}" <{email}>'
+    return f"{cleaned} <{email}>"
+
+
 @teams_router.get("/emails", status_code=status.HTTP_200_OK)
 async def get_team_emails(
     db_session: db_dependency,
-    _: api_key_admin_dependency,
+    _: admin_user_or_api_key_dependency,
     event_short_name: str,
 ) -> str:
+    """Comma-separated `Name <email>` addresses, safe to paste into To or Bcc."""
     teams = await Team.find_all(
         async_session=db_session,
         select_relationships=[Team.athletes],
         event_short_name=event_short_name,
     )
-    athletes = [athlete for team in teams if team.athletes for athlete in team.athletes]
-    return " ; ".join(
-        {
-            f"{athlete.first_name} {athlete.last_name} <{athlete.email}>"
-            for athlete in athletes
-            if athlete.email
-        },
-    )
+    seen: set[str] = set()
+    mailboxes: list[str] = []
+    for team in teams:
+        for athlete in team.athletes or []:
+            email = (athlete.email or "").strip()
+            if not email:
+                continue
+            key = email.casefold()
+            if key in seen:
+                continue
+            seen.add(key)
+            name = f"{athlete.first_name} {athlete.last_name}"
+            mailboxes.append(format_mailbox(name, email))
+    mailboxes.sort(key=str.casefold)
+    return ", ".join(mailboxes)
 
 
 @teams_router.get(

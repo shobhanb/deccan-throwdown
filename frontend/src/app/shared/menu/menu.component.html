@@ -163,6 +163,26 @@
             <ion-icon name="notifications-outline" slot="start"></ion-icon>
             <ion-label>Send Notification</ion-label>
           </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'emails']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label>Athlete Emails</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'phones']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="call-outline" slot="start"></ion-icon>
+            <ion-label>Athlete Phones</ion-label>
+          </ion-item>
         </ion-list>
         }
 
