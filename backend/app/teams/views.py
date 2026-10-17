@@ -311,7 +311,7 @@ def get_waiver_links_for_athletes(
 ) -> list[WaiverLinkModel] | None:
     waiver_links = []
     for athlete in athletes:
-        if athlete.gym and athlete.gym != "CFMF":
+        if athlete.gym:
             waiver_link = add_domain_redirect(get_waiver_link(athlete, team_name))
             waiver_links.append(
                 WaiverLinkModel(
@@ -323,8 +323,6 @@ def get_waiver_links_for_athletes(
 
 
 def get_waiver_link(athlete: AthleteBaseModel, team_name: str) -> str:
-    if athlete.gym == "CFMF":
-        return ""
 
     waiver_params = {
         "name": athlete.first_name + " " + athlete.last_name,
