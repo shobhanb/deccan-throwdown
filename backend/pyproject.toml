@@ -9,6 +9,6 @@ dependencies = [
     "fastapi[all]>=0.116.1",
     "firebase-admin>=7.1.0",
     "pydantic>=2.11.7",
-    "resend>=2.14.0",
+    "resend>=2.16.0",
     "sqlalchemy[asyncio]>=2.0.43",
 ]
