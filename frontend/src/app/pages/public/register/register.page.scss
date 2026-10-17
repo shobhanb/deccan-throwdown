@@ -88,6 +88,12 @@
   color: var(--ion-color-medium);
 }
 
+.roster-note {
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
 .athlete-slots {
   display: grid;
   grid-template-columns: 1fr 1fr;

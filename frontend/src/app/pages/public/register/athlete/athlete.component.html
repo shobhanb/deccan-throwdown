@@ -10,6 +10,20 @@
 <ion-content>
   <form novalidate (submit)="onSave(); $event.preventDefault()">
     <ion-list [inset]="true">
+      @if (allowSexSelection) {
+      <ion-item>
+        <ion-select
+          label="Sex"
+          labelPlacement="stacked"
+          [formField]="athleteForm.sex"
+          placeholder="Select sex"
+          interface="popover"
+        >
+          <ion-select-option value="F">Female</ion-select-option>
+          <ion-select-option value="M">Male</ion-select-option>
+        </ion-select>
+      </ion-item>
+      }
       <ion-item>
         <ion-input
           type="text"

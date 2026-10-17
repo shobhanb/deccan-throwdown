@@ -92,6 +92,7 @@ export class RegisterPage {
   athletesPerTeam = this.appConfigService.athletesPerTeam;
   femaleAthletesPerTeam = this.appConfigService.femaleAthletesPerTeam;
   maleAthletesPerTeam = this.appConfigService.maleAthletesPerTeam;
+  minFemaleAthletesPerTeam = this.appConfigService.minFemaleAthletesPerTeam;
 
   athletes = signal<apiAthleteRegistrationModel[]>([]);
 
@@ -119,18 +120,29 @@ export class RegisterPage {
   }
 
   get femaleAthletes(): apiAthleteRegistrationModel[] {
-    return this.athletes().filter((athlete) => athlete.sex === 'F');
+    return this.athletes().filter((athlete) => athlete?.sex === 'F');
   }
 
   get maleAthletes(): apiAthleteRegistrationModel[] {
-    return this.athletes().filter((athlete) => athlete.sex === 'M');
+    return this.athletes().filter((athlete) => athlete?.sex === 'M');
+  }
+
+  get filledAthleteCount(): number {
+    return this.athletes().filter((athlete) => !!athlete).length;
   }
 
   get athleteSlots(): {
-    type: 'F' | 'M';
+    type?: 'F' | 'M';
     index: number;
     athlete?: apiAthleteRegistrationModel;
   }[] {
+    if (this.minFemaleAthletesPerTeam != null) {
+      return Array.from({ length: this.athletesPerTeam }, (_, index) => ({
+        index,
+        athlete: this.athletes()[index],
+      }));
+    }
+
     const slots = [];
 
     for (let i = 0; i < this.femaleAthletesPerTeam; i++) {
@@ -152,23 +164,26 @@ export class RegisterPage {
     return slots;
   }
 
-  async openAthleteModal(sex: 'M' | 'F', athleteIndex?: number) {
+  async openAthleteModal(sex?: 'M' | 'F', athleteIndex?: number) {
     const existingAthlete =
-      sex === 'F'
-        ? this.femaleAthletes[athleteIndex || 0]
-        : this.maleAthletes[athleteIndex || 0];
+      this.minFemaleAthletesPerTeam != null
+        ? this.athletes()[athleteIndex ?? 0]
+        : sex === 'F'
+          ? this.femaleAthletes[athleteIndex || 0]
+          : this.maleAthletes[athleteIndex || 0];
 
     const modal = await this.modalController.create({
       component: AthleteComponent,
       componentProps: {
-        sex: sex,
+        sex: existingAthlete?.sex ?? sex ?? 'F',
+        allowSexSelection: this.minFemaleAthletesPerTeam != null,
         athleteData: existingAthlete || null,
       },
     });
 
     modal.onDidDismiss().then((result) => {
       if (result.data) {
-        this.updateAthlete(result.data, sex, athleteIndex);
+        this.updateAthlete(result.data, result.data.sex, athleteIndex);
       }
     });
 
@@ -180,6 +195,13 @@ export class RegisterPage {
     sex: 'M' | 'F',
     athleteIndex?: number
   ) {
+    if (this.minFemaleAthletesPerTeam != null && athleteIndex !== undefined) {
+      const next = [...this.athletes()];
+      next[athleteIndex] = athleteData;
+      this.athletes.set(next);
+      return;
+    }
+
     const currentAthletes = [...this.athletes()];
     const sameGenderAthletes = currentAthletes.filter((a) => a.sex === sex);
     const otherGenderAthletes = currentAthletes.filter((a) => a.sex !== sex);
@@ -194,9 +216,21 @@ export class RegisterPage {
   }
 
   isFormValid(): boolean {
+    const filledAthletes = this.athletes().filter(
+      (athlete): athlete is apiAthleteRegistrationModel => !!athlete
+    );
+    if (filledAthletes.length !== this.athletesPerTeam || !this.teamForm().valid()) {
+      return false;
+    }
+
+    if (this.minFemaleAthletesPerTeam != null) {
+      return (
+        filledAthletes.filter((athlete) => athlete.sex === 'F').length >=
+        this.minFemaleAthletesPerTeam
+      );
+    }
+
     return (
-      this.teamForm().valid() &&
-      this.athletes().length === this.athletesPerTeam &&
       this.femaleAthletes.length === this.femaleAthletesPerTeam &&
       this.maleAthletes.length === this.maleAthletesPerTeam
     );
@@ -212,16 +246,20 @@ export class RegisterPage {
       team_name: teamData.team_name.trim(),
       category: teamData.category,
       event_short_name: this.appConfigService.eventShortName,
-      athletes: this.athletes().map((athlete) => ({
-        first_name: athlete.first_name.trim(),
-        last_name: athlete.last_name.trim(),
-        sex: athlete.sex,
-        email: athlete.email?.trim() || null,
-        phone_number: athlete.phone_number?.trim() || null,
-        date_of_birth: athlete.date_of_birth,
-        gym: athlete.gym?.trim() || null,
-        city: athlete.city?.trim() || null,
-      })),
+      athletes: this.athletes()
+        .filter(
+          (athlete): athlete is apiAthleteRegistrationModel => !!athlete
+        )
+        .map((athlete) => ({
+          first_name: athlete.first_name.trim(),
+          last_name: athlete.last_name.trim(),
+          sex: athlete.sex,
+          email: athlete.email?.trim() || null,
+          phone_number: athlete.phone_number?.trim() || null,
+          date_of_birth: athlete.date_of_birth,
+          gym: athlete.gym?.trim() || null,
+          city: athlete.city?.trim() || null,
+        })),
     };
 
     fromApi(

@@ -14,6 +14,8 @@ export interface AppConfig {
   athletesPerTeam: number;
   femaleAthletesPerTeam?: number;
   maleAthletesPerTeam?: number;
+  /** When set, a team needs this many female athletes and may fill the rest with either sex. */
+  minFemaleAthletesPerTeam?: number;
   wods: WodConfig[];
   wodsUrl?: string;
   standardsUrl?: string;
@@ -345,13 +347,12 @@ export const appConfig: { [key: string]: AppConfig } = {
     eventType: 'teams',
     eventDates: 'Nov 28 & 29, 2026',
     tagline:
-      'Teams of 6 athletes (2 female, 4 male). Categories: Scaled, Open.',
+      'Teams of 6 athletes (at least 2 female). Categories: Scaled, Open.',
     registrationStatus: 'open',
     leaderboardEnabled: true,
     categories: ['Scaled', 'Open'],
     athletesPerTeam: 6,
-    femaleAthletesPerTeam: 2,
-    maleAthletesPerTeam: 4,
+    minFemaleAthletesPerTeam: 2,
     registrationPricing: {
       standard: 13000,
       earlyBird: 10000,

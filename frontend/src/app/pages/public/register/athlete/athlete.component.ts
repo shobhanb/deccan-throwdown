@@ -58,6 +58,7 @@ export class AthleteComponent implements OnInit {
   private modalController = inject(ModalController);
 
   @Input() sex: 'M' | 'F' = 'F';
+  @Input() allowSexSelection = false;
   @Input() athleteData: apiAthleteRegistrationModel | null = null;
 
   athleteModel = signal<AthleteFormModel>({
@@ -108,6 +109,13 @@ export class AthleteComponent implements OnInit {
     required(schemaPath.gym_selection, { message: 'Gym selection is required' });
     applyWhen(
       schemaPath,
+      () => this.allowSexSelection,
+      (path) => {
+        required(path.sex, { message: 'Sex is required' });
+      }
+    );
+    applyWhen(
+      schemaPath,
       ({ value }) => value().gym_selection === 'Other',
       (path) => {
         required(path.gym, { message: 'Gym name is required' });
@@ -127,7 +135,7 @@ export class AthleteComponent implements OnInit {
     this.athleteModel.set({
       first_name: data?.first_name ?? '',
       last_name: data?.last_name ?? '',
-      sex: this.sex,
+      sex: this.allowSexSelection ? (data?.sex ?? '') : this.sex,
       email: data?.email ?? '',
       phone_number: data?.phone_number ?? '',
       date_of_birth: data?.date_of_birth ?? '',
@@ -150,8 +158,11 @@ export class AthleteComponent implements OnInit {
   }
 
   get formTitle(): string {
-    const gender = this.sex === 'F' ? 'Female' : 'Male';
     const action = this.athleteData ? 'Edit' : 'Add';
+    if (this.allowSexSelection) {
+      return `${action} Athlete`;
+    }
+    const gender = this.sex === 'F' ? 'Female' : 'Male';
     return `${action} ${gender} Athlete`;
   }
 
@@ -168,6 +179,11 @@ export class AthleteComponent implements OnInit {
     const gym =
       model.gym_selection === 'CFMF' ? 'CFMF' : model.gym.trim();
 
+    const sex = this.allowSexSelection ? model.sex : this.sex;
+    if (sex !== 'M' && sex !== 'F') {
+      return;
+    }
+
     const athleteData: apiAthleteRegistrationModel = {
       first_name: model.first_name,
       last_name: model.last_name,
@@ -175,7 +191,7 @@ export class AthleteComponent implements OnInit {
       phone_number: model.phone_number,
       date_of_birth: model.date_of_birth,
       gym,
-      sex: this.sex,
+      sex,
     };
 
     this.modalController.dismiss(athleteData);

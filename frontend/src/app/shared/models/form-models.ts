@@ -21,7 +21,7 @@ export interface TeamFormModel {
 export interface AthleteFormModel {
   first_name: string;
   last_name: string;
-  sex: 'M' | 'F';
+  sex: 'M' | 'F' | '';
   email: string;
   phone_number: string;
   date_of_birth: string;

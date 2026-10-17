@@ -75,9 +75,20 @@
     </ion-list>
 
     <div class="section-header">
+      @if (minFemaleAthletesPerTeam != null) {
+      Athletes ({{ filledAthleteCount }}/{{ athletesPerTeam }} — {{ femaleAthletes.length }}
+      female, minimum {{ minFemaleAthletesPerTeam }})
+      } @else {
       Athletes ({{ athletes().length }}/{{ athletesPerTeam }} — {{ femaleAthletesPerTeam }}F,
       {{ maleAthletesPerTeam }}M)
+      }
     </div>
+    @if (minFemaleAthletesPerTeam != null) {
+    <p class="roster-note">
+      Add {{ athletesPerTeam }} athletes, including at least
+      {{ minFemaleAthletesPerTeam }} females.
+    </p>
+    }
     <div class="athlete-slots">
       @for (slot of athleteSlots; track $index) {
       <button
@@ -102,11 +113,18 @@
             >{{ slot.athlete.first_name }} {{ slot.athlete.last_name }}</strong
           >
           <span>{{ slot.athlete.email }}</span>
+          @if (!slot.type) {
+          <span>{{ slot.athlete.sex === 'F' ? 'Female' : 'Male' }}</span>
+          }
           <span>DOB: {{ slot.athlete.date_of_birth | date:'dd MMM yyyy':'UTC' }}</span>
         </div>
         } @else {
         <span class="athlete-slot-label">
+          @if (slot.type) {
           Add {{ slot.type === 'F' ? 'Female' : 'Male' }} {{ slot.index + 1 }}
+          } @else {
+          Add Athlete {{ slot.index + 1 }}
+          }
         </span>
         }
       </button>

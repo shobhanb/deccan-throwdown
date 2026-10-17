@@ -229,12 +229,11 @@ async def register_team(
 
     if team.event_short_name == "dtteams2026":
         female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
-        male_count = sum(1 for athlete in team.athletes if athlete.sex == "M")
         if len(team.athletes) != 6:  # noqa: PLR2004
             raise conflict_exception(detail="A team must have exactly 6 athletes.")
-        if female_count != 2 or male_count != 4:  # noqa: PLR2004
+        if female_count < 2:  # noqa: PLR2004
             raise conflict_exception(
-                detail="A team must have exactly 2 female and 4 male athletes.",
+                detail="A team must have at least 2 female athletes.",
             )
     elif len(team.athletes) != 4:  # noqa: PLR2004
         raise conflict_exception(detail="A team must have exactly 4 athletes.")

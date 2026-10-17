@@ -93,6 +93,10 @@ export class AppConfigService {
     return this._config.athletesPerTeam;
   }
 
+  get minFemaleAthletesPerTeam(): number | null {
+    return this._config.minFemaleAthletesPerTeam ?? null;
+  }
+
   get femaleAthletesPerTeam(): number {
     return (
       this._config.femaleAthletesPerTeam ??

@@ -62,11 +62,19 @@ export class TestRegisterPage implements OnInit {
       return;
     }
 
+    const minFemale = this.appConfigService.minFemaleAthletesPerTeam;
+    const femaleCount =
+      minFemale ?? this.appConfigService.femaleAthletesPerTeam;
+    const maleCount =
+      minFemale != null
+        ? this.appConfigService.athletesPerTeam - minFemale
+        : this.appConfigService.maleAthletesPerTeam;
+
     const payload = createTestRegistrationPayload({
       eventShortName: this.appConfigService.eventShortName,
       categories: this.appConfigService.categories,
-      femaleCount: this.appConfigService.femaleAthletesPerTeam,
-      maleCount: this.appConfigService.maleAthletesPerTeam,
+      femaleCount,
+      maleCount,
     });
 
     this.teamName.set(payload.team_name);
