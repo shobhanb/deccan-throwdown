@@ -12,16 +12,98 @@
   </ion-refresher>
 
   <app-admin-page-header
-    title="Athlete Emails"
+    title="Email delivery"
     [subtitle]="eventName"
   ></app-admin-page-header>
+
+  <p class="audience-note ion-padding-horizontal">
+    Recent messages sent through Resend. Not delivered means the message
+    bounced, failed to send, was suppressed, or a scheduled send was canceled.
+    Pending is still in transit.
+  </p>
+
+  @if (deliveriesLoaded()) {
+    <p class="audience-note ion-padding-horizontal">
+      {{ undeliveredCount() }} not delivered, {{ pendingCount() }} pending,
+      {{ deliveredCount() }} delivered.
+    </p>
+
+    <ion-segment
+      class="delivery-filter"
+      [value]="deliveryFilter()"
+      (ionChange)="onDeliveryFilter($event)"
+    >
+      <ion-segment-button value="undelivered">
+        <ion-label>Failed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pending</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    @if (visibleDeliveries().length === 0) {
+      <p class="audience-note ion-padding-horizontal">
+        @if (deliveryFilter() === 'undelivered') {
+          No failed deliveries in these recent sends.
+        } @else if (deliveryFilter() === 'pending') {
+          Nothing is still in transit.
+        } @else {
+          No sent emails yet.
+        }
+      </p>
+    } @else {
+      <ion-list [inset]="true" class="dt-admin-list">
+        @for (email of visibleDeliveries(); track email.id) {
+          <ion-item class="admin-data-row">
+            <ion-label>
+              <h2>{{ email.subject || '(no subject)' }}</h2>
+              <p>{{ email.to.join(', ') || email.sender }}</p>
+              <p>{{ formatSentAt(email.created_at) }}</p>
+            </ion-label>
+            <span
+              slot="end"
+              class="dt-pill"
+              [class.delivery-pill-undelivered]="email.status === 'undelivered'"
+              [class.dt-pill-warning]="email.status === 'pending'"
+              [class.dt-pill-gold]="email.status === 'delivered'"
+            >
+              {{ eventLabel(email.last_event) }}
+            </span>
+          </ion-item>
+        }
+      </ion-list>
+    }
+
+    @if (hasMoreDeliveries()) {
+      <p class="audience-note ion-padding-horizontal">
+        Showing the most recent {{ deliveries().length }} sends. Older messages
+        are not included.
+      </p>
+    }
+  } @else {
+    <ion-list [inset]="true" class="dt-admin-list">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <ion-item>
+          <ion-skeleton-text
+            [animated]="true"
+            style="width: 100%; height: 48px"
+          ></ion-skeleton-text>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <h3 class="section-heading ion-padding-horizontal">Athlete addresses</h3>
 
   <p class="audience-note ion-padding-horizontal">
     Registered athletes for this event, as Name &lt;email&gt;. Paste them into
     the To or Bcc field of a new message. Open in email app puts them in Bcc.
   </p>
 
-  @if (dataLoaded()) {
+  @if (recipientsLoaded()) {
     @if (recipients().length === 0) {
       <p class="audience-note ion-padding-horizontal">No athlete emails yet.</p>
     } @else {

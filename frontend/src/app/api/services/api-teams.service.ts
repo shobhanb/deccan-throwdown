@@ -15,6 +15,8 @@ import { deleteTeamTeamsTeamIdDelete } from '../fn/teams/delete-team-teams-team-
 import { DeleteTeamTeamsTeamIdDelete$Params } from '../fn/teams/delete-team-teams-team-id-delete';
 import { getTeamEmailsTeamsEmailsGet } from '../fn/teams/get-team-emails-teams-emails-get';
 import { GetTeamEmailsTeamsEmailsGet$Params } from '../fn/teams/get-team-emails-teams-emails-get';
+import { getSentEmailDeliveriesTeamsEmailDeliveriesGet } from '../fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
+import { GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params } from '../fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
 import { getTeamInfoTeamsTeamIdGet } from '../fn/teams/get-team-info-teams-team-id-get';
 import { GetTeamInfoTeamsTeamIdGet$Params } from '../fn/teams/get-team-info-teams-team-id-get';
 import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
@@ -23,6 +25,7 @@ import { getTeamWaiverLinksTeamsWaiverLinksGet } from '../fn/teams/get-team-waiv
 import { GetTeamWaiverLinksTeamsWaiverLinksGet$Params } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
 import { registerTeamTeamsRegisterPost } from '../fn/teams/register-team-teams-register-post';
 import { RegisterTeamTeamsRegisterPost$Params } from '../fn/teams/register-team-teams-register-post';
+import { apiSentEmailDeliveryListModel } from '../models/api-sent-email-delivery-list-model';
 import { apiTeamRegistrationResponseModel } from '../models/api-team-registration-response-model';
 import { apiTeamsOutputDetailModel } from '../models/api-teams-output-detail-model';
 import { apiTeamsOutputModel } from '../models/api-teams-output-model';
@@ -133,6 +136,39 @@ export class apiTeamsService extends BaseService {
   getTeamEmailsTeamsEmailsGet(params: GetTeamEmailsTeamsEmailsGet$Params, context?: HttpContext): Promise<string> {
     const resp = this.getTeamEmailsTeamsEmailsGet$Response(params, context);
     return resp.then((r: StrictHttpResponse<string>): string => r.body);
+  }
+
+  /** Path part for operation `getSentEmailDeliveriesTeamsEmailDeliveriesGet()` */
+  static readonly GetSentEmailDeliveriesTeamsEmailDeliveriesGetPath = '/teams/email-deliveries';
+
+  /**
+   * Get Sent Email Deliveries.
+   *
+   * Recent Resend sends, with delivery outcome for each message.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getSentEmailDeliveriesTeamsEmailDeliveriesGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSentEmailDeliveriesTeamsEmailDeliveriesGet$Response(params?: GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params, context?: HttpContext): Promise<StrictHttpResponse<apiSentEmailDeliveryListModel>> {
+    const obs = getSentEmailDeliveriesTeamsEmailDeliveriesGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Get Sent Email Deliveries.
+   *
+   * Recent Resend sends, with delivery outcome for each message.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getSentEmailDeliveriesTeamsEmailDeliveriesGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSentEmailDeliveriesTeamsEmailDeliveriesGet(params?: GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params, context?: HttpContext): Promise<apiSentEmailDeliveryListModel> {
+    const resp = this.getSentEmailDeliveriesTeamsEmailDeliveriesGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiSentEmailDeliveryListModel>): apiSentEmailDeliveryListModel => r.body);
   }
 
   /** Path part for operation `getTeamWaiverLinksTeamsWaiverLinksGet()` */

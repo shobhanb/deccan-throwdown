@@ -16,6 +16,8 @@ export type { apiHttpValidationError } from './models/api-http-validation-error'
 export type { apiScoreCreateModel } from './models/api-score-create-model';
 export type { apiScoreOutputModel } from './models/api-score-output-model';
 export type { apiScoreUpdateModel } from './models/api-score-update-model';
+export type { apiSentEmailDeliveryListModel } from './models/api-sent-email-delivery-list-model';
+export type { apiSentEmailDeliveryModel } from './models/api-sent-email-delivery-model';
 export type { apiTeamRegistrationModel } from './models/api-team-registration-model';
 export type { apiTeamRegistrationResponseModel } from './models/api-team-registration-response-model';
 export type { apiTeamsCreateModel } from './models/api-teams-create-model';

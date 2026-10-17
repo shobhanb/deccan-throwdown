@@ -25,6 +25,8 @@ export type { CreateTeamTeamsPost$Params as CreateTeamTeamsPost$Params } from '.
 export { createTeamTeamsPost as createTeamTeamsPost } from './fn/teams/create-team-teams-post';
 export type { GetTeamEmailsTeamsEmailsGet$Params as GetTeamEmailsTeamsEmailsGet$Params } from './fn/teams/get-team-emails-teams-emails-get';
 export { getTeamEmailsTeamsEmailsGet as getTeamEmailsTeamsEmailsGet } from './fn/teams/get-team-emails-teams-emails-get';
+export type { GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params as GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params } from './fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
+export { getSentEmailDeliveriesTeamsEmailDeliveriesGet as getSentEmailDeliveriesTeamsEmailDeliveriesGet } from './fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
 export type { GetTeamWaiverLinksTeamsWaiverLinksGet$Params as GetTeamWaiverLinksTeamsWaiverLinksGet$Params } from './fn/teams/get-team-waiver-links-teams-waiver-links-get';
 export { getTeamWaiverLinksTeamsWaiverLinksGet as getTeamWaiverLinksTeamsWaiverLinksGet } from './fn/teams/get-team-waiver-links-teams-waiver-links-get';
 export type { GetTeamInfoTeamsTeamIdGet$Params as GetTeamInfoTeamsTeamIdGet$Params } from './fn/teams/get-team-info-teams-team-id-get';

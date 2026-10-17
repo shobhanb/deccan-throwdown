@@ -3,3 +3,24 @@
   font-size: 0.9rem;
   margin-top: 0;
 }
+
+.section-heading {
+  margin: var(--dt-space-lg) 0 var(--dt-space-sm);
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.delivery-filter {
+  margin: 0 var(--dt-space-md) var(--dt-space-sm);
+}
+
+.delivery-pill-undelivered {
+  background: rgba(var(--ion-color-danger-rgb), 0.16);
+  color: var(--ion-color-danger);
+}
+
+.admin-data-row .dt-pill {
+  flex-shrink: 0;
+  margin-inline-start: 8px;
+  text-transform: capitalize;
+}

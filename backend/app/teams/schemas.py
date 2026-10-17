@@ -1,3 +1,4 @@
+from typing import Literal
 from uuid import UUID
 
 from app.athletes.schemas import AthleteOutputModel, AthleteRegistrationModel
@@ -62,3 +63,18 @@ class WaiverLinkModel(CustomBaseModel):
 class TeamRegistrationResponseModel(CustomBaseModel):
     payment_link: str
     waiver_links: list[WaiverLinkModel] | None = None
+
+
+class SentEmailDeliveryModel(CustomBaseModel):
+    id: str
+    to: list[str]
+    sender: str
+    subject: str
+    created_at: str
+    last_event: str
+    status: Literal["delivered", "undelivered", "pending"]
+
+
+class SentEmailDeliveryListModel(CustomBaseModel):
+    emails: list[SentEmailDeliveryModel]
+    has_more: bool

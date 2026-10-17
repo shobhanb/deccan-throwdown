@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import html
 import json
@@ -5,11 +6,12 @@ import logging
 import re
 import urllib.parse as urlparse
 from collections.abc import Sequence
+from typing import Any, Literal
 from urllib.parse import quote
 from uuid import UUID
 
 import resend
-from fastapi import APIRouter, BackgroundTasks, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 
 from app.apikey_auth.dependencies import api_key_admin_dependency
 from app.athletes.models import Athlete
@@ -29,6 +31,8 @@ from app.settings import registration_settings, resend_settings
 
 from .models import Team
 from .schemas import (
+    SentEmailDeliveryListModel,
+    SentEmailDeliveryModel,
     TeamRegistrationModel,
     TeamRegistrationResponseModel,
     TeamsCreateModel,
@@ -141,6 +145,83 @@ async def get_team_emails(
             mailboxes.append(format_mailbox(name, email))
     mailboxes.sort(key=str.casefold)
     return ", ".join(mailboxes)
+
+
+# Resend returns at most 100 emails per page. Cap the walk so an admin
+# request stays bounded; `has_more` tells the UI when older sends exist.
+_DELIVERY_PAGE_SIZE = 100
+_DELIVERY_MAX_PAGES = 3
+
+_UNDELIVERED_EVENTS = frozenset({"bounced", "failed", "suppressed", "canceled"})
+_DELIVERED_EVENTS = frozenset({"delivered", "opened", "clicked", "complained"})
+
+
+def _delivery_status(last_event: str) -> Literal["delivered", "undelivered", "pending"]:
+    if last_event in _UNDELIVERED_EVENTS:
+        return "undelivered"
+    if last_event in _DELIVERED_EVENTS:
+        return "delivered"
+    return "pending"
+
+
+def _as_address_list(value: Any) -> list[str]:
+    if isinstance(value, str):
+        return [value] if value else []
+    if isinstance(value, list):
+        return [str(item) for item in value if item]
+    return []
+
+
+def _list_sent_email_deliveries() -> SentEmailDeliveryListModel:
+    emails: list[SentEmailDeliveryModel] = []
+    after: str | None = None
+    has_more = False
+    for _ in range(_DELIVERY_MAX_PAGES):
+        params: dict[str, Any] = {"limit": _DELIVERY_PAGE_SIZE}
+        if after:
+            params["after"] = after
+        page = resend.Emails.list(params)
+        data = page.get("data") or []
+        for item in data:
+            last_event = str(item.get("last_event") or "sent")
+            emails.append(
+                SentEmailDeliveryModel(
+                    id=str(item.get("id") or ""),
+                    to=_as_address_list(item.get("to")),
+                    sender=str(item.get("from") or ""),
+                    subject=str(item.get("subject") or ""),
+                    created_at=str(item.get("created_at") or ""),
+                    last_event=last_event,
+                    status=_delivery_status(last_event),
+                )
+            )
+        has_more = bool(page.get("has_more"))
+        if not data or not has_more:
+            has_more = False
+            break
+        after = str(data[-1].get("id") or "")
+        if not after:
+            break
+    return SentEmailDeliveryListModel(emails=emails, has_more=has_more)
+
+
+@teams_router.get(
+    "/email-deliveries",
+    status_code=status.HTTP_200_OK,
+    response_model=SentEmailDeliveryListModel,
+)
+async def get_sent_email_deliveries(
+    _: admin_user_dependency,
+) -> SentEmailDeliveryListModel:
+    """Recent Resend sends, with delivery outcome for each message."""
+    try:
+        return await asyncio.to_thread(_list_sent_email_deliveries)
+    except Exception:
+        log.exception("Failed to list Resend email deliveries")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Could not load email delivery status",
+        ) from None
 
 
 @teams_router.get(
