@@ -12,6 +12,17 @@ if TYPE_CHECKING:
     from app.teams.models import Team
 
 
+def score_is_verified(value: object) -> bool:
+    """Score.verified is a string column. Legacy rows use 0/1 and true/false text."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value == 1
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes"}
+    return False
+
+
 class Score(Base):
     __table_args__ = (UniqueConstraint("team_id", "wod_number"),)
 

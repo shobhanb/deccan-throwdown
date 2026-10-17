@@ -35,7 +35,7 @@ class RegistrationSettings(CustomBaseSettings):
     registration_cc_list: list[EmailStr] = ["me@example.com"]
     payment_link: str = "https://pay.example.com"
     waiver_link: str = "https://waiver.example.com"
-    domain_redirect_url: str = "https://example.com/redirect?link="
+    domain_redirect_url: str = "https://example.com/redirect"
     team_fee: int = 500
     early_bird_team_fee: int = 500
     use_early_bird_fee: bool = False

@@ -40,7 +40,10 @@ async def create_user(
         user_custom_claims.admin = True
 
         try:
-            fireauth.set_custom_user_claims(uid=user.uid, custom_claims=user_custom_claims.model_dump_json())
+            fireauth.set_custom_user_claims(
+                uid=user.uid,
+                custom_claims=user_custom_claims.model_dump(),
+            )
         except ValueError as e:
             msg = "Invalid UID for custom claims"
             raise invalid_input_exception(msg) from e
@@ -61,7 +64,7 @@ async def update_user_admin_rights(
     admin: bool,  # noqa: FBT001
 ) -> None:
     claims = FirebaseCustomClaims(admin=admin)
-    fireauth.set_custom_user_claims(uid=uid, custom_claims=claims.model_dump_json())
+    fireauth.set_custom_user_claims(uid=uid, custom_claims=claims.model_dump())
 
 
 @firebase_auth_router.get("/user/{uid}", status_code=status.HTTP_200_OK, response_model=FirebaseUserRecord)

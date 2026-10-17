@@ -78,7 +78,7 @@ async def update_score(
     )
 
     # Update only the fields that are provided
-    update_dict = update_data.model_dump()
+    update_dict = update_data.model_dump(exclude_unset=True)
     for field, value in update_dict.items():
         setattr(score, field, value)
 

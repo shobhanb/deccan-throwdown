@@ -1,6 +1,9 @@
 from uuid import UUID
 
+from pydantic import field_validator
+
 from app.schemas import CustomBaseModel
+from app.scores.models import score_is_verified
 
 
 # Base model with all fields, using correct types and defaults
@@ -21,6 +24,11 @@ class ScoreOutputModel(ScoreModel):
     verified: bool
     wod_rank: int | None = None
     wod_points: int | None = None
+
+    @field_validator("verified", mode="before")
+    @classmethod
+    def coerce_verified(cls, value: object) -> bool:
+        return score_is_verified(value)
 
 
 class ScoreCreateModel(ScoreBaseModel):

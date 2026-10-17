@@ -96,7 +96,9 @@ export class LeaderboardPage implements OnInit {
     const selectedWod = this.selectedWod();
 
     return this.teamsData()
-      .filter((team) => team.category === this.selectedCategory())
+      .filter(
+        (team) => team.category === this.selectedCategory() && team.verified
+      )
       .map((team) => {
         let rank: number | null = null;
 
@@ -185,17 +187,24 @@ export class LeaderboardPage implements OnInit {
       (event.target as HTMLIonRefresherElement).complete();
       return;
     }
-    this.loadLeaderboard({ forceNetwork: true });
+    this.loadLeaderboard({ forceNetwork: true, preserveFilters: true });
     (event.target as HTMLIonRefresherElement).complete();
   }
 
-  private loadLeaderboard(options?: { forceNetwork?: boolean }) {
+  private loadLeaderboard(options?: {
+    forceNetwork?: boolean;
+    preserveFilters?: boolean;
+  }) {
     const eventShortNameParam =
       this.activatedRoute.snapshot.paramMap.get('eventShortName');
-    this.eventShortName.set(eventShortNameParam ?? defaultConfig);
+    const nextEvent = eventShortNameParam ?? defaultConfig;
+    const eventChanged = nextEvent !== this.eventShortName();
+    this.eventShortName.set(nextEvent);
     const eventShortName = this.eventShortName();
-    this.selectedCategory.set(this.categories()?.[0] ?? null);
-    this.selectedWod.set(0);
+    if (!options?.preserveFilters || eventChanged) {
+      this.selectedCategory.set(this.categories()?.[0] ?? null);
+      this.selectedWod.set(0);
+    }
 
     this.dataLoaded.set(false);
 
@@ -215,7 +224,7 @@ export class LeaderboardPage implements OnInit {
         },
         onSettled: () => this.dataLoaded.set(true),
       },
-      options
+      { forceNetwork: options?.forceNetwork }
     );
   }
 

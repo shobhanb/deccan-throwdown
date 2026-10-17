@@ -51,7 +51,7 @@
                 }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
-                @if (getScore(team.id)?.reps) {
+                @if (getScore(team.id)?.reps != null) {
                 <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
                 } @if (getScore(team.id)?.time_s) {
                 <h3>
@@ -81,7 +81,7 @@
                 }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
-                @if (getScore(team.id)?.reps) {
+                @if (getScore(team.id)?.reps != null) {
                 <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
                 } @if (getScore(team.id)?.time_s) {
                 <h3>

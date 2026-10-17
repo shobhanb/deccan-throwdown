@@ -158,13 +158,21 @@ export class ScorePage {
           this.scoreData.set(data);
           this.dataLoaded.set(true);
           this.scoreModel.set({
-            reps: data.reps || null,
-            time_minutes: data.time_s ? Math.floor(data.time_s / 60) : null,
-            time_seconds: data.time_s ? data.time_s % 60 : null,
-            tiebreak_minutes: data.tiebreak_s
-              ? Math.floor(data.tiebreak_s / 60)
-              : null,
-            tiebreak_seconds: data.tiebreak_s ? data.tiebreak_s % 60 : null,
+            reps: data.reps ?? null,
+            time_minutes:
+              data.time_s != null && data.time_s > 0
+                ? Math.floor(data.time_s / 60)
+                : null,
+            time_seconds:
+              data.time_s != null && data.time_s > 0 ? data.time_s % 60 : null,
+            tiebreak_minutes:
+              data.tiebreak_s != null && data.tiebreak_s > 0
+                ? Math.floor(data.tiebreak_s / 60)
+                : null,
+            tiebreak_seconds:
+              data.tiebreak_s != null && data.tiebreak_s > 0
+                ? data.tiebreak_s % 60
+                : null,
             score_detail: data.score_detail || '',
           });
         },
@@ -188,10 +196,10 @@ export class ScorePage {
       (formValue.tiebreak_seconds || 0);
 
     const scoreSubmission = {
-      reps: formValue.reps || undefined,
-      time_s: timeInSeconds > 0 ? timeInSeconds : undefined,
-      tiebreak_s: tiebreakInSeconds > 0 ? tiebreakInSeconds : undefined,
-      score_detail: formValue.score_detail || undefined,
+      reps: formValue.reps,
+      time_s: timeInSeconds > 0 ? timeInSeconds : null,
+      tiebreak_s: tiebreakInSeconds > 0 ? tiebreakInSeconds : null,
+      score_detail: formValue.score_detail || null,
     };
 
     if (this.isEditing()) {

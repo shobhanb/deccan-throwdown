@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from fastapi import APIRouter, status
 
 from app.database.dependencies import db_dependency
+from app.exceptions import unauthorised_exception
 from app.firebase_auth.dependencies import admin_user_dependency
 
 from .dependencies import optional_firebase_user_dependency
@@ -81,10 +82,16 @@ async def register_fcm_token(
 async def unregister_fcm_token(
     db_session: db_dependency,
     token: str,
+    firebase_user: optional_firebase_user_dependency,
 ) -> None:
     record = await FcmToken.find(async_session=db_session, token=token)
     if not record:
         return
+
+    if record.firebase_uid:
+        caller_uid = firebase_user.get("uid") if firebase_user else None
+        if caller_uid != record.firebase_uid:
+            raise unauthorised_exception(detail="Cannot unregister this token")
 
     NotificationService.unsubscribe_token(record.token, event_topic(record.event_short_name))
     if record.subscribe_admin:

@@ -18,6 +18,7 @@ athletes_router = APIRouter(prefix="/athletes", tags=["athletes"])
 )
 async def get_athlete(
     db_session: db_dependency,
+    _: admin_user_dependency,
     athlete_id: UUID,
 ) -> Athlete:
     return await Athlete.find_or_raise(async_session=db_session, id=athlete_id)

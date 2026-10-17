@@ -139,13 +139,14 @@ export class CategoriesPage implements OnInit {
     const score = team?.scores.find(
       (score) => score.wod_number === this.wodNumber()
     );
-    if (team && score) {
-      score.verified = isChecked;
+    if (!team || !score) {
+      return;
     }
+    score.verified = isChecked;
 
     this.apiScores
       .updateScoreVerificationScoresVerifyScoreIdPatch({
-        score_id: score?.id || '',
+        score_id: score.id,
         verified: isChecked,
       })
       .then(() => {

@@ -3,9 +3,42 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.even_scoring_tables.models import EvenScoringTable
 from app.notifications.wod_complete import sync_wod_leaderboard_notification
+from app.scores.models import Score, score_is_verified
 from app.teams.models import Team
 
-from .models import Score
+
+def _score_sort_key(score: Score) -> tuple[float, float, float]:
+    return (
+        score.time_s if score.time_s is not None else float("inf"),
+        -(score.reps if score.reps is not None else 0),
+        score.tiebreak_s if score.tiebreak_s is not None else float("inf"),
+    )
+
+
+def _points_for_rank(
+    table_rows: list[EvenScoringTable],
+    field_size: int,
+    rank: int,
+) -> int:
+    for row in table_rows:
+        if row.min_athletes <= field_size <= row.max_athletes and row.rank == rank:
+            return row.points
+    return 0
+
+
+def _tie_points(
+    table_rows: list[EvenScoringTable],
+    field_size: int,
+    start_rank: int,
+    tied_count: int,
+) -> int:
+    if tied_count <= 0:
+        return 0
+    total = sum(
+        _points_for_rank(table_rows, field_size, start_rank + offset)
+        for offset in range(tied_count)
+    )
+    return round(total / tied_count)
 
 
 async def update_ranks(
@@ -18,6 +51,20 @@ async def update_ranks(
     await sync_wod_leaderboard_notification(async_session, event_short_name, wod_number)
 
 
+async def rerank_event(async_session: AsyncSession, event_short_name: str) -> None:
+    teams = await Team.find_all(
+        async_session=async_session,
+        select_relationships=[Team.scores],
+        event_short_name=event_short_name,
+    )
+    wod_numbers = sorted({score.wod_number for team in teams for score in team.scores})
+    for wod_number in wod_numbers:
+        await update_score_ranks(async_session, event_short_name, wod_number)
+    await update_overall_ranks(async_session, event_short_name)
+    for wod_number in wod_numbers:
+        await sync_wod_leaderboard_notification(async_session, event_short_name, wod_number)
+
+
 async def update_score_ranks(
     async_session: AsyncSession,
     event_short_name: str,
@@ -28,110 +75,79 @@ async def update_score_ranks(
         select_relationships=[Team.scores],
         event_short_name=event_short_name,
     )
+    table_rows = list(await async_session.scalars(select(EvenScoringTable)))
 
-    # Calculate count of teams in each category
-    teams_count_by_category = {}
+    scores_by_category: dict[str, list[Score]] = {}
     for team in teams:
-        category = team.category
-        if category not in teams_count_by_category:
-            teams_count_by_category[category] = 0
-        teams_count_by_category[category] += 1
+        for score in team.scores:
+            if score.wod_number != wod_number:
+                continue
+            counts_for_rank = team.verified and score_is_verified(score.verified)
+            if not counts_for_rank:
+                score.wod_rank = None
+                score.wod_points = None
+                async_session.add(score)
+                continue
+            scores_by_category.setdefault(team.category, []).append(score)
 
-    scores = [score for team in teams for score in team.scores if score.wod_number == wod_number and score.verified]
-
-    # Group scores by team category
-    scores_by_category = {}
-    for score in scores:
-        category = score.team.category
-        if category not in scores_by_category:
-            scores_by_category[category] = []
-        scores_by_category[category].append(score)
-
-    # Rank teams within each category
     for category_scores in scores_by_category.values():
-        # Sort scores based on reps (desc), time_s (asc), tiebreak_s (asc)
-        sorted_scores = sorted(
-            category_scores,
-            key=lambda s: (
-                s.time_s if s.time_s is not None else float("inf"),
-                -(s.reps if s.reps is not None else 0),
-                s.tiebreak_s if s.tiebreak_s is not None else float("inf"),
-            ),
-        )
+        field_size = len(category_scores)
+        sorted_scores = sorted(category_scores, key=_score_sort_key)
 
-        # Update ranks with tie handling within this category
+        groups: list[tuple[tuple[float, float, float], list[Score]]] = []
+        for score in sorted_scores:
+            score_key = _score_sort_key(score)
+            if groups and groups[-1][0] == score_key:
+                groups[-1][1].append(score)
+            else:
+                groups.append((score_key, [score]))
+
         current_rank = 1
-        previous_score_key = None
-
-        for i, score in enumerate(sorted_scores):
-            # Create a comparison key for the current score
-            score_key = (
-                score.time_s if score.time_s is not None else float("inf"),
-                -(score.reps if score.reps is not None else 0),
-                score.tiebreak_s if score.tiebreak_s is not None else float("inf"),
-            )
-
-            # If this score is different from the previous one, update the rank
-            if previous_score_key is not None and score_key != previous_score_key:
-                current_rank = i + 1
-
-            score.wod_rank = current_rank
-
-            scoring_table_stmt = select(EvenScoringTable.points).where(
-                (EvenScoringTable.min_athletes <= teams_count_by_category[score.team.category])
-                & (EvenScoringTable.max_athletes >= teams_count_by_category[score.team.category])
-                & (EvenScoringTable.rank == current_rank),
-            )
-            scoring_table_points = await async_session.scalar(scoring_table_stmt)
-            score.wod_points = scoring_table_points
-
-            async_session.add(score)
-            previous_score_key = score_key
+        for _, tied_scores in groups:
+            points = _tie_points(table_rows, field_size, current_rank, len(tied_scores))
+            for score in tied_scores:
+                score.wod_rank = current_rank
+                score.wod_points = points
+                async_session.add(score)
+            current_rank += len(tied_scores)
 
     await async_session.commit()
 
 
 async def update_overall_ranks(async_session: AsyncSession, event_short_name: str) -> None:
-    teams = await Team.find_all(async_session=async_session, event_short_name=event_short_name)
+    teams = await Team.find_all(
+        async_session=async_session,
+        select_relationships=[Team.scores],
+        event_short_name=event_short_name,
+    )
 
-    # Group teams by category
-    teams_by_category = {}
+    teams_by_category: dict[str, list[Team]] = {}
     for team in teams:
-        category = team.category
-        if category not in teams_by_category:
-            teams_by_category[category] = []
-        teams_by_category[category].append(team)
+        if not team.verified:
+            team.overall_rank = None
+            team.overall_points = None
+            async_session.add(team)
+            continue
+        teams_by_category.setdefault(team.category, []).append(team)
 
-    # Rank teams within each category
     for category_teams in teams_by_category.values():
-        # Calculate total points for each team in this category
-        team_total_points = []
+        team_total_points: list[tuple[Team, int]] = []
         for team in category_teams:
-            total_points = 0
-            scores = await Score.find_all(
-                async_session=async_session,
-                team_id=team.id,
-                verified=True,
+            total_points = sum(
+                score.wod_points
+                for score in team.scores
+                if score_is_verified(score.verified) and score.wod_points is not None
             )
-            for score in scores:
-                if score.wod_points is not None:
-                    total_points += score.wod_points
-
-            # Set the overall_points on the team
             team.overall_points = total_points
             team_total_points.append((team, total_points))
 
-        # Sort teams based on total points (desc - higher points is better)
-        sorted_teams = sorted(team_total_points, key=lambda tr: tr[1], reverse=True)
+        sorted_teams = sorted(team_total_points, key=lambda item: item[1], reverse=True)
 
-        # Update overall ranks with tie handling within this category
         current_rank = 1
-        previous_points = None
-
-        for i, (team, total_points) in enumerate(sorted_teams):
+        previous_points: int | None = None
+        for index, (team, total_points) in enumerate(sorted_teams):
             if previous_points is not None and total_points != previous_points:
-                current_rank = i + 1
-
+                current_rank = index + 1
             team.overall_rank = current_rank
             async_session.add(team)
             previous_points = total_points

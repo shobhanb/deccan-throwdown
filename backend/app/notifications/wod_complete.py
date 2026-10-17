@@ -12,8 +12,14 @@ from .service import NotificationService
 
 log = logging.getLogger("uvicorn.error")
 
-# score.verified is stored as text ("0"/"1") in SQLite; avoid ORM relationship caches.
-_SCORE_VERIFIED = or_(Score.verified == "1", Score.verified.is_(True))
+# score.verified is stored as text in SQLite ("0"/"1", sometimes "true"/"false").
+_SCORE_VERIFIED = or_(
+    Score.verified == "1",
+    Score.verified == "true",
+    Score.verified == "True",
+    Score.verified == "yes",
+    Score.verified.is_(True),
+)
 
 
 async def is_wod_fully_verified(

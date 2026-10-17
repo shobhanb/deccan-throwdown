@@ -368,13 +368,9 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Workout details for Open will be announced closer to the event.',
             'Expect a team-based test of strength and conditioning.',
           ],
-          Intermediate: [
-            'Workout details for Intermediate will be announced closer to the event.',
+          Scaled: [
+            'Workout details for Scaled will be announced closer to the event.',
             'Scaled movements and loads will apply for this division.',
-          ],
-          Beginner: [
-            'Workout details for Beginner will be announced closer to the event.',
-            'Beginner-friendly movement options will be provided.',
           ],
         },
         scoreTypes: ['Reps', 'Time', 'Tiebreak'],
@@ -388,11 +384,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Full workout description will be published before registration closes.',
             'Scoring: total repetitions completed within the time cap.',
           ],
-          Intermediate: [
-            'Full workout description will be published before registration closes.',
-            'Scoring: total repetitions completed within the time cap.',
-          ],
-          Beginner: [
+          Scaled: [
             'Full workout description will be published before registration closes.',
             'Scoring: total repetitions completed within the time cap.',
           ],
@@ -408,11 +400,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Workout structure and movement standards to be confirmed.',
             'Score is total time or repetitions completed at time cap.',
           ],
-          Intermediate: [
-            'Workout structure and movement standards to be confirmed.',
-            'Score is total time or repetitions completed at time cap.',
-          ],
-          Beginner: [
+          Scaled: [
             'Workout structure and movement standards to be confirmed.',
             'Score is total time or repetitions completed at time cap.',
           ],
@@ -428,13 +416,9 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Athletes will establish a team max lift — movement TBA.',
             'Details including time cap and tiebreak rules coming soon.',
           ],
-          Intermediate: [
+          Scaled: [
             'Athletes will establish a team max lift — movement TBA.',
             'Scaled loading will apply for this division.',
-          ],
-          Beginner: [
-            'Athletes will establish a team max lift — movement TBA.',
-            'Beginner-friendly loading and technique standards will apply.',
           ],
         },
         scoreTypes: ['Weight'],
@@ -448,13 +432,9 @@ export const appConfig: { [key: string]: AppConfig } = {
             'The finale WOD caps off the weekend — full details TBA.',
             'Expect a team test combining multiple movement domains.',
           ],
-          Intermediate: [
+          Scaled: [
             'The finale WOD caps off the weekend — full details TBA.',
             'Scaled options will be provided for this division.',
-          ],
-          Beginner: [
-            'The finale WOD caps off the weekend — full details TBA.',
-            'Beginner-friendly movement standards will apply.',
           ],
         },
         scoreTypes: ['Time', 'Reps'],

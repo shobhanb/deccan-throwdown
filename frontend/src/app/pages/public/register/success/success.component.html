@@ -21,7 +21,7 @@
       <a [href]="responseData?.payment_link" target="_blank" rel="noopener">Pay Now</a>
     </p>
     @if (responseData?.waiver_links) {
-    <p><strong>Waiver forms</strong> (Non CFMF athletes)</p>
+    <p><strong>Waiver forms</strong></p>
     <ul>
       @for (waiverLink of responseData?.waiver_links; track $index) {
       <li>

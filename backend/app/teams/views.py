@@ -1,4 +1,5 @@
 import base64
+import html
 import json
 import logging
 import urllib.parse as urlparse
@@ -11,11 +12,14 @@ from fastapi import APIRouter, BackgroundTasks, status
 
 from app.apikey_auth.dependencies import api_key_admin_dependency
 from app.athletes.models import Athlete
-from app.athletes.schemas import AthleteBaseModel
+from app.athletes.schemas import AthleteBaseModel, AthleteOutputModel
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
-from app.firebase_auth.dependencies import admin_user_dependency
+from app.firebase_auth.dependencies import admin_user_dependency, optional_admin_user_dependency
 from app.notifications.service import NotificationService
+from app.scores.models import Score, score_is_verified
+from app.scores.schemas import ScoreOutputModel
+from app.scores.service import rerank_event
 from app.settings import registration_settings, resend_settings
 
 from .models import Team
@@ -34,6 +38,47 @@ log = logging.getLogger("uvicorn.error")
 teams_router = APIRouter(prefix="/teams", tags=["teams"])
 
 
+def serialize_score(score: Score) -> ScoreOutputModel:
+    return ScoreOutputModel(
+        id=score.id,
+        reps=score.reps,
+        time_s=score.time_s,
+        tiebreak_s=score.tiebreak_s,
+        score_detail=score.score_detail,
+        team_id=score.team_id,
+        wod_number=score.wod_number,
+        verified=score_is_verified(score.verified),
+        wod_rank=score.wod_rank,
+        wod_points=score.wod_points,
+    )
+
+
+def serialize_team(team: Team, *, include_private: bool) -> TeamsOutputDetailModel:
+    athletes = []
+    for athlete in team.athletes:
+        athlete_model = AthleteOutputModel.model_validate(athlete)
+        if not include_private:
+            athlete_model = athlete_model.model_copy(
+                update={
+                    "email": None,
+                    "phone_number": None,
+                    "date_of_birth": None,
+                },
+            )
+        athletes.append(athlete_model)
+    return TeamsOutputDetailModel(
+        id=team.id,
+        category=team.category,
+        team_name=team.team_name,
+        paid=team.paid,
+        verified=team.verified,
+        event_short_name=team.event_short_name,
+        overall_rank=team.overall_rank,
+        athletes=athletes,
+        scores=[serialize_score(score) for score in team.scores],
+    )
+
+
 @teams_router.get(
     "/",
     status_code=status.HTTP_200_OK,
@@ -42,12 +87,15 @@ teams_router = APIRouter(prefix="/teams", tags=["teams"])
 async def get_teams(
     db_session: db_dependency,
     event_short_name: str,
-) -> Sequence[Team]:
-    return await Team.find_all(
+    admin_user: optional_admin_user_dependency,
+) -> list[TeamsOutputDetailModel]:
+    teams = await Team.find_all(
         async_session=db_session,
         select_relationships=[Team.athletes, Team.scores],
         event_short_name=event_short_name,
     )
+    include_private = admin_user is not None
+    return [serialize_team(team, include_private=include_private) for team in teams]
 
 
 @teams_router.get("/emails", status_code=status.HTTP_200_OK)
@@ -110,12 +158,14 @@ async def get_team_waiver_links(
 async def get_team_info(
     db_session: db_dependency,
     team_id: UUID,
-) -> Team:
-    return await Team.find_or_raise(
+    admin_user: optional_admin_user_dependency,
+) -> TeamsOutputDetailModel:
+    team = await Team.find_or_raise(
         async_session=db_session,
         id=team_id,
         select_relationships=[Team.athletes, Team.scores],
     )
+    return serialize_team(team, include_private=admin_user is not None)
 
 
 @teams_router.post(
@@ -168,6 +218,7 @@ async def update_team(
 ) -> Team:
     team = await Team.find_or_raise(async_session=db_session, id=team_id)
     was_verified = team.verified
+    previous_category = team.category
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
@@ -177,6 +228,8 @@ async def update_team(
     db_session.add(team)
     await db_session.commit()
     await db_session.refresh(team)
+    if previous_category != team.category or was_verified != team.verified:
+        await rerank_event(db_session, team.event_short_name)
     if not was_verified and team.verified:
         NotificationService.send_team_verified(
             team.event_short_name,
@@ -227,16 +280,13 @@ async def register_team(
     if team_exists:
         raise conflict_exception(detail="Team name already registered for this event.")
 
-    if team.event_short_name == "dtteams2026":
-        female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
-        if len(team.athletes) != 6:  # noqa: PLR2004
-            raise conflict_exception(detail="A team must have exactly 6 athletes.")
-        if female_count < 2:  # noqa: PLR2004
-            raise conflict_exception(
-                detail="A team must have at least 2 female athletes.",
-            )
-    elif len(team.athletes) != 4:  # noqa: PLR2004
-        raise conflict_exception(detail="A team must have exactly 4 athletes.")
+    female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
+    if len(team.athletes) != 6:  # noqa: PLR2004
+        raise conflict_exception(detail="A team must have exactly 6 athletes.")
+    if female_count < 2:  # noqa: PLR2004
+        raise conflict_exception(
+            detail="A team must have at least 2 female athletes.",
+        )
 
     new_team = Team(
         category=team.category,
@@ -246,8 +296,7 @@ async def register_team(
         event_short_name=team.event_short_name,
     )
     db_session.add(new_team)
-    await db_session.commit()
-    await db_session.refresh(new_team)
+    await db_session.flush()
 
     for athlete_data in team.athletes:
         new_athlete = Athlete(**athlete_data.model_dump())
@@ -283,7 +332,9 @@ async def register_team(
 
 def add_domain_redirect(link: str) -> str:
     encoded_target = quote(link, safe="")
-    return f"{registration_settings.domain_redirect_url}?link={encoded_target}"
+    parsed = urlparse.urlparse(registration_settings.domain_redirect_url)
+    base = urlparse.urlunparse(parsed._replace(query="", fragment=""))
+    return f"{base}?link={encoded_target}"
 
 
 def get_payment_link(team: TeamRegistrationModel) -> str:
@@ -328,70 +379,176 @@ def get_waiver_link(athlete: AthleteBaseModel, team_name: str) -> str:
         "email": athlete.email,
         "team": team_name,
     }
-    waiver_params_base64 = base64.b64encode(
+    waiver_params_base64 = base64.urlsafe_b64encode(
         json.dumps(waiver_params).encode("utf-8")
     ).decode("utf-8")
 
-    return f"{registration_settings.waiver_link}{waiver_params_base64}"
+    return f"{registration_settings.waiver_link}{quote(waiver_params_base64, safe='')}"
+
+
+def _email_text(value: str | None) -> str:
+    return html.escape(value or "")
+
+
+def _registration_fee() -> int:
+    if registration_settings.use_early_bird_fee:
+        return registration_settings.early_bird_team_fee
+    return registration_settings.team_fee
+
+
+def _roster_entries(team: TeamRegistrationModel, *, include_email: bool) -> list[str]:
+    entries = []
+    for athlete in team.athletes:
+        entry = f"{athlete.first_name} {athlete.last_name}"
+        if athlete.phone_number:
+            entry = f"{entry} ({athlete.phone_number})"
+        if include_email and athlete.email:
+            entry = f"{entry} <{athlete.email}>"
+        entries.append(entry)
+    return entries
+
+
+def _registration_message(
+    registration_response: TeamRegistrationResponseModel,
+    team: TeamRegistrationModel,
+    *,
+    include_email: bool,
+) -> tuple[str, str]:
+    roster = _roster_entries(team, include_email=include_email)
+    fee = _registration_fee()
+    payment_link = registration_response.payment_link
+    waiver_links = registration_response.waiver_links or []
+
+    html_roster = "".join(f"<li>{_email_text(entry)}</li>" for entry in roster)
+    html_waivers = ""
+    if waiver_links:
+        waiver_items = "".join(
+            "<li>"
+            f"{_email_text(link.athlete_name)} "
+            f'<a href="{html.escape(link.waiver_link, quote=True)}">Waiver link</a>'
+            "</li>"
+            for link in waiver_links
+        )
+        html_waivers = (
+            "<p>Please fill out a waiver for each athlete, if not already filled:</p>"
+            f"<ul>{waiver_items}</ul>"
+        )
+
+    html_body = f"""
+        <h1>Deccan Throwdown Teams</h1>
+        <p>Thank you for registering for the Deccan Throwdown Teams event!</p>
+        <h2>Team: {_email_text(team.team_name)}</h2>
+        <h3>Category: {_email_text(team.category)}</h3>
+        <ul>
+            {html_roster}
+        </ul>
+        <p>Registration fees are Rs. {fee} per team.</p>
+        <p>Here is the payment link if you haven't paid already:
+        <a href="{html.escape(payment_link, quote=True)}">Pay now</a></p>
+        <p>Once payment is processed, we will confirm your participation in the Teams event.</p>
+        {html_waivers}
+        <p>Reply to this email if you have any questions.</p>
+        <p>Train hard, stay humble,<br/>DT Team</p>
+        """
+
+    text_lines = [
+        "Deccan Throwdown Teams",
+        "",
+        "Thank you for registering for the Deccan Throwdown Teams event!",
+        "",
+        f"Team: {team.team_name}",
+        f"Category: {team.category}",
+        "",
+        "Athletes:",
+        *[f"- {entry}" for entry in roster],
+        "",
+        f"Registration fees are Rs. {fee} per team.",
+        "",
+        f"Payment link: {payment_link}",
+        "",
+        "Once payment is processed, we will confirm your participation in the Teams event.",
+    ]
+    if waiver_links:
+        text_lines.extend(
+            [
+                "",
+                "Please fill out a waiver for each athlete, if not already filled:",
+                *[f"- {link.athlete_name}: {link.waiver_link}" for link in waiver_links],
+            ]
+        )
+    text_lines.extend(
+        [
+            "",
+            "Reply to this email if you have any questions.",
+            "",
+            "Train hard, stay humble,",
+            "DT Team",
+        ]
+    )
+    return html_body, "\n".join(text_lines)
+
+
+def _send_registration_message(
+    *,
+    to: list[str],
+    subject: str,
+    html_body: str,
+    text_body: str,
+) -> None:
+    params: resend.Emails.SendParams = {
+        "from": resend_settings.resend_from_email,
+        "to": to,
+        "reply_to": registration_settings.registration_cc_list,
+        "subject": subject,
+        "html": html_body,
+        "text": text_body,
+    }
+    try:
+        email_id: resend.Emails.SendResponse = resend.Emails.send(params)
+    except Exception:
+        log.exception("Registration email failed for %s", ", ".join(to))
+        return
+    log.info("Sent registration email to %s, email id: %s", ", ".join(to), email_id)
 
 
 def send_registration_email(
     registration_response: TeamRegistrationResponseModel, team: TeamRegistrationModel
 ) -> None:
-    athlete_emails = [athlete.email for athlete in team.athletes if athlete.email]
-    email_payment_link = registration_response.payment_link
-
-    waiver_section = ""
-    if (
-        registration_response.waiver_links
-        and len(registration_response.waiver_links) > 0
-    ):
-        waiver_section = f"""
-        <p>Please fill out the waiver forms (for Non-CFMF athletes), if not already filled:</p>
-        <ul>
-            {
-            "".join(
-                f'<li>{athlete.athlete_name} <a href="{athlete.waiver_link}" target="_blank">Waiver Link</a></li>'
-                for athlete in registration_response.waiver_links
-            )
-        }
-        </ul>
-    """
-
-    team_fees = (
-        registration_settings.early_bird_team_fee
-        if registration_settings.use_early_bird_fee
-        else registration_settings.team_fee
+    safe_team_name = team.team_name.replace("\r", " ").replace("\n", " ")
+    subject = f"DT - Team Registration - {safe_team_name}"
+    athlete_html, athlete_text = _registration_message(
+        registration_response,
+        team,
+        include_email=False,
+    )
+    organizer_html, organizer_text = _registration_message(
+        registration_response,
+        team,
+        include_email=True,
+    )
+    organizer_text = (
+        "A separate copy of this email was sent to each athlete.\n\n" + organizer_text
+    )
+    organizer_html = (
+        "<p>A separate copy of this email was sent to each athlete.</p>" + organizer_html
     )
 
-    params: resend.Emails.SendParams = {
-        "from": resend_settings.resend_from_email,
-        "to": registration_settings.registration_cc_list,
-        "reply_to": registration_settings.registration_cc_list,
-        "subject": f"DT - Team Registration - {team.team_name}",
-        "html": f"""
-        <h1>Deccan Throwdown Teams</h1>
-        <p>Thank you for registering for the Deccan Throwdown Teams event!</p>
-        <h2>Team: {team.team_name}</h2>
-        <h3>Category: {team.category}</h3>
-        <ul>
-            {"".join(f"<li>{athlete.first_name} {athlete.last_name}{f' ({athlete.phone_number})' if athlete.phone_number else ''}</li>" for athlete in team.athletes)}
-        </ul>
-        <p>Registration fees are Rs. {team_fees} per team.</p>
-        <p>Here is the payment link if you haven't paid already: <a href="{email_payment_link}" target="_blank">Pay Now</a></p>
-        <p>Once payment is processed, we will confirm your participation in the Teams event</p>
-        {waiver_section}
-        <p>Reply-all to this email if you have any questions.</p>
-        <p>Train hard, stay humble,<br/>DT Team</p>
-        <br/>
-        <br/>
-        <p>{"; ".join(athlete_emails)}</p>
-        <br/>
-        """,  # noqa: E501
-    }
-    email_id: resend.Emails.SendResponse = resend.Emails.send(params)
-    log.info(
-        "Sent team registration email to team %s, email id: %s",
-        team.team_name,
-        email_id,
+    athlete_emails = list(
+        dict.fromkeys(athlete.email for athlete in team.athletes if athlete.email)
     )
+    for athlete_email in athlete_emails:
+        _send_registration_message(
+            to=[athlete_email],
+            subject=subject,
+            html_body=athlete_html,
+            text_body=athlete_text,
+        )
+
+    organizers = list(dict.fromkeys(registration_settings.registration_cc_list))
+    if organizers:
+        _send_registration_message(
+            to=organizers,
+            subject=subject,
+            html_body=organizer_html,
+            text_body=organizer_text,
+        )
