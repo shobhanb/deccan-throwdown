@@ -94,6 +94,28 @@
   color: var(--ion-color-medium);
 }
 
+.athlete-requirements {
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  padding: var(--dt-space-md);
+  background: var(--dt-surface);
+
+  ul {
+    margin: var(--dt-space-xs) 0 0;
+    padding-left: 1.15rem;
+  }
+
+  li {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
+.athlete-requirements-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
 .athlete-slots {
   display: grid;
   grid-template-columns: 1fr 1fr;
