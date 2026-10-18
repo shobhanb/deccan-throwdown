@@ -39,7 +39,7 @@ export const appConfig: { [key: string]: AppConfig } = {
   dtpairs2025: {
     eventName: 'Deccan Throwdown Pairs 2025',
     eventType: 'pairs',
-    eventDates: '2025',
+    eventDates: 'Jan 18th & 19th, 2025',
     tagline: 'Same-sex pairs competing across Beginner and Open divisions.',
     registrationStatus: 'closed',
     leaderboardEnabled: true,
@@ -102,7 +102,7 @@ export const appConfig: { [key: string]: AppConfig } = {
   dtteams2025: {
     eventName: 'Deccan Throwdown Teams 2025',
     eventType: 'teams',
-    eventDates: 'Nov 1 & Nov 2, 2025',
+    eventDates: 'Nov 1st & 2nd, 2025',
     tagline:
       'Teams of 4 athletes (2 female, 2 male). Categories: Beginner, Intermediate, Open.',
     registrationStatus: 'closed',
@@ -345,7 +345,7 @@ export const appConfig: { [key: string]: AppConfig } = {
   dtteams2026: {
     eventName: 'Deccan Throwdown Teams 2026',
     eventType: 'teams',
-    eventDates: 'Nov 28 & 29, 2026',
+    eventDates: 'Nov 28th & 29th, 2026',
     tagline:
       'Teams of 6 athletes (at least 2 female). Categories: Scaled, Open.',
     registrationStatus: 'open',

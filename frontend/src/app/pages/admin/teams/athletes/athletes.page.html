@@ -57,6 +57,16 @@
           placeholder="Enter email"
         ></ion-input>
       </ion-item>
+      @if (emailChanged()) {
+      <ion-item>
+        <ion-checkbox
+          [checked]="sendRegistrationEmail()"
+          (ionChange)="sendRegistrationEmail.set($event.detail.checked)"
+        >
+          Send registration email to this address
+        </ion-checkbox>
+      </ion-item>
+      }
       <ion-item>
         <ion-input
           type="tel"

@@ -6,6 +6,7 @@ import logging
 import re
 import urllib.parse as urlparse
 from collections.abc import Sequence
+from datetime import date
 from typing import Any, Literal
 from urllib.parse import quote
 from uuid import UUID
@@ -15,7 +16,11 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 
 from app.apikey_auth.dependencies import api_key_admin_dependency
 from app.athletes.models import Athlete
-from app.athletes.schemas import AthleteBaseModel, AthleteOutputModel
+from app.athletes.schemas import (
+    AthleteBaseModel,
+    AthleteOutputModel,
+    AthleteRegistrationModel,
+)
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import (
@@ -172,7 +177,40 @@ def _as_address_list(value: Any) -> list[str]:
     return []
 
 
-def _list_sent_email_deliveries() -> SentEmailDeliveryListModel:
+def _email_address(value: str) -> str:
+    match = re.search(r"<([^>]+)>", value)
+    if match:
+        return match.group(1).strip()
+    return value.strip()
+
+
+async def _athlete_names_by_email(db_session: db_dependency) -> dict[str, str]:
+    athletes = await Athlete.find_all(async_session=db_session)
+    names_by_email: dict[str, str] = {}
+    for athlete in sorted(athletes, key=lambda item: (item.created_at, str(item.id))):
+        email = (athlete.email or "").strip()
+        if not email:
+            continue
+        key = email.casefold()
+        if key in names_by_email:
+            continue
+        name = " ".join(f"{athlete.first_name} {athlete.last_name}".split())
+        if name:
+            names_by_email[key] = name
+    return names_by_email
+
+
+def _delivery_recipient(address: str, names_by_email: dict[str, str]) -> str:
+    email = _email_address(address)
+    name = names_by_email.get(email.casefold())
+    if not name:
+        return address
+    return f"{name} <{email}>"
+
+
+def _list_sent_email_deliveries(
+    names_by_email: dict[str, str],
+) -> SentEmailDeliveryListModel:
     emails: list[SentEmailDeliveryModel] = []
     after: str | None = None
     has_more = False
@@ -187,7 +225,10 @@ def _list_sent_email_deliveries() -> SentEmailDeliveryListModel:
             emails.append(
                 SentEmailDeliveryModel(
                     id=str(item.get("id") or ""),
-                    to=_as_address_list(item.get("to")),
+                    to=[
+                        _delivery_recipient(address, names_by_email)
+                        for address in _as_address_list(item.get("to"))
+                    ],
                     sender=str(item.get("from") or ""),
                     subject=str(item.get("subject") or ""),
                     created_at=str(item.get("created_at") or ""),
@@ -211,11 +252,13 @@ def _list_sent_email_deliveries() -> SentEmailDeliveryListModel:
     response_model=SentEmailDeliveryListModel,
 )
 async def get_sent_email_deliveries(
+    db_session: db_dependency,
     _: admin_user_dependency,
 ) -> SentEmailDeliveryListModel:
     """Recent Resend sends, with delivery outcome for each message."""
+    names_by_email = await _athlete_names_by_email(db_session)
     try:
-        return await asyncio.to_thread(_list_sent_email_deliveries)
+        return await asyncio.to_thread(_list_sent_email_deliveries, names_by_email)
     except Exception:
         log.exception("Failed to list Resend email deliveries")
         raise HTTPException(
@@ -614,6 +657,49 @@ def _send_registration_message(
         log.exception("Registration email failed for %s", ", ".join(to))
         return
     log.info("Sent registration email to %s, email id: %s", ", ".join(to), email_id)
+
+
+def registration_model_from_team(team: Team) -> TeamRegistrationModel:
+    athletes = sorted(team.athletes, key=lambda athlete: athlete.created_at)
+    return TeamRegistrationModel(
+        team_name=team.team_name,
+        category=team.category,
+        event_short_name=team.event_short_name,
+        athletes=[
+            AthleteRegistrationModel(
+                first_name=athlete.first_name,
+                last_name=athlete.last_name,
+                email=athlete.email,
+                phone_number=athlete.phone_number,
+                sex=athlete.sex,
+                date_of_birth=athlete.date_of_birth or date(1900, 1, 1),
+                waiver=athlete.waiver,
+                gym=athlete.gym,
+                city=athlete.city,
+            )
+            for athlete in athletes
+        ],
+    )
+
+
+def send_registration_email_to(
+    recipient: str,
+    registration_response: TeamRegistrationResponseModel,
+    team: TeamRegistrationModel,
+) -> None:
+    safe_team_name = team.team_name.replace("\r", " ").replace("\n", " ")
+    subject = f"DT - Team Registration - {safe_team_name}"
+    html_body, text_body = _registration_message(
+        registration_response,
+        team,
+        include_email=False,
+    )
+    _send_registration_message(
+        to=[recipient],
+        subject=subject,
+        html_body=html_body,
+        text_body=text_body,
+    )
 
 
 def send_registration_email(

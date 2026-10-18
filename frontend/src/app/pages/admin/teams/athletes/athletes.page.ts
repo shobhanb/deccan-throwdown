@@ -3,9 +3,11 @@ import {
   DestroyRef,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import {
+  applyWhen,
   email,
   form,
   FormField,
@@ -90,6 +92,7 @@ export class AthletesPage {
   isEditing = signal<boolean>(false);
   editAthlete = signal<apiAthleteOutputModel | null>(null);
   teamId = signal<string>('');
+  sendRegistrationEmail = signal(false);
 
   athleteModel = signal<AdminAthleteFormModel>({
     first_name: '',
@@ -103,17 +106,24 @@ export class AthletesPage {
     city: '',
   });
 
+  emailChanged = computed(() => {
+    if (!this.isEditing()) {
+      return false;
+    }
+
+    const nextEmail = this.athleteModel().email.trim().toLowerCase();
+    const currentEmail = (this.editAthlete()?.email ?? '').trim().toLowerCase();
+    return nextEmail.length > 0 && nextEmail !== currentEmail;
+  });
+
   athleteForm = form(this.athleteModel, (schemaPath) => {
     required(schemaPath.first_name, { message: 'First name is required' });
     required(schemaPath.last_name, { message: 'Last name is required' });
     required(schemaPath.sex, { message: 'Sex is required' });
     pattern(schemaPath.sex, /^M|F$/, { message: 'Sex must be M or F' });
     email(schemaPath.email, { message: 'Enter a valid email address' });
-    pattern(schemaPath.phone_number, /^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
+    pattern(schemaPath.phone_number, /^$|^[\+]?[0-9\s\-\(\)\.]{7,15}$/, {
       message: 'Enter a valid phone number',
-    });
-    required(schemaPath.date_of_birth, {
-      message: 'Date of birth is required',
     });
     validate(schemaPath.date_of_birth, ({ value }) => {
       const dateOfBirth = value();
@@ -137,10 +147,20 @@ export class AthletesPage {
 
       return undefined;
     });
-    validate(schemaPath.waiver, ({ value }) =>
-      value()
-        ? undefined
-        : { kind: 'required', message: 'Waiver must be accepted' }
+    applyWhen(
+      schemaPath,
+      () => !this.isEditing(),
+      (path) => {
+        required(path.phone_number, { message: 'Phone number is required' });
+        required(path.date_of_birth, {
+          message: 'Date of birth is required',
+        });
+        validate(path.waiver, ({ value }) =>
+          value()
+            ? undefined
+            : { kind: 'required', message: 'Waiver must be accepted' }
+        );
+      }
     );
   });
 
@@ -154,6 +174,7 @@ export class AthletesPage {
   }
 
   getData() {
+    this.sendRegistrationEmail.set(false);
     this.dataLoaded.set(false);
     const teamId = this.activatedRoute.snapshot.paramMap.get('teamId');
     const athleteId = this.activatedRoute.snapshot.paramMap.get('athleteId');
@@ -213,11 +234,16 @@ export class AthletesPage {
     };
 
     if (this.isEditing()) {
+      const sendRegistrationEmail =
+        this.emailChanged() && this.sendRegistrationEmail();
       fromApi(
         this.apiAthlete.updateAthleteAthletesAthleteIdPatch({
           athlete_id: this.editAthlete()?.id!,
+          send_registration_email: sendRegistrationEmail,
           body: {
             ...trimmedData,
+            email: trimmedData.email?.trim() || null,
+            phone_number: trimmedData.phone_number?.trim() || null,
             sex:
               trimmedData.sex === 'M' || trimmedData.sex === 'F'
                 ? trimmedData.sex
@@ -228,7 +254,11 @@ export class AthletesPage {
       )
         .subscribe({
           next: () => {
-            this.toastService.showSuccess('Athlete updated successfully');
+            this.toastService.showSuccess(
+              sendRegistrationEmail
+                ? 'Athlete updated and registration email sent'
+                : 'Athlete updated successfully'
+            );
             this.router.navigate(
               ['/admin', 'teams', this.editAthlete()!.team_id],
               { replaceUrl: true }

@@ -12,6 +12,7 @@ import { apiAthleteUpdateModel } from '../../models/api-athlete-update-model';
 
 export interface UpdateAthleteAthletesAthleteIdPatch$Params {
   athlete_id: string;
+  send_registration_email?: boolean;
       body: apiAthleteUpdateModel
 }
 
@@ -19,6 +20,7 @@ export function updateAthleteAthletesAthleteIdPatch(http: HttpClient, rootUrl: s
   const rb = new RequestBuilder(rootUrl, updateAthleteAthletesAthleteIdPatch.PATH, 'patch');
   if (params) {
     rb.path('athlete_id', params.athlete_id, {});
+    rb.query('send_registration_email', params.send_registration_email, {});
     rb.body(params.body, 'application/json');
   }
 
