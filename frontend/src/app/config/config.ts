@@ -347,12 +347,13 @@ export const appConfig: { [key: string]: AppConfig } = {
     eventType: 'teams',
     eventDates: 'Nov 28th & 29th, 2026',
     tagline:
-      'Teams of 6 athletes (at least 2 female). Categories: Scaled, Open.',
+      'Teams of 6 athletes (2 female, 4 male). Categories: Scaled, Open.',
     registrationStatus: 'open',
     leaderboardEnabled: true,
     categories: ['Scaled', 'Open'],
     athletesPerTeam: 6,
-    minFemaleAthletesPerTeam: 2,
+    femaleAthletesPerTeam: 2,
+    maleAthletesPerTeam: 4,
     registrationPricing: {
       standard: 13000,
       earlyBird: 10000,

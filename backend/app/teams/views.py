@@ -429,11 +429,16 @@ async def register_team(
         raise conflict_exception(detail="Team name already registered for this event.")
 
     female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
+    male_count = sum(1 for athlete in team.athletes if athlete.sex == "M")
     if len(team.athletes) != 6:  # noqa: PLR2004
         raise conflict_exception(detail="A team must have exactly 6 athletes.")
-    if female_count < 2:  # noqa: PLR2004
+    if female_count != 2:  # noqa: PLR2004
         raise conflict_exception(
-            detail="A team must have at least 2 female athletes.",
+            detail="A team must have exactly 2 female athletes.",
+        )
+    if male_count != 4:  # noqa: PLR2004
+        raise conflict_exception(
+            detail="A team must have exactly 4 male athletes.",
         )
 
     new_team = Team(

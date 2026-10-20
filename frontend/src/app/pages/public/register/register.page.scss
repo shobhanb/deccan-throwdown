@@ -94,6 +94,30 @@
   color: var(--ion-color-medium);
 }
 
+.athletes-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--dt-space-xs) var(--dt-space-sm);
+}
+
+.athletes-gender-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dt-space-sm);
+}
+
+.athletes-gender-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  ion-icon {
+    font-size: 1rem;
+    color: var(--ion-color-primary);
+  }
+}
+
 .athlete-requirements {
   margin: 0 var(--dt-space-md) var(--dt-space-md);
   padding: var(--dt-space-md);

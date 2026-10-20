@@ -74,13 +74,28 @@
       </ion-item>
     </ion-list>
 
-    <div class="section-header">
+    <div class="section-header athletes-section-header">
+      <span>
+        Athletes ({{ minFemaleAthletesPerTeam != null ? filledAthleteCount : athletes().length }}/{{ athletesPerTeam }})
+      </span>
       @if (minFemaleAthletesPerTeam != null) {
-      Athletes ({{ filledAthleteCount }}/{{ athletesPerTeam }} — {{ femaleAthletes.length }}
-      female, minimum {{ minFemaleAthletesPerTeam }})
+      <span class="athletes-gender-summary">
+        <span class="athletes-gender-count">
+          <ion-icon name="woman-outline" aria-hidden="true"></ion-icon>
+          {{ femaleAthletes.length }} (min {{ minFemaleAthletesPerTeam }})
+        </span>
+      </span>
       } @else {
-      Athletes ({{ athletes().length }}/{{ athletesPerTeam }} — {{ femaleAthletesPerTeam }}F,
-      {{ maleAthletesPerTeam }}M)
+      <span class="athletes-gender-summary">
+        <span class="athletes-gender-count">
+          <ion-icon name="woman-outline" aria-hidden="true"></ion-icon>
+          {{ femaleAthletesPerTeam }}
+        </span>
+        <span class="athletes-gender-count">
+          <ion-icon name="man-outline" aria-hidden="true"></ion-icon>
+          {{ maleAthletesPerTeam }}
+        </span>
+      </span>
       }
     </div>
     @if (minFemaleAthletesPerTeam != null) {
@@ -108,11 +123,11 @@
       >
         <ion-icon
           [name]="
-            slot.athlete
-              ? slot.athlete.sex === 'M'
-                ? 'man-outline'
-                : 'woman-outline'
-              : 'add-outline'
+            slot.athlete?.sex === 'M' || slot.type === 'M'
+              ? 'man-outline'
+              : slot.athlete?.sex === 'F' || slot.type === 'F'
+                ? 'woman-outline'
+                : 'add-outline'
           "
         ></ion-icon>
         @if (slot.athlete) {
