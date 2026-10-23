@@ -29,17 +29,44 @@
     </div>
   </div>
 
-  @if (registrationPricing) {
+  @if (registrationPricing(); as pricing) {
   <div class="pricing-card card-elevated">
     <img src="assets/brand/fortress-mark.svg" alt="" class="pricing-icon-img" />
     <div>
       <p>
-        <strong>Rs {{ registrationPricing.standard | number }}</strong> per team
+        <strong>Rs {{ pricing.active_team_fee | number }}</strong> per team
+        @if (pricing.use_early_bird_fee) {
+          <span class="pricing-note">(early bird)</span>
+        }
       </p>
-      @if (registrationPricing.earlyBird) {
+      @if (
+        pricing.use_early_bird_fee &&
+        registrationPricingConfig?.earlyBirdDeadline
+      ) {
       <p class="pricing-note">
-        Early bird: Rs {{ registrationPricing.earlyBird | number }} (valid till
-        {{ registrationPricing.earlyBirdDeadline }})
+          Price increases to Rs {{ pricing.team_fee | number }} after {{ registrationPricingConfig?.earlyBirdDeadline }}.
+      </p>
+      } @else if (
+        !pricing.use_early_bird_fee &&
+        registrationPricingConfig?.earlyBird
+      ) {
+      <p class="pricing-note">
+        Early bird was Rs {{ registrationPricingConfig?.earlyBird | number }}
+      </p>
+      }
+    </div>
+  </div>
+  } @else if (registrationPricingConfig) {
+  <div class="pricing-card card-elevated">
+    <img src="assets/brand/fortress-mark.svg" alt="" class="pricing-icon-img" />
+    <div>
+      <p>
+        <strong>Rs {{ registrationPricingConfig.standard | number }}</strong> per team
+      </p>
+      @if (registrationPricingConfig.earlyBird) {
+      <p class="pricing-note">
+        Early bird: Rs {{ registrationPricingConfig.earlyBird | number }} (valid till
+        {{ registrationPricingConfig.earlyBirdDeadline }})
       </p>
       }
     </div>

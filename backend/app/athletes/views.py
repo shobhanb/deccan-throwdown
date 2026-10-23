@@ -8,6 +8,7 @@ from app.database.dependencies import db_dependency
 from app.firebase_auth.dependencies import admin_user_dependency
 from app.teams.models import Team
 from app.teams.schemas import TeamRegistrationModel, TeamRegistrationResponseModel
+from app.teams.registration_pricing import get_use_early_bird_fee
 from app.teams.views import (
     get_payment_link,
     get_waiver_links,
@@ -126,19 +127,20 @@ async def _queue_registration_email(
     if registration_email is None:
         return
 
-    recipient, registration_response, registration = registration_email
+    recipient, registration_response, registration, use_early_bird_fee = registration_email
     background_tasks.add_task(
         send_registration_email_to,
         recipient,
         registration_response,
         registration,
+        use_early_bird_fee,
     )
 
 
 async def _registration_email_for_athlete(
     db_session: AsyncSession,
     athlete: Athlete,
-) -> tuple[str, TeamRegistrationResponseModel, TeamRegistrationModel] | None:
+) -> tuple[str, TeamRegistrationResponseModel, TeamRegistrationModel, bool] | None:
     recipient = (athlete.email or "").strip()
     if not recipient:
         return None
@@ -156,9 +158,13 @@ async def _registration_email_for_athlete(
         )
         return None
 
+    use_early_bird_fee = await get_use_early_bird_fee(db_session)
     registration = registration_model_from_team(team)
     registration_response = TeamRegistrationResponseModel(
-        payment_link=get_payment_link(registration),
+        payment_link=get_payment_link(
+            registration,
+            use_early_bird_fee=use_early_bird_fee,
+        ),
         waiver_links=get_waiver_links(registration),
     )
-    return recipient, registration_response, registration
+    return recipient, registration_response, registration, use_early_bird_fee

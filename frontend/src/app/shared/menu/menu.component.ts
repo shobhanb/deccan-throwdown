@@ -20,6 +20,7 @@ import {
   bookOutline,
   calculatorOutline,
   callOutline,
+  cashOutline,
   cameraOutline,
   checkmarkCircleOutline,
   createOutline,
@@ -87,6 +88,7 @@ export class MenuComponent {
       notificationsOutline,
       mailOutline,
       callOutline,
+      cashOutline,
     });
 
     this.router.events

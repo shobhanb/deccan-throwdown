@@ -78,3 +78,20 @@ class SentEmailDeliveryModel(CustomBaseModel):
 class SentEmailDeliveryListModel(CustomBaseModel):
     emails: list[SentEmailDeliveryModel]
     has_more: bool
+
+
+class RegistrationPricingModel(CustomBaseModel):
+    use_early_bird_fee: bool
+    team_fee: int
+    early_bird_team_fee: int
+    active_team_fee: int
+
+
+class RegistrationPricingUpdateModel(CustomBaseModel):
+    use_early_bird_fee: bool
+
+
+class TeamPaymentLinkModel(CustomBaseModel):
+    payment_link: str
+    use_early_bird_fee: bool
+    active_team_fee: int

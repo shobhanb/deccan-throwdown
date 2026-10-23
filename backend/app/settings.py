@@ -33,6 +33,7 @@ class ResendSettings(CustomBaseSettings):
 
 class RegistrationSettings(CustomBaseSettings):
     registration_cc_list: list[EmailStr] = ["me@example.com"]
+    early_bird_payment_link: str = "https://pay.example.com"
     payment_link: str = "https://pay.example.com"
     waiver_link: str = "https://waiver.example.com"
     domain_redirect_url: str = "https://example.com/redirect"

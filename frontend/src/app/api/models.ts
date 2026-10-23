@@ -13,6 +13,8 @@ export type { apiFcmTokenRegisterResponseModel } from './models/api-fcm-token-re
 export type { apiFirebaseCustomClaims } from './models/api-firebase-custom-claims';
 export type { apiFirebaseUserRecord } from './models/api-firebase-user-record';
 export type { apiHttpValidationError } from './models/api-http-validation-error';
+export type { apiRegistrationPricingModel } from './models/api-registration-pricing-model';
+export type { apiRegistrationPricingUpdateModel } from './models/api-registration-pricing-update-model';
 export type { apiScoreCreateModel } from './models/api-score-create-model';
 export type { apiScoreOutputModel } from './models/api-score-output-model';
 export type { apiScoreUpdateModel } from './models/api-score-update-model';

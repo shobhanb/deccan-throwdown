@@ -1,3 +1,8 @@
+from app.teams.registration_pricing import (
+    get_registration_pricing,
+    set_use_early_bird_fee,
+    get_use_early_bird_fee,
+)
 import asyncio
 import base64
 import html
@@ -35,6 +40,7 @@ from app.scores.service import rerank_event
 from app.settings import registration_settings, resend_settings
 
 from .models import Team
+from .payment_link import add_domain_redirect, get_payment_link
 from .schemas import (
     SentEmailDeliveryListModel,
     SentEmailDeliveryModel,
@@ -45,6 +51,9 @@ from .schemas import (
     TeamsOutputModel,
     TeamsUpdateModel,
     WaiverLinkModel,
+    RegistrationPricingModel,
+    RegistrationPricingUpdateModel,
+    TeamPaymentLinkModel,
 )
 
 log = logging.getLogger("uvicorn.error")
@@ -150,6 +159,62 @@ async def get_team_emails(
             mailboxes.append(format_mailbox(name, email))
     mailboxes.sort(key=str.casefold)
     return ", ".join(mailboxes)
+
+
+@teams_router.get(
+    "/registration-pricing",
+    status_code=status.HTTP_200_OK,
+    response_model=RegistrationPricingModel,
+)
+async def read_registration_pricing(
+    db_session: db_dependency,
+) -> RegistrationPricingModel:
+    return await get_registration_pricing(db_session)
+
+
+@teams_router.patch(
+    "/registration-pricing",
+    status_code=status.HTTP_200_OK,
+    response_model=RegistrationPricingModel,
+)
+async def update_registration_pricing(
+    db_session: db_dependency,
+    _: admin_user_dependency,
+    body: RegistrationPricingUpdateModel,
+) -> RegistrationPricingModel:
+    return await set_use_early_bird_fee(db_session, body.use_early_bird_fee)
+
+
+@teams_router.get(
+    "/payment-link",
+    status_code=status.HTTP_200_OK,
+    response_model=TeamPaymentLinkModel,
+)
+async def read_team_payment_link(
+    db_session: db_dependency,
+    _: admin_user_or_api_key_dependency,
+    team_name: str,
+    event_short_name: str,
+) -> TeamPaymentLinkModel:
+    team = await Team.find_or_raise(
+        async_session=db_session,
+        select_relationships=[Team.athletes],
+        team_name=team_name,
+        event_short_name=event_short_name,
+    )
+    if not team.athletes:
+        raise conflict_exception(detail="Team has no athletes.")
+
+    registration = registration_model_from_team(team)
+    use_early_bird_fee = await get_use_early_bird_fee(db_session)
+    return TeamPaymentLinkModel(
+        payment_link=get_payment_link(
+            registration,
+            use_early_bird_fee=use_early_bird_fee,
+        ),
+        use_early_bird_fee=use_early_bird_fee,
+        active_team_fee=_registration_fee(use_early_bird_fee),
+    )
 
 
 # Resend returns at most 100 emails per page. Cap the walk so an admin
@@ -458,7 +523,8 @@ async def register_team(
 
     await db_session.commit()
 
-    payment_link = get_payment_link(team)
+    use_early_bird_fee = await get_use_early_bird_fee(db_session)
+    payment_link = get_payment_link(team, use_early_bird_fee=use_early_bird_fee)
     waiver_links = get_waiver_links(team)
 
     registration_response = TeamRegistrationResponseModel(
@@ -471,6 +537,7 @@ async def register_team(
         send_registration_email,
         registration_response,
         team,
+        use_early_bird_fee,
     )
     background_tasks.add_task(
         NotificationService.send_new_team_registration,
@@ -481,27 +548,6 @@ async def register_team(
     log.info("Registered new team: %s", team.team_name)
 
     return registration_response
-
-
-def add_domain_redirect(link: str) -> str:
-    encoded_target = quote(link, safe="")
-    parsed = urlparse.urlparse(registration_settings.domain_redirect_url)
-    base = urlparse.urlunparse(parsed._replace(query="", fragment=""))
-    return f"{base}?link={encoded_target}"
-
-
-def get_payment_link(team: TeamRegistrationModel) -> str:
-    payment_url_params = {
-        "email": team.athletes[0].email,
-        "phone": team.athletes[0].phone_number,
-        "team_name": team.team_name,
-    }
-    url_parts = list(urlparse.urlparse(registration_settings.payment_link))
-    query = dict(urlparse.parse_qsl(url_parts[4]))
-    query.update(payment_url_params)
-    url_parts[4] = urlparse.urlencode(query)
-    payment_link = urlparse.urlunparse(url_parts)
-    return add_domain_redirect(payment_link)
 
 
 def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | None:
@@ -543,8 +589,8 @@ def _email_text(value: str | None) -> str:
     return html.escape(value or "")
 
 
-def _registration_fee() -> int:
-    if registration_settings.use_early_bird_fee:
+def _registration_fee(use_early_bird_fee: bool) -> int:
+    if use_early_bird_fee:
         return registration_settings.early_bird_team_fee
     return registration_settings.team_fee
 
@@ -566,9 +612,10 @@ def _registration_message(
     team: TeamRegistrationModel,
     *,
     include_email: bool,
+    use_early_bird_fee: bool,
 ) -> tuple[str, str]:
     roster = _roster_entries(team, include_email=include_email)
-    fee = _registration_fee()
+    fee = _registration_fee(use_early_bird_fee)
     payment_link = registration_response.payment_link
     waiver_links = registration_response.waiver_links or []
 
@@ -626,7 +673,10 @@ def _registration_message(
             [
                 "",
                 "Please fill out a waiver for each athlete, if not already filled:",
-                *[f"- {link.athlete_name}: {link.waiver_link}" for link in waiver_links],
+                *[
+                    f"- {link.athlete_name}: {link.waiver_link}"
+                    for link in waiver_links
+                ],
             ]
         )
     text_lines.extend(
@@ -676,7 +726,7 @@ def registration_model_from_team(team: Team) -> TeamRegistrationModel:
                 last_name=athlete.last_name,
                 email=athlete.email,
                 phone_number=athlete.phone_number,
-                sex=athlete.sex,
+                sex="F" if athlete.sex == "F" else "M",
                 date_of_birth=athlete.date_of_birth or date(1900, 1, 1),
                 waiver=athlete.waiver,
                 gym=athlete.gym,
@@ -691,6 +741,7 @@ def send_registration_email_to(
     recipient: str,
     registration_response: TeamRegistrationResponseModel,
     team: TeamRegistrationModel,
+    use_early_bird_fee: bool,
 ) -> None:
     safe_team_name = team.team_name.replace("\r", " ").replace("\n", " ")
     subject = f"DT - Team Registration - {safe_team_name}"
@@ -698,6 +749,7 @@ def send_registration_email_to(
         registration_response,
         team,
         include_email=False,
+        use_early_bird_fee=use_early_bird_fee,
     )
     _send_registration_message(
         to=[recipient],
@@ -708,7 +760,9 @@ def send_registration_email_to(
 
 
 def send_registration_email(
-    registration_response: TeamRegistrationResponseModel, team: TeamRegistrationModel
+    registration_response: TeamRegistrationResponseModel,
+    team: TeamRegistrationModel,
+    use_early_bird_fee: bool,
 ) -> None:
     safe_team_name = team.team_name.replace("\r", " ").replace("\n", " ")
     subject = f"DT - Team Registration - {safe_team_name}"
@@ -716,17 +770,20 @@ def send_registration_email(
         registration_response,
         team,
         include_email=False,
+        use_early_bird_fee=use_early_bird_fee,
     )
     organizer_html, organizer_text = _registration_message(
         registration_response,
         team,
         include_email=True,
+        use_early_bird_fee=use_early_bird_fee,
     )
     organizer_text = (
         "A separate copy of this email was sent to each athlete.\n\n" + organizer_text
     )
     organizer_html = (
-        "<p>A separate copy of this email was sent to each athlete.</p>" + organizer_html
+        "<p>A separate copy of this email was sent to each athlete.</p>"
+        + organizer_html
     )
 
     athlete_emails = list(

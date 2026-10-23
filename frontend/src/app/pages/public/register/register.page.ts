@@ -43,6 +43,7 @@ import {
 import { apiTeamsService } from 'src/app/api/services';
 import {
   apiAthleteRegistrationModel,
+  apiRegistrationPricingModel,
   apiTeamRegistrationResponseModel,
 } from 'src/app/api/models';
 import { TeamFormModel } from 'src/app/shared/models/form-models';
@@ -87,7 +88,8 @@ export class RegisterPage {
 
   categories = this.appConfigService.categories;
   eventName = this.appConfigService.eventName;
-  registrationPricing = this.appConfigService.registrationPricing;
+  registrationPricingConfig = this.appConfigService.registrationPricing;
+  registrationPricing = signal<apiRegistrationPricingModel | null>(null);
   registrationOpen = this.appConfigService.registrationStatus === 'open';
   athletesPerTeam = this.appConfigService.athletesPerTeam;
   femaleAthletesPerTeam = this.appConfigService.femaleAthletesPerTeam;
@@ -117,6 +119,14 @@ export class RegisterPage {
 
   constructor() {
     addIcons({ addOutline, manOutline, womanOutline, cashOutline });
+    this.apiTeams
+      .getRegistrationPricingTeamsRegistrationPricingGet()
+      .then((pricing: apiRegistrationPricingModel) =>
+        this.registrationPricing.set(pricing)
+      )
+      .catch(() => {
+        /* Fall back to static config pricing in the template */
+      });
   }
 
   get femaleAthletes(): apiAthleteRegistrationModel[] {

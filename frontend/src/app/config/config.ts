@@ -357,7 +357,7 @@ export const appConfig: { [key: string]: AppConfig } = {
     registrationPricing: {
       standard: 13000,
       earlyBird: 10000,
-      earlyBirdDeadline: 'TBA',
+      earlyBirdDeadline: 'Nov 15th, 2026',
     },
     wods: [
       {

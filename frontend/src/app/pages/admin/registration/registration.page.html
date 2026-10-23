@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Registration</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-admin-page-header
+    title="Registration pricing"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  <p class="pricing-help ion-padding-horizontal">
+    Choose which fee and payment link new registrations receive in confirmation
+    emails. Amounts and payment URLs are configured on the server.
+  </p>
+
+  @if (loading()) {
+    <p class="ion-padding-horizontal">Loading…</p>
+  } @else if (pricing(); as p) {
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-label>Use early bird pricing</ion-label>
+        <ion-toggle
+          slot="end"
+          [checked]="useEarlyBird()"
+          [disabled]="saving()"
+          (ionChange)="onEarlyBirdToggle($event)"
+        ></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Active team fee</h2>
+          <p>Rs {{ p.active_team_fee | number }}</p>
+        </ion-label>
+        <ion-note slot="end">
+          {{ p.use_early_bird_fee ? 'Early bird' : 'Regular' }}
+        </ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Regular fee</h2>
+          <p>Rs {{ p.team_fee | number }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Early bird fee</h2>
+          <p>Rs {{ p.early_bird_team_fee | number }}</p>
+        </ion-label>
+        @if (earlyBirdDeadline) {
+          <ion-note slot="end">{{ earlyBirdDeadline }}</ion-note>
+        }
+      </ion-item>
+    </ion-list>
+  }
+</ion-content>

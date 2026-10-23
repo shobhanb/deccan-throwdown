@@ -23,8 +23,13 @@ import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
 import { GetTeamsTeamsGet$Params } from '../fn/teams/get-teams-teams-get';
 import { getTeamWaiverLinksTeamsWaiverLinksGet } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
 import { GetTeamWaiverLinksTeamsWaiverLinksGet$Params } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
+import { getRegistrationPricingTeamsRegistrationPricingGet } from '../fn/teams/get-registration-pricing-teams-registration-pricing-get';
+import { GetRegistrationPricingTeamsRegistrationPricingGet$Params } from '../fn/teams/get-registration-pricing-teams-registration-pricing-get';
+import { updateRegistrationPricingTeamsRegistrationPricingPatch } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
+import { UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
 import { registerTeamTeamsRegisterPost } from '../fn/teams/register-team-teams-register-post';
 import { RegisterTeamTeamsRegisterPost$Params } from '../fn/teams/register-team-teams-register-post';
+import { apiRegistrationPricingModel } from '../models/api-registration-pricing-model';
 import { apiSentEmailDeliveryListModel } from '../models/api-sent-email-delivery-list-model';
 import { apiTeamRegistrationResponseModel } from '../models/api-team-registration-response-model';
 import { apiTeamsOutputDetailModel } from '../models/api-teams-output-detail-model';
@@ -334,6 +339,32 @@ export class apiTeamsService extends BaseService {
   registerTeamTeamsRegisterPost(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Promise<apiTeamRegistrationResponseModel> {
     const resp = this.registerTeamTeamsRegisterPost$Response(params, context);
     return resp.then((r: StrictHttpResponse<apiTeamRegistrationResponseModel>): apiTeamRegistrationResponseModel => r.body);
+  }
+
+  /** Path part for operation `getRegistrationPricingTeamsRegistrationPricingGet()` */
+  static readonly GetRegistrationPricingTeamsRegistrationPricingGetPath = '/teams/registration-pricing';
+
+  getRegistrationPricingTeamsRegistrationPricingGet$Response(params?: GetRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
+    const obs = getRegistrationPricingTeamsRegistrationPricingGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  getRegistrationPricingTeamsRegistrationPricingGet(params?: GetRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
+    const resp = this.getRegistrationPricingTeamsRegistrationPricingGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
+  }
+
+  /** Path part for operation `updateRegistrationPricingTeamsRegistrationPricingPatch()` */
+  static readonly UpdateRegistrationPricingTeamsRegistrationPricingPatchPath = '/teams/registration-pricing';
+
+  updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
+    const obs = updateRegistrationPricingTeamsRegistrationPricingPatch(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  updateRegistrationPricingTeamsRegistrationPricingPatch(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
+    const resp = this.updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
   }
 
 }

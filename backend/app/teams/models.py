@@ -24,5 +24,11 @@ class Team(Base):
     paid: Mapped[bool] = mapped_column(Boolean, default=False)
     verified: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    athletes: Mapped[list[Athlete]] = relationship(back_populates="team", cascade="all, delete-orphan")
+    athletes: Mapped[list[Athlete]] = relationship(
+        back_populates="team", cascade="all, delete-orphan"
+    )
     scores: Mapped[list[Score]] = relationship(back_populates="team")
+
+
+class RegistrationPricingState(Base):
+    use_early_bird_fee: Mapped[bool] = mapped_column(Boolean, default=False)

@@ -37,6 +37,10 @@ export type { UpdateTeamTeamsTeamIdPatch$Params as UpdateTeamTeamsTeamIdPatch$Pa
 export { updateTeamTeamsTeamIdPatch as updateTeamTeamsTeamIdPatch } from './fn/teams/update-team-teams-team-id-patch';
 export type { RegisterTeamTeamsRegisterPost$Params as RegisterTeamTeamsRegisterPost$Params } from './fn/teams/register-team-teams-register-post';
 export { registerTeamTeamsRegisterPost as registerTeamTeamsRegisterPost } from './fn/teams/register-team-teams-register-post';
+export type { GetRegistrationPricingTeamsRegistrationPricingGet$Params as GetRegistrationPricingTeamsRegistrationPricingGet$Params } from './fn/teams/get-registration-pricing-teams-registration-pricing-get';
+export { getRegistrationPricingTeamsRegistrationPricingGet as getRegistrationPricingTeamsRegistrationPricingGet } from './fn/teams/get-registration-pricing-teams-registration-pricing-get';
+export type { UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params as UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params } from './fn/teams/update-registration-pricing-teams-registration-pricing-patch';
+export { updateRegistrationPricingTeamsRegistrationPricingPatch as updateRegistrationPricingTeamsRegistrationPricingPatch } from './fn/teams/update-registration-pricing-teams-registration-pricing-patch';
 export type { GetScoresScoresGet$Params as GetScoresScoresGet$Params } from './fn/scores/get-scores-scores-get';
 export { getScoresScoresGet as getScoresScoresGet } from './fn/scores/get-scores-scores-get';
 export type { CreateScoreScoresPost$Params as CreateScoreScoresPost$Params } from './fn/scores/create-score-scores-post';
