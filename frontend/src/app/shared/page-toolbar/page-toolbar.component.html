@@ -1,6 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    @if (showMenuButton()) {
+    @if (backHref(); as href) {
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="href"></ion-back-button>
+    </ion-buttons>
+    } @else if (showMenuButton()) {
     <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
     }
     <ion-title>{{ title() }}</ion-title>

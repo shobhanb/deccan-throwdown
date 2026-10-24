@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  HostListener,
   inject,
   linkedSignal,
   OnInit,
@@ -59,7 +60,7 @@ interface ImageData {
   sizeFormatted: string;
   extension: string;
   lastModified: string;
-  type: 'square' | 'horizontal' | 'general' | string;
+  type: string;
   folder: string;
   eventShortName: string;
 }
@@ -171,6 +172,28 @@ export class PicsPage implements OnInit {
     }
   }
 
+  @HostListener('document:keydown', ['$event'])
+  onLightboxKeydown(event: KeyboardEvent) {
+    if (this.selectedImageIndex() === null) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        event.preventDefault();
+        this.prevImage();
+        break;
+      case 'ArrowRight':
+        event.preventDefault();
+        this.nextImage();
+        break;
+      case 'Escape':
+        event.preventDefault();
+        this.closeLightbox();
+        break;
+    }
+  }
+
   private syncRouteAndLoad() {
     const param = this.activatedRoute.snapshot.paramMap.get('eventShortName');
     if (param && !galleryEventShortNames.includes(param)) {
@@ -229,8 +252,9 @@ export class PicsPage implements OnInit {
           const cards = galleryEventShortNames.map((shortName, index) => {
             const config = appConfig[shortName];
             const data = results[index];
+            const images = this.sortImages(data.images);
             const photoCount =
-              data.metadata?.totalImages ?? data.images.length ?? 0;
+              data.metadata?.totalImages ?? images.length ?? 0;
             return {
               shortName,
               eventName: config.eventName,
@@ -238,7 +262,7 @@ export class PicsPage implements OnInit {
               eventTypeLabel:
                 config.eventType === 'pairs' ? 'Pairs' : 'Teams',
               photoCount,
-              coverPath: this.pickCoverImage(data.images),
+              coverPath: images[0]?.path ?? null,
             };
           });
           this.hubEvents.set(cards);
@@ -250,25 +274,10 @@ export class PicsPage implements OnInit {
       });
   }
 
-  private pickCoverImage(images: ImageData[]): string | null {
-    if (images.length === 0) {
-      return null;
-    }
-    const horizontal = images.find((img) => img.type === 'horizontal');
-    if (horizontal) {
-      return horizontal.path;
-    }
-    const square = images.find((img) => img.type === 'square');
-    return square?.path ?? images[0].path;
-  }
-
-  private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+  private sortImages(images: ImageData[]): ImageData[] {
+    return [...images].sort((a, b) =>
+      a.filename.localeCompare(b.filename, undefined, { sensitivity: 'base' })
+    );
   }
 
   loadImages(forceReload = false) {
@@ -282,7 +291,6 @@ export class PicsPage implements OnInit {
       this.loadedForEvent === event &&
       this.imageData().length > 0
     ) {
-      this.imageData.set(this.shuffleArray(this.imageData()));
       this.dataLoaded.set(true);
       return;
     }
@@ -295,8 +303,7 @@ export class PicsPage implements OnInit {
       .pipe(pendingUntilComplete(this.pendingTasks))
       .subscribe({
         next: (data) => {
-          const shuffledImages = this.shuffleArray(data.images);
-          this.imageData.set(shuffledImages);
+          this.imageData.set(this.sortImages(data.images));
           this.loadedForEvent = event;
           this.dataLoaded.set(true);
         },

@@ -1,6 +1,14 @@
-# Image Gallery Script Documentation
+# Image Gallery
 
-Event photos live under `src/assets/images/<eventShortName>/` (for example `dtpairs2025/square/`). The generator writes one JSON manifest per event.
+Event photos live under `src/assets/images/<eventShortName>/`. A flat folder is enough:
+
+```text
+src/assets/images/dtpairs2025/
+  photo-001.jpg
+  photo-002.jpg
+```
+
+Nested folders (for example legacy `square/` or `horizontal/`) still work — the generator includes every image — but the UI does not treat those folder names specially. Hub covers and the grid use a uniform layout for all photos.
 
 ## Quick Start
 
@@ -20,8 +28,10 @@ Configure which events appear in the picker via `galleryEventShortNames` in `src
 
 ## Workflow
 
-1. Add images under `src/assets/images/<eventShortName>/`
+1. Add images under `src/assets/images/<eventShortName>/` (flat layout preferred)
 2. Run `npm run generate-images`
 3. Open the matching `/pics/<eventShortName>` route
+
+Photos are shown in stable filename order as a square thumbnail grid; tap opens a full-screen viewer.
 
 Supported extensions are listed in `scripts/generate-image-list.js` (`IMAGE_EXTENSIONS`).
