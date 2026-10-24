@@ -32,6 +32,6 @@ Configure which events appear in the picker via `galleryEventShortNames` in `src
 2. Run `npm run generate-images`
 3. Open the matching `/pics/<eventShortName>` route
 
-Photos are shown in stable filename order as a square thumbnail grid; tap opens a full-screen viewer.
+Photos are shown in a randomized order as a square thumbnail grid; tap opens a full-screen viewer. The hub page picks a random cover image per event on each visit.
 
 Supported extensions are listed in `scripts/generate-image-list.js` (`IMAGE_EXTENSIONS`).

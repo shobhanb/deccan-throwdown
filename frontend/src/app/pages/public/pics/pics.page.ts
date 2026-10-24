@@ -340,7 +340,7 @@ export class PicsPage implements OnInit {
           const cards = galleryEventShortNames.map((shortName, index) => {
             const config = appConfig[shortName];
             const data = results[index];
-            const images = this.sortImages(data.images);
+            const images = data.images;
             const photoCount =
               data.metadata?.totalImages ?? images.length ?? 0;
             return {
@@ -350,7 +350,7 @@ export class PicsPage implements OnInit {
               eventTypeLabel:
                 config.eventType === 'pairs' ? 'Pairs' : 'Teams',
               photoCount,
-              coverPath: images[0]?.path ?? null,
+              coverPath: this.pickRandomCover(images),
             };
           });
           this.hubEvents.set(cards);
@@ -362,10 +362,21 @@ export class PicsPage implements OnInit {
       });
   }
 
-  private sortImages(images: ImageData[]): ImageData[] {
-    return [...images].sort((a, b) =>
-      a.filename.localeCompare(b.filename, undefined, { sensitivity: 'base' })
-    );
+  private pickRandomCover(images: ImageData[]): string | null {
+    if (images.length === 0) {
+      return null;
+    }
+    const index = Math.floor(Math.random() * images.length);
+    return images[index].path;
+  }
+
+  private shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
   }
 
   loadImages(forceReload = false) {
@@ -379,6 +390,7 @@ export class PicsPage implements OnInit {
       this.loadedForEvent === event &&
       this.imageData().length > 0
     ) {
+      this.imageData.set(this.shuffleArray(this.imageData()));
       this.dataLoaded.set(true);
       return;
     }
@@ -391,7 +403,7 @@ export class PicsPage implements OnInit {
       .pipe(pendingUntilComplete(this.pendingTasks))
       .subscribe({
         next: (data) => {
-          this.imageData.set(this.sortImages(data.images));
+          this.imageData.set(this.shuffleArray(data.images));
           this.loadedForEvent = event;
           this.dataLoaded.set(true);
         },
