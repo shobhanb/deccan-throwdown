@@ -143,7 +143,19 @@ build_frontend() {
         run npm ci
     fi
 
+    # Gallery photos may arrive from cameras/exports as mode 700; nginx
+    # cannot serve those and returns 403. Ensure assets are world-readable.
+    if [[ -d src/assets ]]; then
+        log "Normalizing asset file permissions for nginx"
+        run chmod -R a+rX src/assets
+    fi
+
+    run npm run generate-images
     run npm run build
+
+    if [[ -d www/assets ]]; then
+        run chmod -R a+rX www/assets
+    fi
 
     if ! ensure_www_index; then
         echo "Error: frontend build failed; ${REPO_ROOT}/frontend/www/index.html not found" >&2
@@ -189,7 +201,8 @@ EOF
 
 sync_frontend() {
     log "Syncing frontend/www to ${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
-    run rsync -avz --delete \
+    # Force readable perms on the droplet even if local files are owner-only.
+    run rsync -avz --delete --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
         "${REPO_ROOT}/frontend/www/" \
         "${SSH_TARGET}:${DEPLOY_PATH}/frontend/www/"
 }

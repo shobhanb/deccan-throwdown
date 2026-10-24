@@ -29,8 +29,9 @@ Configure which events appear in the picker via `galleryEventShortNames` in `src
 ## Workflow
 
 1. Add images under `src/assets/images/<eventShortName>/` (flat layout preferred)
-2. Run `npm run generate-images`
-3. Open the matching `/pics/<eventShortName>` route
+2. Ensure files are world-readable (`chmod a+r` / avoid mode `700`) — nginx returns **403** for owner-only files in production
+3. Run `npm run generate-images` (also run automatically by `scripts/deploy.sh`)
+4. Open the matching `/pics/<eventShortName>` route
 
 Photos are shown in a randomized order as a square thumbnail grid; tap opens a full-screen viewer. The hub page picks a random cover image per event on each visit.
 
