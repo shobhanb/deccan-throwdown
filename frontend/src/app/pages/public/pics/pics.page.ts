@@ -42,6 +42,8 @@ import {
   chevronBackOutline,
   chevronForwardOutline,
   closeOutline,
+  downloadOutline,
+  shareOutline,
 } from 'ionicons/icons';
 
 interface GalleryHubEvent {
@@ -132,6 +134,8 @@ export class PicsPage implements OnInit {
       closeOutline,
       chevronBackOutline,
       chevronForwardOutline,
+      downloadOutline,
+      shareOutline,
     });
   }
 
@@ -170,6 +174,90 @@ export class PicsPage implements OnInit {
     if (current !== null && current < this.imageData().length - 1) {
       this.selectedImageIndex.set(current + 1);
     }
+  }
+
+  private selectedImage(): ImageData | null {
+    const index = this.selectedImageIndex();
+    if (index === null) {
+      return null;
+    }
+    return this.imageData()[index] ?? null;
+  }
+
+  async downloadImage(): Promise<void> {
+    const image = this.selectedImage();
+    if (!image || typeof document === 'undefined') {
+      return;
+    }
+
+    try {
+      const response = await fetch(image.path);
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = image.filename;
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      // Same-origin fallback if fetch/blob download is blocked.
+      const link = document.createElement('a');
+      link.href = image.path;
+      link.download = image.filename;
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  }
+
+  async shareImage(): Promise<void> {
+    const image = this.selectedImage();
+    if (!image || typeof window === 'undefined') {
+      return;
+    }
+
+    const absoluteUrl = new URL(image.path, window.location.origin).href;
+    const title = this.eventName() ?? 'Deccan Throwdown';
+    const text = `${title} photo`;
+
+    try {
+      const response = await fetch(image.path);
+      if (!response.ok) {
+        throw new Error(`Share fetch failed: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const file = new File([blob], image.filename, {
+        type: blob.type || 'image/jpeg',
+      });
+
+      if (
+        typeof navigator.share === 'function' &&
+        typeof navigator.canShare === 'function' &&
+        navigator.canShare({ files: [file] })
+      ) {
+        await navigator.share({ files: [file], title, text });
+        return;
+      }
+
+      if (typeof navigator.share === 'function') {
+        await navigator.share({ title, text, url: absoluteUrl });
+        return;
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
+    }
+
+    // Desktop / unsupported Web Share: fall back to download.
+    await this.downloadImage();
   }
 
   @HostListener('document:keydown', ['$event'])
