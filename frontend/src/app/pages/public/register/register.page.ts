@@ -119,6 +119,13 @@ export class RegisterPage {
 
   constructor() {
     addIcons({ addOutline, manOutline, womanOutline, cashOutline });
+  }
+
+  ionViewWillEnter() {
+    this.loadRegistrationPricing();
+  }
+
+  private loadRegistrationPricing() {
     this.apiTeams
       .getRegistrationPricingTeamsRegistrationPricingGet()
       .then((pricing: apiRegistrationPricingModel) =>
