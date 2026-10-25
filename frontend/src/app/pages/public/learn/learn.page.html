@@ -8,12 +8,12 @@
     ></app-page-header>
 
     <section class="learn-card">
-      <p class="learn-body">Learn something new about CrossFit. No, this won't get you points for Deccan Throwdown. But it will help you understand the sport better.</p>
+      <p class="learn-body">Learn something new about CrossFit from the Level 1 curriculum. No, this won't get you points for Deccan Throwdown. But it will help you understand the sport better.</p>
       <ul class="snippets">
         <li>
           <strong>CrossFit Movements.</strong>
           The points of performance for that movement, each one explained
-          for the rep. A link opens the demonstration on CrossFit’s site.
+          for the rep. 
         </li>
         <li>
           <strong>Methodology.</strong>
@@ -41,7 +41,7 @@
 
       @if (card.points?.length) {
         <h2 class="question-prompt">Points of performance</h2>
-        <p class="learn-body">A rep counts when these are met.</p>
+        <p class="learn-body">It's a good rep when these are met:</p>
         <ul class="snippets">
           @for (point of card.points; track point) {
             <li>{{ point }}</li>
