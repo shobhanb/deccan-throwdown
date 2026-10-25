@@ -61,7 +61,7 @@ async def create_user(
 async def update_user_admin_rights(
     _: admin_user_dependency,
     uid: str,
-    admin: bool,  # noqa: FBT001
+    admin: bool,
 ) -> None:
     claims = FirebaseCustomClaims(admin=admin)
     fireauth.set_custom_user_claims(uid=uid, custom_claims=claims.model_dump())

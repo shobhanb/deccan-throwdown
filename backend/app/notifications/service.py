@@ -94,7 +94,7 @@ class NotificationService:
     ) -> None:
         NotificationService.send_to_topic(
             event_topic(event_short_name),
-            f"New Team on the Roster!",
+            "New Team on the Roster!",
             f"New team in category {category} for {event_short_name}: {team_name}",
             event_short_name=event_short_name,
             route=f"/teams/{event_short_name}",

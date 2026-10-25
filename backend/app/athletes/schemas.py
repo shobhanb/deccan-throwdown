@@ -7,16 +7,19 @@ from pydantic import EmailStr
 from app.schemas import CustomBaseModel
 
 
-class AthleteBaseModel(CustomBaseModel):
+class AthletePersonModel(CustomBaseModel):
     first_name: str
     last_name: str
     email: EmailStr | None = None
     phone_number: str | None = None
     sex: Literal["M", "F"]
-    date_of_birth: date | None = None
     waiver: bool = False
     gym: str | None = None
     city: str | None = None
+
+
+class AthleteBaseModel(AthletePersonModel):
+    date_of_birth: date | None = None
 
 
 class AthleteModel(AthleteBaseModel):
@@ -45,5 +48,5 @@ class AthleteUpdateModel(CustomBaseModel):
     team_id: UUID | None = None
 
 
-class AthleteRegistrationModel(AthleteBaseModel):
+class AthleteRegistrationModel(AthletePersonModel):
     date_of_birth: date

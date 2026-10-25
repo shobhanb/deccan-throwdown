@@ -65,10 +65,9 @@ def get_payment_link(team: TeamRegistrationModel, *, use_early_bird_fee: bool) -
     page_base = _payment_page_base(configured)
 
     captain = team.athletes[0]
-    query: dict[str, str] = {
-        "email": captain.email,
-        "team_name": team.team_name,
-    }
+    query: dict[str, str] = {"team_name": team.team_name}
+    if captain.email:
+        query["email"] = captain.email
     if captain.phone_number:
         query["phone"] = captain.phone_number
 

@@ -4,14 +4,20 @@ import logging
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncConnection,
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from app.settings import db_settings
 
 from .exceptions import DBSessionNotInitializedError
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator, AsyncIterator
+    from collections.abc import AsyncGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +42,7 @@ class SessionManager:
             self._session_maker = None
 
     @asynccontextmanager
-    async def connect(self) -> AsyncIterator[AsyncConnection]:
+    async def connect(self) -> AsyncGenerator[AsyncConnection, None]:
         if not self.engine:
             raise DBSessionNotInitializedError
 
@@ -48,7 +54,7 @@ class SessionManager:
                 raise
 
     @asynccontextmanager
-    async def session(self) -> AsyncIterator[AsyncSession]:
+    async def session(self) -> AsyncGenerator[AsyncSession, None]:
         if self._session_maker is None:
             raise DBSessionNotInitializedError
 

@@ -64,7 +64,7 @@ class Base(DeclarativeBase):
         cls,
         async_session: AsyncSession,
         select_relationships: list[QueryableAttribute] | None = None,
-        **kwargs,  # noqa: ANN003
+        **kwargs,
     ) -> Self | None:
         stmt = select(cls).filter_by(**kwargs)
         if select_relationships:
@@ -76,7 +76,7 @@ class Base(DeclarativeBase):
         cls,
         async_session: AsyncSession,
         select_relationships: list[QueryableAttribute] | None = None,
-        **kwargs,  # noqa: ANN003
+        **kwargs,
     ) -> Self:
         resp = await cls.find(async_session, select_relationships, **kwargs)
         if not resp:
@@ -88,7 +88,7 @@ class Base(DeclarativeBase):
         cls,
         async_session: AsyncSession,
         select_relationships: list[QueryableAttribute] | None = None,
-        **kwargs,  # noqa: ANN003
+        **kwargs,
     ) -> Sequence[Self]:
         stmt = select(cls).filter_by(**kwargs)
         if select_relationships:
@@ -101,7 +101,7 @@ class Base(DeclarativeBase):
         cls,
         async_session: AsyncSession,
         nested_relationships: list[Any] | None = None,
-        **kwargs,  # noqa: ANN003
+        **kwargs,
     ) -> Self | None:
         stmt = select(cls).filter_by(**kwargs)
         if nested_relationships:
@@ -113,7 +113,7 @@ class Base(DeclarativeBase):
         cls,
         async_session: AsyncSession,
         nested_relationships: list[Any] | None = None,
-        **kwargs,  # noqa: ANN003
+        **kwargs,
     ) -> Self:
         resp = await cls.find_with_nested_relationships(async_session, nested_relationships, **kwargs)
         if not resp:

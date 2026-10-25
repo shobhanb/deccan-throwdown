@@ -12,3 +12,9 @@ dependencies = [
     "resend>=2.16.0",
     "sqlalchemy[asyncio]>=2.0.43",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.2",
+    "ty>=0.0.91",
+]

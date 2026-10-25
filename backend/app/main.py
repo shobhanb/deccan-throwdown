@@ -16,7 +16,7 @@ from app.firebase_auth.views import firebase_auth_router
 from app.notifications import models as notifications_models  # noqa: F401
 from app.notifications.views import notifications_router
 from app.scores.views import scores_router
-from app.settings import env_settings, resend_settings, url_settings
+from app.settings import resend_settings, url_settings
 from app.teams.views import teams_router
 
 log = logging.getLogger("uvicorn.error")

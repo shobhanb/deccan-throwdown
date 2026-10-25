@@ -103,7 +103,7 @@ async def update_score_verification(
     db_session: db_dependency,
     _: admin_user_dependency,
     score_id: UUID,
-    verified: bool,  # noqa: FBT001
+    verified: bool,
 ) -> Score:
     score = await Score.find_or_raise(
         async_session=db_session, select_relationships=[Score.team], id=score_id

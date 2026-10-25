@@ -1,15 +1,9 @@
-from app.teams.registration_pricing import (
-    get_registration_pricing,
-    set_use_early_bird_fee,
-    get_use_early_bird_fee,
-)
 import asyncio
 import base64
 import html
 import json
 import logging
 import re
-import urllib.parse as urlparse
 from collections.abc import Sequence
 from datetime import date
 from typing import Any, Literal
@@ -24,6 +18,7 @@ from app.athletes.models import Athlete
 from app.athletes.schemas import (
     AthleteBaseModel,
     AthleteOutputModel,
+    AthletePersonModel,
     AthleteRegistrationModel,
 )
 from app.database.dependencies import db_dependency
@@ -38,12 +33,20 @@ from app.scores.models import Score, score_is_verified
 from app.scores.schemas import ScoreOutputModel
 from app.scores.service import rerank_event
 from app.settings import registration_settings, resend_settings
+from app.teams.registration_pricing import (
+    get_registration_pricing,
+    get_use_early_bird_fee,
+    set_use_early_bird_fee,
+)
 
 from .models import Team
 from .payment_link import add_domain_redirect, get_payment_link
 from .schemas import (
+    RegistrationPricingModel,
+    RegistrationPricingUpdateModel,
     SentEmailDeliveryListModel,
     SentEmailDeliveryModel,
+    TeamPaymentLinkModel,
     TeamRegistrationModel,
     TeamRegistrationResponseModel,
     TeamsCreateModel,
@@ -51,9 +54,6 @@ from .schemas import (
     TeamsOutputModel,
     TeamsUpdateModel,
     WaiverLinkModel,
-    RegistrationPricingModel,
-    RegistrationPricingUpdateModel,
-    TeamPaymentLinkModel,
 )
 
 log = logging.getLogger("uvicorn.error")
@@ -280,7 +280,7 @@ def _list_sent_email_deliveries(
     after: str | None = None
     has_more = False
     for _ in range(_DELIVERY_MAX_PAGES):
-        params: dict[str, Any] = {"limit": _DELIVERY_PAGE_SIZE}
+        params: resend.Emails.ListParams = {"limit": _DELIVERY_PAGE_SIZE}
         if after:
             params["after"] = after
         page = resend.Emails.list(params)
@@ -495,13 +495,13 @@ async def register_team(
 
     female_count = sum(1 for athlete in team.athletes if athlete.sex == "F")
     male_count = sum(1 for athlete in team.athletes if athlete.sex == "M")
-    if len(team.athletes) != 6:  # noqa: PLR2004
+    if len(team.athletes) != 6:
         raise conflict_exception(detail="A team must have exactly 6 athletes.")
-    if female_count != 2:  # noqa: PLR2004
+    if female_count != 2:
         raise conflict_exception(
             detail="A team must have exactly 2 female athletes.",
         )
-    if male_count != 4:  # noqa: PLR2004
+    if male_count != 4:
         raise conflict_exception(
             detail="A team must have exactly 4 male athletes.",
         )
@@ -556,7 +556,7 @@ def get_waiver_links(team: TeamRegistrationModel) -> list[WaiverLinkModel] | Non
 
 def get_waiver_links_for_athletes(
     team_name: str,
-    athletes: Sequence[AthleteBaseModel],
+    athletes: Sequence[AthletePersonModel],
 ) -> list[WaiverLinkModel] | None:
     waiver_links = []
     for athlete in athletes:
@@ -571,7 +571,7 @@ def get_waiver_links_for_athletes(
     return waiver_links if waiver_links else None
 
 
-def get_waiver_link(athlete: AthleteBaseModel, team_name: str) -> str:
+def get_waiver_link(athlete: AthletePersonModel, team_name: str) -> str:
 
     waiver_params = {
         "name": athlete.first_name + " " + athlete.last_name,

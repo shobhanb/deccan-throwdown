@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.dependencies import db_dependency
 from app.firebase_auth.dependencies import admin_user_dependency
 from app.teams.models import Team
-from app.teams.schemas import TeamRegistrationModel, TeamRegistrationResponseModel
 from app.teams.registration_pricing import get_use_early_bird_fee
+from app.teams.schemas import TeamRegistrationModel, TeamRegistrationResponseModel
 from app.teams.views import (
     get_payment_link,
     get_waiver_links,

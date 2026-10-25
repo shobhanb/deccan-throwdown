@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+from datetime import date
 from typing import TYPE_CHECKING
 from uuid import UUID
-
-from datetime import date
 
 from sqlalchemy import Boolean, Date, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
