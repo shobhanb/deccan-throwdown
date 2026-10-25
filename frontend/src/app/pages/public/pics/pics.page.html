@@ -144,9 +144,6 @@
           <ion-button (click)="shareImage()" aria-label="Share photo">
             <ion-icon name="share-outline" slot="icon-only"></ion-icon>
           </ion-button>
-          <ion-button (click)="downloadImage()" aria-label="Download photo">
-            <ion-icon name="download-outline" slot="icon-only"></ion-icon>
-          </ion-button>
           <ion-button (click)="closeLightbox()" aria-label="Close">
             <ion-icon name="close-outline" slot="icon-only"></ion-icon>
           </ion-button>
@@ -154,8 +151,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="modal-content">
-      <div class="image-viewer">
+      <div class="image-viewer" [class.is-zoomed]="zoomScale() > 1">
         @if (selectedImageIndex() !== null) {
+        @if (zoomScale() <= 1) {
         <ion-button
           class="nav-button prev-button"
           fill="clear"
@@ -165,13 +163,26 @@
         >
           <ion-icon name="chevron-back-outline"></ion-icon>
         </ion-button>
-        <div class="full-image-container">
+        }
+        <div
+          class="full-image-container"
+          [class.is-zoomed]="zoomScale() > 1"
+          (touchstart)="onZoomTouchStart($event)"
+          (touchmove)="onZoomTouchMove($event)"
+          (touchend)="onZoomTouchEnd($event)"
+          (touchcancel)="onZoomTouchEnd($event)"
+          (wheel)="onZoomWheel($event)"
+          (dblclick)="onZoomDoubleClick($event)"
+        >
           <img
             [src]="imageData()[selectedImageIndex()!].path"
             [alt]="imageData()[selectedImageIndex()!].filename"
             class="full-size-image"
+            [style.transform]="zoomTransform()"
+            draggable="false"
           />
         </div>
+        @if (zoomScale() <= 1) {
         <ion-button
           class="nav-button next-button"
           fill="clear"
@@ -181,6 +192,7 @@
         >
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </ion-button>
+        }
         }
       </div>
     </ion-content>

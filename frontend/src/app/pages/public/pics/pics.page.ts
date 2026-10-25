@@ -42,7 +42,6 @@ import {
   chevronBackOutline,
   chevronForwardOutline,
   closeOutline,
-  downloadOutline,
   shareOutline,
 } from 'ionicons/icons';
 
@@ -128,13 +127,41 @@ export class PicsPage implements OnInit {
   selectedImageIndex = signal<number | null>(null);
   private loadedForEvent: string | null = null;
 
+  private static readonly MIN_ZOOM = 1;
+  private static readonly MAX_ZOOM = 4;
+  private static readonly DOUBLE_TAP_ZOOM = 2.5;
+
+  zoomScale = signal(1);
+  zoomTranslateX = signal(0);
+  zoomTranslateY = signal(0);
+  zoomTransform = computed(
+    () =>
+      `translate3d(${this.zoomTranslateX()}px, ${this.zoomTranslateY()}px, 0) scale(${this.zoomScale()})`
+  );
+
+  private pinchStartDistance = 0;
+  private pinchStartScale = 1;
+  private pinchOriginX = 0;
+  private pinchOriginY = 0;
+  private pinchStartTranslateX = 0;
+  private pinchStartTranslateY = 0;
+  private isPinching = false;
+  private isPanning = false;
+  private didInteract = false;
+  private panStartX = 0;
+  private panStartY = 0;
+  private panStartTranslateX = 0;
+  private panStartTranslateY = 0;
+  private lastTapAt = 0;
+  private lastTapX = 0;
+  private lastTapY = 0;
+
   constructor() {
     addIcons({
       cameraOutline,
       closeOutline,
       chevronBackOutline,
       chevronForwardOutline,
-      downloadOutline,
       shareOutline,
     });
   }
@@ -155,16 +182,19 @@ export class PicsPage implements OnInit {
   }
 
   openLightbox(index: number) {
+    this.resetZoom();
     this.selectedImageIndex.set(index);
   }
 
   closeLightbox() {
+    this.resetZoom();
     this.selectedImageIndex.set(null);
   }
 
   prevImage() {
     const current = this.selectedImageIndex();
     if (current !== null && current > 0) {
+      this.resetZoom();
       this.selectedImageIndex.set(current - 1);
     }
   }
@@ -172,6 +202,7 @@ export class PicsPage implements OnInit {
   nextImage() {
     const current = this.selectedImageIndex();
     if (current !== null && current < this.imageData().length - 1) {
+      this.resetZoom();
       this.selectedImageIndex.set(current + 1);
     }
   }
@@ -184,37 +215,223 @@ export class PicsPage implements OnInit {
     return this.imageData()[index] ?? null;
   }
 
-  async downloadImage(): Promise<void> {
-    const image = this.selectedImage();
-    if (!image || typeof document === 'undefined') {
+  resetZoom() {
+    this.zoomScale.set(1);
+    this.zoomTranslateX.set(0);
+    this.zoomTranslateY.set(0);
+    this.isPinching = false;
+    this.isPanning = false;
+    this.didInteract = false;
+    this.pinchStartDistance = 0;
+  }
+
+  onZoomTouchStart(event: TouchEvent) {
+    if (event.touches.length === 2) {
+      event.preventDefault();
+      this.isPinching = true;
+      this.isPanning = false;
+      this.didInteract = true;
+      this.lastTapAt = 0;
+      this.pinchStartDistance = this.touchDistance(
+        event.touches[0],
+        event.touches[1]
+      );
+      this.pinchStartScale = this.zoomScale();
+      this.pinchStartTranslateX = this.zoomTranslateX();
+      this.pinchStartTranslateY = this.zoomTranslateY();
+      const mid = this.touchMidpoint(event.touches[0], event.touches[1]);
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      this.pinchOriginX = mid.x - rect.left - rect.width / 2;
+      this.pinchOriginY = mid.y - rect.top - rect.height / 2;
       return;
     }
 
-    try {
-      const response = await fetch(image.path);
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.status}`);
-      }
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = image.filename;
-      link.rel = 'noopener';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(objectUrl);
-    } catch {
-      // Same-origin fallback if fetch/blob download is blocked.
-      const link = document.createElement('a');
-      link.href = image.path;
-      link.download = image.filename;
-      link.rel = 'noopener';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    if (event.touches.length === 1 && this.zoomScale() > 1) {
+      this.isPanning = true;
+      this.didInteract = false;
+      this.panStartX = event.touches[0].clientX;
+      this.panStartY = event.touches[0].clientY;
+      this.panStartTranslateX = this.zoomTranslateX();
+      this.panStartTranslateY = this.zoomTranslateY();
     }
+  }
+
+  onZoomTouchMove(event: TouchEvent) {
+    if (this.isPinching && event.touches.length === 2) {
+      event.preventDefault();
+      this.didInteract = true;
+      const distance = this.touchDistance(event.touches[0], event.touches[1]);
+      if (this.pinchStartDistance <= 0) {
+        return;
+      }
+      const nextScale = this.clampZoom(
+        this.pinchStartScale * (distance / this.pinchStartDistance)
+      );
+      const scaleRatio = nextScale / this.pinchStartScale;
+      this.zoomScale.set(nextScale);
+      this.zoomTranslateX.set(
+        this.pinchStartTranslateX + this.pinchOriginX * (1 - scaleRatio)
+      );
+      this.zoomTranslateY.set(
+        this.pinchStartTranslateY + this.pinchOriginY * (1 - scaleRatio)
+      );
+      this.clampPan(event.currentTarget as HTMLElement);
+      return;
+    }
+
+    if (this.isPanning && event.touches.length === 1 && this.zoomScale() > 1) {
+      event.preventDefault();
+      const dx = event.touches[0].clientX - this.panStartX;
+      const dy = event.touches[0].clientY - this.panStartY;
+      if (dx * dx + dy * dy > 25) {
+        this.didInteract = true;
+      }
+      this.zoomTranslateX.set(this.panStartTranslateX + dx);
+      this.zoomTranslateY.set(this.panStartTranslateY + dy);
+      this.clampPan(event.currentTarget as HTMLElement);
+    }
+  }
+
+  onZoomTouchEnd(event: TouchEvent) {
+    const wasPinching = this.isPinching;
+    if (event.touches.length < 2) {
+      this.isPinching = false;
+    }
+
+    if (event.touches.length === 0) {
+      this.isPanning = false;
+
+      if (this.zoomScale() > 1 && this.zoomScale() <= 1.05) {
+        this.resetZoom();
+        return;
+      }
+
+      // Double-tap zoom when the gesture was a tap, not a pan/pinch.
+      if (
+        event.changedTouches.length === 1 &&
+        !wasPinching &&
+        !this.didInteract
+      ) {
+        const touch = event.changedTouches[0];
+        const now = Date.now();
+        const dt = now - this.lastTapAt;
+        const dx = touch.clientX - this.lastTapX;
+        const dy = touch.clientY - this.lastTapY;
+        if (dt > 0 && dt < 300 && dx * dx + dy * dy < 400) {
+          this.toggleZoomAt(
+            event.currentTarget as HTMLElement,
+            touch.clientX,
+            touch.clientY
+          );
+          this.lastTapAt = 0;
+          return;
+        }
+        this.lastTapAt = now;
+        this.lastTapX = touch.clientX;
+        this.lastTapY = touch.clientY;
+      }
+      return;
+    }
+
+    if (event.touches.length === 1 && this.zoomScale() > 1) {
+      this.isPanning = true;
+      this.panStartX = event.touches[0].clientX;
+      this.panStartY = event.touches[0].clientY;
+      this.panStartTranslateX = this.zoomTranslateX();
+      this.panStartTranslateY = this.zoomTranslateY();
+    }
+  }
+
+  onZoomWheel(event: WheelEvent) {
+    event.preventDefault();
+    const container = event.currentTarget as HTMLElement;
+    const rect = container.getBoundingClientRect();
+    const originX = event.clientX - rect.left - rect.width / 2;
+    const originY = event.clientY - rect.top - rect.height / 2;
+    const prevScale = this.zoomScale();
+    const delta = event.deltaY > 0 ? 0.9 : 1.1;
+    const nextScale = this.clampZoom(prevScale * delta);
+    if (nextScale === prevScale) {
+      return;
+    }
+    const ratio = nextScale / prevScale;
+    this.zoomScale.set(nextScale);
+    this.zoomTranslateX.set(
+      this.zoomTranslateX() + originX * (1 - ratio)
+    );
+    this.zoomTranslateY.set(
+      this.zoomTranslateY() + originY * (1 - ratio)
+    );
+    if (nextScale <= 1) {
+      this.resetZoom();
+      return;
+    }
+    this.clampPan(container);
+  }
+
+  onZoomDoubleClick(event: MouseEvent) {
+    event.preventDefault();
+    this.toggleZoomAt(
+      event.currentTarget as HTMLElement,
+      event.clientX,
+      event.clientY
+    );
+  }
+
+  private toggleZoomAt(
+    container: HTMLElement,
+    clientX: number,
+    clientY: number
+  ) {
+    if (this.zoomScale() > 1) {
+      this.resetZoom();
+      return;
+    }
+    const rect = container.getBoundingClientRect();
+    const originX = clientX - rect.left - rect.width / 2;
+    const originY = clientY - rect.top - rect.height / 2;
+    const nextScale = PicsPage.DOUBLE_TAP_ZOOM;
+    this.zoomScale.set(nextScale);
+    this.zoomTranslateX.set(originX * (1 - nextScale));
+    this.zoomTranslateY.set(originY * (1 - nextScale));
+    this.clampPan(container);
+  }
+
+  private clampZoom(scale: number): number {
+    return Math.min(
+      PicsPage.MAX_ZOOM,
+      Math.max(PicsPage.MIN_ZOOM, scale)
+    );
+  }
+
+  private clampPan(container: HTMLElement) {
+    const scale = this.zoomScale();
+    if (scale <= 1) {
+      this.zoomTranslateX.set(0);
+      this.zoomTranslateY.set(0);
+      return;
+    }
+    const maxX = (container.clientWidth * (scale - 1)) / 2;
+    const maxY = (container.clientHeight * (scale - 1)) / 2;
+    this.zoomTranslateX.set(
+      Math.min(maxX, Math.max(-maxX, this.zoomTranslateX()))
+    );
+    this.zoomTranslateY.set(
+      Math.min(maxY, Math.max(-maxY, this.zoomTranslateY()))
+    );
+  }
+
+  private touchDistance(a: Touch, b: Touch): number {
+    const dx = a.clientX - b.clientX;
+    const dy = a.clientY - b.clientY;
+    return Math.hypot(dx, dy);
+  }
+
+  private touchMidpoint(a: Touch, b: Touch): { x: number; y: number } {
+    return {
+      x: (a.clientX + b.clientX) / 2,
+      y: (a.clientY + b.clientY) / 2,
+    };
   }
 
   async shareImage(): Promise<void> {
@@ -256,8 +473,12 @@ export class PicsPage implements OnInit {
       }
     }
 
-    // Desktop / unsupported Web Share: fall back to download.
-    await this.downloadImage();
+    // Desktop / unsupported Web Share: copy image URL instead of downloading.
+    try {
+      await navigator.clipboard.writeText(absoluteUrl);
+    } catch {
+      // Ignore clipboard failures.
+    }
   }
 
   @HostListener('document:keydown', ['$event'])
