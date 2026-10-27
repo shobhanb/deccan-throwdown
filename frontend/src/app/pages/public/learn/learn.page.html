@@ -4,14 +4,14 @@
   @if (!started()) {
     <app-page-header
       title="While you wait"
-      subtitle="One CrossFit idea between heats."
+      subtitle="Be a student of the sport."
     ></app-page-header>
 
     <section class="learn-card">
-      <p class="learn-body">Learn something new about CrossFit from the Level 1 curriculum. No, this won't get you points for Deccan Throwdown. But it will help you understand the sport better.</p>
+      <p class="learn-body">Learn something new from the <a href="https://journal.crossfit.com/" target="_blank" rel="noopener noreferrer">Crossfit Journal</a> about movements, methodology, and benchmarks. No, this won't get you points for Deccan Throwdown. But it will help you understand the sport better.</p>
       <ul class="snippets">
         <li>
-          <strong>CrossFit Movements.</strong>
+          <strong>Movements.</strong>
           The points of performance for that movement, each one explained
           for the rep. 
         </li>
@@ -28,7 +28,7 @@
       </ul>
       
       <h2 class="question-prompt">Choose a category</h2>
-      <ion-button expand="block" (click)="start('movement')">CrossFit Movements</ion-button>
+      <ion-button expand="block" (click)="start('movement')">Movements</ion-button>
       <ion-button expand="block" (click)="start('methodology')">Methodology</ion-button>
       <ion-button expand="block" (click)="start('benchmark')">Benchmarks</ion-button>
       <ion-button expand="block" fill="outline" (click)="start('random')">Surprise me!</ion-button>

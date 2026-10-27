@@ -7,33 +7,33 @@ const homeSeo: SeoRouteData = {
 };
 
 const wodsSeo: SeoRouteData = {
-  title: 'WODs — Deccan Throwdown CrossFit Workouts',
+  title: 'WODs — Deccan Throwdown Team Workouts',
   description:
-    'Workout descriptions and movement standards for Deccan Throwdown — the CrossFit competition at CrossFit Monkey Flag.',
+    'Workout descriptions and movement standards for Deccan Throwdown — the team competition at CrossFit Monkey Flag.',
 };
 
 const teamsSeo: SeoRouteData = {
   title: 'Teams — Deccan Throwdown',
   description:
-    'Registered teams and divisions for Deccan Throwdown, the CrossFit team throwdown at CrossFit Monkey Flag.',
+    'Registered teams and divisions for Deccan Throwdown, the team competition at CrossFit Monkey Flag.',
 };
 
 const leaderboardSeo: SeoRouteData = {
   title: 'Leaderboard — Deccan Throwdown Live Scores',
   description:
-    'Live CrossFit competition leaderboard and scores for Deccan Throwdown at CrossFit Monkey Flag.',
+    'Live team competition leaderboard and scores for Deccan Throwdown at CrossFit Monkey Flag.',
 };
 
 const picsSeo: SeoRouteData = {
   title: 'Gallery — Deccan Throwdown Photos',
   description:
-    'Photos from Deccan Throwdown CrossFit competitions at CrossFit Monkey Flag.',
+    'Photos from Deccan Throwdown team competitions at CrossFit Monkey Flag.',
 };
 
 const aboutSeo: SeoRouteData = {
   title: 'About — Deccan Throwdown',
   description:
-    'Deccan Throwdown is a CrossFit team competition in Pune at CrossFit Monkey Flag. Event dates, venue, and how to follow WODs, teams, and the live leaderboard.',
+    'Deccan Throwdown is a team competition in Pune at CrossFit Monkey Flag. Event dates, venue, and how to follow WODs, teams, and the live leaderboard.',
 };
 
 const learnSeo: SeoRouteData = {
@@ -45,7 +45,7 @@ const learnSeo: SeoRouteData = {
 const registerSeo: SeoRouteData = {
   title: 'Register — Deccan Throwdown Team Registration',
   description:
-    'Register your team for Deccan Throwdown — CrossFit team competition at CrossFit Monkey Flag, Pune.',
+    'Register your team for Deccan Throwdown — team competition at CrossFit Monkey Flag, Pune.',
 };
 
 export const routes: Routes = [

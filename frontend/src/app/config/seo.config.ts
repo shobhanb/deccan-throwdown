@@ -20,15 +20,15 @@ export const SEO_ORGANIZER = {
 
 /** Shared homepage title and description. Keep index.html in sync. */
 export const SEO_HOME = {
-  title: 'Deccan Throwdown — CrossFit Competition in Pune',
+  title: 'Deccan Throwdown — Team Competition in Pune',
   description:
-    'Deccan Throwdown is a CrossFit competition in Pune at CrossFit Monkey Flag, Futsal 5, Centro Mall. Register your team, view WODs, and follow the live leaderboard.',
+    'Deccan Throwdown is a team competition in Pune at CrossFit Monkey Flag, Futsal 5, Centro Mall. Register your team, view WODs, and follow the live leaderboard.',
 };
 
 export const SEO_DEFAULT_KEYWORDS = [
   'Deccan Throwdown',
   'CrossFit Pune',
-  'CrossFit competition in Pune',
+  'team competition in Pune',
   'CrossFit Monkey Flag',
   'CrossFit',
   'team CrossFit',
@@ -98,7 +98,7 @@ export function seoForPublicPath(
   const place = `${SEO_VENUE.name} in ${SEO_VENUE.addressLocality}`;
   return {
     title: `${label} — ${event.eventName}`,
-    description: `${label} for ${event.eventName} (${event.eventDates}), a CrossFit competition at ${place}.`,
+    description: `${label} for ${event.eventName} (${event.eventDates}), a team competition at ${place}.`,
   };
 }
 
