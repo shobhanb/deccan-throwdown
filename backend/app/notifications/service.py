@@ -69,11 +69,11 @@ class NotificationService:
         category: str,
     ) -> None:
         NotificationService.send_to_topic(
-            admin_topic(),
+            event_topic(event_short_name),
             f"New {category} Team Registration!",
-            f"New team in category {category} for {event_short_name}: {team_name}",
+            f"New team in category {category}: {team_name}",
             event_short_name=event_short_name,
-            route="/admin/teams",
+            route=f"/teams/{event_short_name}",
         )
 
     @staticmethod
@@ -93,11 +93,11 @@ class NotificationService:
         category: str,
     ) -> None:
         NotificationService.send_to_topic(
-            event_topic(event_short_name),
-            "New Team on the Roster!",
-            f"New team in category {category} for {event_short_name}: {team_name}",
+            admin_topic(),
+            "Team Verified",
+            f"{team_name} ({category}) is verified",
             event_short_name=event_short_name,
-            route=f"/teams/{event_short_name}",
+            route="/admin/teams",
         )
 
     @staticmethod

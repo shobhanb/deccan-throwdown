@@ -196,26 +196,9 @@ export class EditTeamPage {
     return this.teamForm().valid() && this.teamForm().dirty();
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (!this.teamFormValid()) {
       return;
-    }
-
-    const formValue = this.teamModel();
-    const verifying =
-      formValue.verified &&
-      (!this.isEditing() || !this.editTeam()?.verified);
-
-    if (verifying) {
-      const confirmed = await this.alertService.showConfirm(
-        'Verify team?',
-        `This will mark ${formValue.team_name.trim()} as verified and send a push notification to everyone subscribed to event updates.`,
-        'Verify and notify',
-        'Cancel'
-      );
-      if (!confirmed) {
-        return;
-      }
     }
 
     if (this.isEditing()) {
