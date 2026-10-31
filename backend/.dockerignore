@@ -1,1 +1,14 @@
 .venv/
+.git/
+__pycache__/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.env
+.env.*
+*.db
+*.json
+*.md
+.python-version
+Dockerfile
+.dockerignore

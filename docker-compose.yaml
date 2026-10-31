@@ -9,6 +9,9 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/database.db:/app/database.db
+      - ./backend/.env:/app/.env:ro
+      - ./backend/firebase_service_account_key.json:/app/firebase_service_account_key.json:ro
+
 
   nginx:
     image: nginx:alpine
