@@ -102,13 +102,12 @@ export class WodsPage implements OnInit {
 
   getWodTypeChips(scoreTypes: WodConfig['scoreTypes']): string[] {
     const labels: Record<string, string> = {
-      Reps: 'AMRAP',
-      Time: 'For Time',
-      Weight: 'Max Weight',
+      Reps: 'Reps',
+      Time: 'Time',
+      Weight: 'Weight',
       Tiebreak: 'Tiebreak',
     };
     return scoreTypes
-      .filter((type) => type !== 'Tiebreak')
       .map((type) => labels[type] ?? type);
   }
 
