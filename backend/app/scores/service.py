@@ -3,8 +3,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.even_scoring_tables.models import EvenScoringTable
 from app.notifications.wod_complete import sync_wod_leaderboard_notification
+from app.scores.detail import detail_affects_ranking, rank_ttmm_scores
+from app.scores.detail.types import TtmmScoreDetail
 from app.scores.models import Score, score_is_verified
+from app.scores.points import points_for_rank, tie_points
 from app.teams.models import Team
+
+# Re-export for any existing imports / tests
+_points_for_rank = points_for_rank
+_tie_points = tie_points
 
 
 def _score_sort_key(score: Score) -> tuple[float, float, float]:
@@ -15,30 +22,8 @@ def _score_sort_key(score: Score) -> tuple[float, float, float]:
     )
 
 
-def _points_for_rank(
-    table_rows: list[EvenScoringTable],
-    field_size: int,
-    rank: int,
-) -> int:
-    for row in table_rows:
-        if row.min_athletes <= field_size <= row.max_athletes and row.rank == rank:
-            return row.points
-    return 0
-
-
-def _tie_points(
-    table_rows: list[EvenScoringTable],
-    field_size: int,
-    start_rank: int,
-    tied_count: int,
-) -> int:
-    if tied_count <= 0:
-        return 0
-    total = sum(
-        _points_for_rank(table_rows, field_size, start_rank + offset)
-        for offset in range(tied_count)
-    )
-    return round(total / tied_count)
+def _serialize_ttmm_detail(detail: TtmmScoreDetail) -> str:
+    return detail.model_dump_json()
 
 
 async def update_ranks(
@@ -63,6 +48,30 @@ async def rerank_event(async_session: AsyncSession, event_short_name: str) -> No
     await update_overall_ranks(async_session, event_short_name)
     for wod_number in wod_numbers:
         await sync_wod_leaderboard_notification(async_session, event_short_name, wod_number)
+
+
+def _rank_flat_scores(
+    category_scores: list[Score],
+    table_rows: list[EvenScoringTable],
+) -> None:
+    field_size = len(category_scores)
+    sorted_scores = sorted(category_scores, key=_score_sort_key)
+
+    groups: list[tuple[tuple[float, float, float], list[Score]]] = []
+    for score in sorted_scores:
+        score_key = _score_sort_key(score)
+        if groups and groups[-1][0] == score_key:
+            groups[-1][1].append(score)
+        else:
+            groups.append((score_key, [score]))
+
+    current_rank = 1
+    for _, tied_scores in groups:
+        points = tie_points(table_rows, field_size, current_rank, len(tied_scores))
+        for score in tied_scores:
+            score.wod_rank = current_rank
+            score.wod_points = points
+        current_rank += len(tied_scores)
 
 
 async def update_score_ranks(
@@ -91,25 +100,28 @@ async def update_score_ranks(
             scores_by_category.setdefault(team.category, []).append(score)
 
     for category_scores in scores_by_category.values():
-        field_size = len(category_scores)
-        sorted_scores = sorted(category_scores, key=_score_sort_key)
+        ttmm_scores = [
+            score for score in category_scores if detail_affects_ranking(score.score_detail)
+        ]
+        flat_scores = [
+            score
+            for score in category_scores
+            if not detail_affects_ranking(score.score_detail)
+        ]
 
-        groups: list[tuple[tuple[float, float, float], list[Score]]] = []
-        for score in sorted_scores:
-            score_key = _score_sort_key(score)
-            if groups and groups[-1][0] == score_key:
-                groups[-1][1].append(score)
-            else:
-                groups.append((score_key, [score]))
-
-        current_rank = 1
-        for _, tied_scores in groups:
-            points = _tie_points(table_rows, field_size, current_rank, len(tied_scores))
-            for score in tied_scores:
-                score.wod_rank = current_rank
-                score.wod_points = points
+        if ttmm_scores:
+            rank_ttmm_scores(
+                ttmm_scores,
+                table_rows,
+                serialize=_serialize_ttmm_detail,
+            )
+            for score in ttmm_scores:
                 async_session.add(score)
-            current_rank += len(tied_scores)
+
+        if flat_scores:
+            _rank_flat_scores(flat_scores, table_rows)
+            for score in flat_scores:
+                async_session.add(score)
 
     await async_session.commit()
 

@@ -43,6 +43,12 @@ import {
 } from 'src/app/config/config';
 import { ActivatedRoute } from '@angular/router';
 import { EventTeamsDataService } from 'src/app/services/event-teams-data.service';
+import {
+  parseTtmmScoreDetail,
+  ttmmScoreboardComponents,
+  TtmmScoreboardComponentView,
+  TtmmScoreDetail,
+} from 'src/app/shared/score-detail/ttmm';
 
 @Component({
   selector: 'app-leaderboard',
@@ -88,6 +94,12 @@ export class LeaderboardPage implements OnInit {
     () =>
       this.wods().find((w) => w.wodNumber === this.selectedWod())?.wodName ||
       'Overall'
+  );
+  selectedWodConfig = computed(() =>
+    this.wods().find((w) => w.wodNumber === this.selectedWod())
+  );
+  isTtmmWod = computed(
+    () => this.selectedWodConfig()?.scoreDetailType === 'ttmm'
   );
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -165,6 +177,25 @@ export class LeaderboardPage implements OnInit {
     return (
       team.scores.find((score) => score.wod_number === this.selectedWod()) ||
       null
+    );
+  }
+
+  getTtmmDetail(team: apiTeamsOutputDetailModel): TtmmScoreDetail | null {
+    return parseTtmmScoreDetail(this.getWodScore(team)?.score_detail);
+  }
+
+  getTtmmComponents(
+    team: apiTeamsOutputDetailModel
+  ): TtmmScoreboardComponentView[] {
+    return ttmmScoreboardComponents(
+      this.getTtmmDetail(team),
+      team.category
+    );
+  }
+
+  getTtmmComponentTotal(team: apiTeamsOutputDetailModel): number | null {
+    return (
+      this.getTtmmDetail(team)?.results?.total_component_points ?? null
     );
   }
 

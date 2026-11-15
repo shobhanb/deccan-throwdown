@@ -53,16 +53,70 @@
   <ion-list [inset]="true" class="dt-card-scoreboard scoreboard-list">
     @for (team of filteredSortedTeamsData(); track team.id) {
     @if (team.rank) {
-    <ion-item class="leaderboard-row">
+    <ion-item class="leaderboard-row" [class.ttmm-row]="isTtmmWod()" lines="full">
       <div slot="start" class="rank-cell">
         <span class="stat-badge" [class.rank-gold]="team.rank === 1" [class.rank-silver]="team.rank === 2" [class.rank-bronze]="team.rank === 3">{{ team.rank }}</span>
       </div>
-      <ion-label>
+      <ion-label class="team-block">
         <h2><strong>{{ team.team_name }}</strong></h2>
         @for (athlete of team.athletes; track athlete.id) {
         <p>{{ athlete.first_name }} {{ athlete.last_name }}</p>
         }
+
+        @if (isTtmmWod()) {
+        <div class="ttmm-detail">
+          @if (getWodScore(team)?.wod_points != null) {
+          <p class="ttmm-wod-points">
+            WOD points: {{ getWodScore(team)!.wod_points }}
+            @if (getTtmmComponentTotal(team) != null) {
+            <span class="ttmm-muted">
+              · component total {{ getTtmmComponentTotal(team) }}
+            </span>
+            }
+          </p>
+          }
+
+          @for (component of getTtmmComponents(team); track component.key) {
+          <div class="ttmm-component" [class.incomplete]="!component.complete">
+            <div class="ttmm-component-header">
+              <strong>{{ component.label }}</strong>
+              <span class="ttmm-component-meta">
+                @if (component.rank) {
+                Rank {{ component.rank }}
+                }
+                @if (component.points) {
+                · {{ component.points }}pts
+                }
+                @if (!component.complete) {
+                · partial
+                }
+              </span>
+            </div>
+            <div class="ttmm-athletes">
+              @for (athlete of component.athletes; track athlete.label) {
+              <span class="ttmm-athlete">
+                {{ athlete.label }}:
+                {{ athlete.reps }}
+                @if (athlete.time) {
+                <span class="ttmm-muted">@ {{ athlete.time }}</span>
+                }
+              </span>
+              }
+            </div>
+            <div class="ttmm-totals">
+              Total: {{ component.totalReps }}
+              @if (component.totalTime) {
+              <span class="ttmm-muted"> · TB {{ component.totalTime }}</span>
+              }
+            </div>
+          </div>
+          } @empty {
+          <p class="ttmm-muted">No TTMM detail entered yet</p>
+          }
+        </div>
+        }
       </ion-label>
+
       @if (selectedWod() === 0) {
       <ion-label slot="end" class="ion-text-end score-column">
         @for (rank of getOverallScore(team); track $index) {
@@ -70,7 +124,7 @@
         }
         <p class="score-value total-score">{{ getTotalScore(team) }}</p>
       </ion-label>
-      } @else {
+      } @else if (!isTtmmWod()) {
       <ion-label slot="end" class="ion-text-end score-column">
         @if (getWodScore(team)?.reps != null) {
         <p class="score-value">Reps: {{ getWodScore(team)!.reps }}</p>

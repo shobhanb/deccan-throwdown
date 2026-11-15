@@ -29,6 +29,10 @@ import {
 } from 'src/app/api/models';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { apiErrorStatusText } from 'src/app/services/api-call.util';
+import {
+  parseTtmmScoreDetail,
+  ttmmSummaryLines,
+} from 'src/app/shared/score-detail/ttmm';
 
 @Component({
   selector: 'app-categories',
@@ -181,5 +185,21 @@ export class CategoriesPage implements OnInit {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  isTtmmWod(): boolean {
+    return this.wod()?.scoreDetailType === 'ttmm';
+  }
+
+  scoringLabel(): string {
+    if (this.isTtmmWod()) {
+      return 'Scoring: TTMM (3 components)';
+    }
+    return 'Scoring: ' + (this.wod()?.scoreTypes ?? []);
+  }
+
+  getTtmmSummary(teamId: string): string[] {
+    const score = this.getScore(teamId);
+    return ttmmSummaryLines(parseTtmmScoreDetail(score?.score_detail));
   }
 }

@@ -27,6 +27,7 @@ import {
   IonInput,
   IonSkeletonText,
   IonRouterLink,
+  IonLabel,
 } from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
@@ -42,6 +43,17 @@ import { AppConfigService } from 'src/app/services/app-config-service';
 import { ScoreFormModel } from 'src/app/shared/models/form-models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
+import {
+  emptyTtmmForm,
+  isTtmmFormValidPartial,
+  parseTtmmScoreDetail,
+  TtmmComponentKey,
+  TtmmFormModel,
+  ttmmAthleteLabels,
+  ttmmComponentLabel,
+  ttmmDetailToForm,
+  ttmmFormToDetailJson,
+} from 'src/app/shared/score-detail/ttmm';
 
 @Component({
   selector: 'app-score',
@@ -55,6 +67,7 @@ import { apiErrorStatusText, fromApi } from 'src/app/services/api-call.util';
     IonButton,
     IonItem,
     IonList,
+    IonLabel,
     IonRefresherContent,
     IonRefresher,
     IonBackButton,
@@ -90,6 +103,7 @@ export class ScorePage {
 
   wodNumber = signal<number>(0);
   wod = computed(() => this.appConfigService.getWodByNumber(this.wodNumber()));
+  isTtmm = computed(() => this.wod()?.scoreDetailType === 'ttmm');
 
   teamId = signal<string>('');
   teamData = signal<apiTeamsOutputDetailModel | null>(null);
@@ -102,6 +116,8 @@ export class ScorePage {
     tiebreak_seconds: null,
     score_detail: '',
   });
+
+  ttmmModel = signal<TtmmFormModel>(emptyTtmmForm());
 
   scoreForm = form(this.scoreModel, (schemaPath) => {
     min(schemaPath.reps, 0, { message: 'Reps must be 0 or greater' });
@@ -118,6 +134,9 @@ export class ScorePage {
       message: 'Tiebreak seconds must be 59 or less',
     });
   });
+
+  // Partial TTMM entry is allowed; range checks live in isTtmmFormValidPartial.
+  ttmmForm = form(this.ttmmModel);
 
   ionViewWillEnter() {
     this.getData();
@@ -152,35 +171,46 @@ export class ScorePage {
         team_id: this.teamId(),
         wod_number: this.wodNumber(),
       })
-    )
-      .subscribe({
-        next: (data: apiScoreOutputModel) => {
-          this.scoreData.set(data);
-          this.dataLoaded.set(true);
-          this.scoreModel.set({
-            reps: data.reps ?? null,
-            time_minutes:
-              data.time_s != null && data.time_s > 0
-                ? Math.floor(data.time_s / 60)
-                : null,
-            time_seconds:
-              data.time_s != null && data.time_s > 0 ? data.time_s % 60 : null,
-            tiebreak_minutes:
-              data.tiebreak_s != null && data.tiebreak_s > 0
-                ? Math.floor(data.tiebreak_s / 60)
-                : null,
-            tiebreak_seconds:
-              data.tiebreak_s != null && data.tiebreak_s > 0
-                ? data.tiebreak_s % 60
-                : null,
-            score_detail: data.score_detail || '',
-          });
-        },
-        error: () => {
-          this.scoreData.set(null);
-          this.dataLoaded.set(true);
-        },
-      });
+    ).subscribe({
+      next: (data: apiScoreOutputModel) => {
+        this.scoreData.set(data);
+        this.dataLoaded.set(true);
+        this.scoreModel.set({
+          reps: data.reps ?? null,
+          time_minutes:
+            data.time_s != null && data.time_s > 0
+              ? Math.floor(data.time_s / 60)
+              : null,
+          time_seconds:
+            data.time_s != null && data.time_s > 0 ? data.time_s % 60 : null,
+          tiebreak_minutes:
+            data.tiebreak_s != null && data.tiebreak_s > 0
+              ? Math.floor(data.tiebreak_s / 60)
+              : null,
+          tiebreak_seconds:
+            data.tiebreak_s != null && data.tiebreak_s > 0
+              ? data.tiebreak_s % 60
+              : null,
+          score_detail: data.score_detail || '',
+        });
+        this.ttmmModel.set(
+          ttmmDetailToForm(parseTtmmScoreDetail(data.score_detail))
+        );
+      },
+      error: () => {
+        this.scoreData.set(null);
+        this.dataLoaded.set(true);
+        this.ttmmModel.set(emptyTtmmForm());
+      },
+    });
+  }
+
+  componentLabel(key: TtmmComponentKey): string {
+    return ttmmComponentLabel(key, this.teamData()?.category);
+  }
+
+  athleteLabel(key: TtmmComponentKey, slot: 0 | 1): string {
+    return ttmmAthleteLabels(key)[slot];
   }
 
   submitScore() {
@@ -188,19 +218,35 @@ export class ScorePage {
       return;
     }
 
-    const formValue = this.scoreModel();
-    const timeInSeconds =
-      (formValue.time_minutes || 0) * 60 + (formValue.time_seconds || 0);
-    const tiebreakInSeconds =
-      (formValue.tiebreak_minutes || 0) * 60 +
-      (formValue.tiebreak_seconds || 0);
-
-    const scoreSubmission = {
-      reps: formValue.reps,
-      time_s: timeInSeconds > 0 ? timeInSeconds : null,
-      tiebreak_s: tiebreakInSeconds > 0 ? tiebreakInSeconds : null,
-      score_detail: formValue.score_detail || null,
+    let scoreSubmission: {
+      reps: number | null;
+      time_s: number | null;
+      tiebreak_s: number | null;
+      score_detail: string | null;
     };
+
+    if (this.isTtmm()) {
+      scoreSubmission = {
+        reps: null,
+        time_s: null,
+        tiebreak_s: null,
+        score_detail: ttmmFormToDetailJson(this.ttmmModel()),
+      };
+    } else {
+      const formValue = this.scoreModel();
+      const timeInSeconds =
+        (formValue.time_minutes || 0) * 60 + (formValue.time_seconds || 0);
+      const tiebreakInSeconds =
+        (formValue.tiebreak_minutes || 0) * 60 +
+        (formValue.tiebreak_seconds || 0);
+
+      scoreSubmission = {
+        reps: formValue.reps,
+        time_s: timeInSeconds > 0 ? timeInSeconds : null,
+        tiebreak_s: tiebreakInSeconds > 0 ? tiebreakInSeconds : null,
+        score_detail: formValue.score_detail || null,
+      };
+    }
 
     if (this.isEditing()) {
       fromApi(
@@ -254,6 +300,13 @@ export class ScorePage {
   }
 
   scoreFormValid() {
+    if (this.isTtmm()) {
+      return (
+        this.ttmmForm().valid() &&
+        this.ttmmForm().dirty() &&
+        isTtmmFormValidPartial(this.ttmmModel())
+      );
+    }
     return this.scoreForm().valid() && this.scoreForm().dirty();
   }
 
@@ -293,5 +346,12 @@ export class ScorePage {
     return team.athletes
       .map((a) => `${a.first_name} ${a.last_name[0]}`)
       .join(', ');
+  }
+
+  scoringLabel(): string {
+    if (this.isTtmm()) {
+      return 'Scoring: TTMM (3 components)';
+    }
+    return 'Scoring: ' + (this.wod()?.scoreTypes ?? []);
   }
 }

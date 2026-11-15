@@ -76,6 +76,73 @@
   margin-bottom: var(--dt-space-xl);
 }
 
+.ttmm-row {
+  --min-height: auto;
+  align-items: flex-start;
+
+  .rank-cell {
+    padding-top: var(--dt-space-sm);
+  }
+
+  .team-block {
+    margin: 0;
+    white-space: normal;
+  }
+}
+
+.ttmm-detail {
+  margin-top: var(--dt-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--dt-space-sm);
+}
+
+.ttmm-wod-points {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ttmm-component {
+  padding: var(--dt-space-sm);
+  border-radius: var(--ion-border-radius);
+  background: var(--dt-badge-background);
+  font-size: 0.8rem;
+}
+
+.ttmm-component.incomplete {
+  opacity: 0.85;
+}
+
+.ttmm-component-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--dt-space-xs);
+  margin-bottom: 4px;
+}
+
+.ttmm-component-meta,
+.ttmm-muted {
+  color: var(--ion-color-medium, #666);
+  font-weight: 400;
+}
+
+.ttmm-athletes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dt-space-sm);
+  margin-bottom: 2px;
+}
+
+.ttmm-athlete {
+  white-space: nowrap;
+}
+
+.ttmm-totals {
+  font-weight: 600;
+}
+
 @media (min-width: 769px) {
   .filter-bar {
     flex-direction: row;

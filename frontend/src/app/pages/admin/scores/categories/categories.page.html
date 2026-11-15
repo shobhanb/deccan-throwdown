@@ -24,7 +24,7 @@
     <strong>
       {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading WOD...' }}
     </strong>
-    <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
+    <div class="wod-score-type">{{ scoringLabel() }}</div>
     <div class="wod-summary">{{ wod()?.wodSummary }}</div>
     @if (verificationMode()) {
     <p class="admin-hint">Click the checkbox to verify scores</p>
@@ -51,6 +51,11 @@
                 }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
+                @if (isTtmmWod()) {
+                @for (line of getTtmmSummary(team.id); track $index) {
+                <h3>{{ line }}</h3>
+                }
+                } @else {
                 @if (getScore(team.id)?.reps != null) {
                 <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
                 } @if (getScore(team.id)?.time_s) {
@@ -64,6 +69,7 @@
                   convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
+                }
                 }
               </ion-label>
               <ion-checkbox
@@ -81,6 +87,11 @@
                 }
               </ion-label>
               <ion-label slot="end" class="ion-text-end">
+                @if (isTtmmWod()) {
+                @for (line of getTtmmSummary(team.id); track $index) {
+                <h3>{{ line }}</h3>
+                }
+                } @else {
                 @if (getScore(team.id)?.reps != null) {
                 <h3>{{ 'Reps: ' + getScore(team.id)?.reps }}</h3>
                 } @if (getScore(team.id)?.time_s) {
@@ -94,6 +105,7 @@
                   convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
+                }
                 } @if (getScore(team.id)?.verified) {
                 <p>Verified</p>
                 }

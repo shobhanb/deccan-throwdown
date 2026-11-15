@@ -3,7 +3,22 @@ from uuid import UUID
 from pydantic import field_validator
 
 from app.schemas import CustomBaseModel
+from app.scores.detail import (
+    ScoreDetailValidationError,
+    validate_and_normalize_score_detail,
+)
 from app.scores.models import score_is_verified
+
+
+def _normalize_score_detail(value: object) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise TypeError("score_detail must be a string")
+    try:
+        return validate_and_normalize_score_detail(value)
+    except ScoreDetailValidationError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 # Base model with all fields, using correct types and defaults
@@ -32,7 +47,10 @@ class ScoreOutputModel(ScoreModel):
 
 
 class ScoreCreateModel(ScoreBaseModel):
-    pass
+    @field_validator("score_detail", mode="before")
+    @classmethod
+    def validate_score_detail(cls, value: object) -> str | None:
+        return _normalize_score_detail(value)
 
 
 class ScoreUpdateModel(CustomBaseModel):
@@ -40,3 +58,8 @@ class ScoreUpdateModel(CustomBaseModel):
     time_s: int | None = None
     tiebreak_s: int | None = None
     score_detail: str | None = None
+
+    @field_validator("score_detail", mode="before")
+    @classmethod
+    def validate_score_detail(cls, value: object) -> str | None:
+        return _normalize_score_detail(value)

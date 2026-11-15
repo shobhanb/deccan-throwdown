@@ -1,5 +1,8 @@
 type ScoreType = 'Reps' | 'Weight' | 'Time' | 'Tiebreak';
 
+/** Discriminator for structured score_detail JSON. Extensible for display-only types later. */
+export type ScoreDetailType = 'ttmm';
+
 export type EventType = 'teams' | 'pairs';
 export type RegistrationStatus = 'open' | 'closed' | 'coming-soon';
 
@@ -33,6 +36,8 @@ export interface WodConfig {
   wodDescription?: string[];
   categoryWodDescription?: Record<string, string[]>;
   scoreTypes: ScoreType[];
+  /** When set, admin/leaderboard use typed score_detail; may affect ranking (e.g. ttmm). */
+  scoreDetailType?: ScoreDetailType;
 }
 
 export const appConfig: { [key: string]: AppConfig } = {
@@ -512,7 +517,8 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Each athlete will have 4 minutes to complete their respective movement, working independently.'
           ],
         },
-        scoreTypes: ['Time', 'Reps' ],
+        scoreTypes: [],
+        scoreDetailType: 'ttmm',
       },
       {
         wodNumber: 5,

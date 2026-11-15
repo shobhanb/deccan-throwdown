@@ -26,17 +26,177 @@
       <strong>
         {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading WOD...' }}
       </strong>
-      <div class="wod-score-type">{{ 'Scoring: ' + wod()?.scoreTypes }}</div>
+      <div class="wod-score-type">{{ scoringLabel() }}</div>
       <div class="wod-summary">{{ wod()?.wodSummary }}</div>
       @if (isVerified()) {
       <p class="admin-hint verified">Verified — editing disabled</p>
       } @else {
-      <p class="admin-hint">Score not yet verified</p>
+      <p class="admin-hint">
+        Score not yet verified — partial TTMM entry is allowed; incomplete
+        components are ranked once both athletes are filled in.
+      </p>
       }
     </div>
   </div>
 
   <form novalidate (submit)="submitScore(); $event.preventDefault()">
+    @if (isTtmm()) {
+    <ion-list [inset]="true" class="dt-admin-list score-entry-list">
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{ componentLabel('jump_rope') }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <p class="admin-hint">Time defaults to 4:00 if left blank when reps are entered</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('jump_rope', 0) + ' reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a1.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Min"
+          labelPlacement="stacked"
+          placeholder="4"
+          [formField]="ttmmForm.jump_rope.a1.tiebreak_minutes"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Sec"
+          labelPlacement="stacked"
+          placeholder="00"
+          min="0"
+          max="59"
+          [formField]="ttmmForm.jump_rope.a1.tiebreak_seconds"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('jump_rope', 1) + ' reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a2.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Min"
+          labelPlacement="stacked"
+          placeholder="4"
+          [formField]="ttmmForm.jump_rope.a2.tiebreak_minutes"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Sec"
+          labelPlacement="stacked"
+          placeholder="00"
+          min="0"
+          max="59"
+          [formField]="ttmmForm.jump_rope.a2.tiebreak_seconds"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-list [inset]="true" class="dt-admin-list score-entry-list">
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{ componentLabel('hold') }}</h2>
+          <p class="admin-hint">Time defaults to 4:00 if left blank when reps are entered</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('hold', 0) + ' reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a1.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Min"
+          labelPlacement="stacked"
+          placeholder="4"
+          [formField]="ttmmForm.hold.a1.tiebreak_minutes"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Sec"
+          labelPlacement="stacked"
+          placeholder="00"
+          min="0"
+          max="59"
+          [formField]="ttmmForm.hold.a1.tiebreak_seconds"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('hold', 1) + ' reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a2.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Min"
+          labelPlacement="stacked"
+          placeholder="4"
+          [formField]="ttmmForm.hold.a2.tiebreak_minutes"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Sec"
+          labelPlacement="stacked"
+          placeholder="00"
+          min="0"
+          max="59"
+          [formField]="ttmmForm.hold.a2.tiebreak_seconds"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-list [inset]="true" class="dt-admin-list score-entry-list">
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{ componentLabel('yoke') }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('yoke', 0) + ' distance / reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a1.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          [label]="athleteLabel('yoke', 1) + ' distance / reps'"
+          labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a2.reps"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+    } @else {
     <ion-list [inset]="true" class="dt-admin-list score-entry-list">
       @if (wod()?.scoreTypes?.includes('Reps') ||
       wod()?.scoreTypes?.includes('Weight')) {
@@ -87,18 +247,8 @@
         ></ion-input>
       </ion-item>
       }
-
-      <!-- <ion-item>
-        <ion-textarea
-          label="Score Detail"
-          labelPlacement="stacked"
-          formControlName="score_detail"
-          placeholder="Enter additional score details"
-          rows="4"
-          autoGrow="true"
-        ></ion-textarea>
-      </ion-item> -->
     </ion-list>
+    }
 
     @if (!isVerified()) {
     <ion-button
@@ -148,7 +298,6 @@
     }
   </ion-list>
 
-  <!-- Loading skeleton for buttons -->
   <ion-skeleton-text
     [animated]="true"
     style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"
