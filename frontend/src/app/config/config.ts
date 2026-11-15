@@ -449,9 +449,8 @@ export const appConfig: { [key: string]: AppConfig } = {
         categoryWodDescription: {
           Open: [
             '21 Min AMRAP:',
-            '80 Cal Row & 60 Cal Air Bike',
-            '4 athletes working at a time',
-            '20 Synchro Dumbell Deadlifts @ 15kg, 22.5kg pair',
+            '80 Cal Row & 60 Cal Air Bike; 4 athletes working at a time',
+            '20 Synchro Dumbell Deadlifts @ 15kg, 22.5kg pair; 2 athletes working at a time',
             '10 Wall Walks',
             '',
             'Workout Flow:',
@@ -461,9 +460,8 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
           Scaled: [
             '21 Min AMRAP:',
-            '50 Cal Row & 40 Cal Air Bike',
-            '4 athletes working at a time',
-            '20 Synchro Dumbell Deadlifts @ 10kg, 15kg pair',
+            '50 Cal Row & 40 Cal Air Bike; 4 athletes working at a time',
+            '20 Synchro Dumbell Deadlifts @ 10kg, 15kg pair; 2 athletes working at a time',
             '10 Seal Walks',
             '',
             'Workout Flow:',
