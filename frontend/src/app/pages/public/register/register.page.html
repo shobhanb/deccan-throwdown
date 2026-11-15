@@ -166,7 +166,7 @@
           @if (!slot.type) {
           <span>{{ slot.athlete.sex === 'F' ? 'Female' : 'Male' }}</span>
           }
-          <span>DOB: {{ slot.athlete.date_of_birth | date:'dd MMM yyyy':'UTC' }}</span>
+          <span>DOB: {{ slot.athlete.date_of_birth | date:'dd MMM yyyy' }}</span>
         </div>
         } @else {
         <span class="athlete-slot-label">
