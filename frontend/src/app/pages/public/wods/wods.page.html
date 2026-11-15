@@ -37,26 +37,37 @@
   </ion-segment>
   }
 
-  <div class="wod-grid">
-    @if (dataLoaded()) {
+  @if (dataLoaded()) {
+  <ion-accordion-group class="wod-grid">
     @for (wod of wods(); track wod.wodNumber) {
-    <article class="dt-card-workout wod-card">
-      <div class="wod-number text-display">WOD {{ wod.wodNumber }}</div>
-      <h2 class="wod-name">{{ wod.wodName }}</h2>
-      <div class="wod-type-chips">
-        @for (chip of getWodTypeChips(wod.scoreTypes); track chip) {
-        <span class="dt-pill">{{ chip }}</span>
+    <ion-accordion [value]="'wod-' + wod.wodNumber" class="dt-card-workout wod-card">
+      <div slot="header" class="wod-accordion-header">
+        <div class="wod-header-top">
+          <div class="wod-number text-display">WOD {{ wod.wodNumber }}</div>
+          <ion-icon name="chevron-down-outline" class="wod-expand-icon" aria-hidden="true"></ion-icon>
+        </div>
+        <h2 class="wod-name">{{ wod.wodName }}</h2>
+        <div class="wod-type-chips">
+          @for (chip of getWodTypeChips(wod.scoreTypes); track chip) {
+          <span class="dt-pill">{{ chip }}</span>
+          }
+        </div>
+        <div class="wod-summary">{{ wod.wodSummary }}</div>
+      </div>
+      <div slot="content">
+        @if (getWodDescription(wod).length) {
+        <div class="wod-description">
+          @for (line of getWodDescription(wod); track $index) {
+          <div class="wod-description-line">{{ line }}</div>
+          }
+        </div>
         }
       </div>
-      <div class="wod-summary">{{ wod.wodSummary }}</div>
-      <div class="wod-description">
-        @for (line of getWodDescription(wod); track $index) {
-        <div class="wod-description-line">{{ line }}</div>
-        }
-      </div>
-    </article>
+    </ion-accordion>
     }
-    } @else {
+  </ion-accordion-group>
+  } @else {
+  <div class="wod-grid">
     @for (item of [1, 2, 3]; track $index) {
     <article class="dt-card-workout wod-card wod-skeleton">
       <ion-skeleton-text [animated]="true" style="width: 40%; height: 24px"></ion-skeleton-text>
@@ -64,6 +75,6 @@
       <ion-skeleton-text [animated]="true" style="width: 90%; height: 14px; margin-top: 12px"></ion-skeleton-text>
     </article>
     }
-    }
   </div>
+  }
 </ion-content>

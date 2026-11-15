@@ -34,7 +34,36 @@
 }
 
 .wod-card {
+  padding: 0;
+  overflow: hidden;
+
+  &::part(content) {
+    background: transparent;
+  }
+}
+
+.wod-accordion-header {
   padding: var(--dt-space-md);
+  cursor: pointer;
+}
+
+.wod-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dt-space-sm);
+}
+
+.wod-expand-icon {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--ion-color-medium);
+  transition: transform 0.2s ease;
+}
+
+ion-accordion.accordion-expanding .wod-expand-icon,
+ion-accordion.accordion-expanded .wod-expand-icon {
+  transform: rotate(180deg);
 }
 
 .wod-number {
@@ -58,9 +87,13 @@
 
 .wod-summary {
   font-weight: 700;
-  padding-bottom: var(--dt-space-sm);
-  margin-bottom: var(--dt-space-sm);
-  border-bottom: 1px solid var(--ion-color-step-200, #e5e5ea);
+}
+
+.wod-description {
+  padding: 0 var(--dt-space-md) var(--dt-space-md);
+  border-top: 1px solid var(--ion-color-step-200, #e5e5ea);
+  margin-top: 0;
+  padding-top: var(--dt-space-sm);
 }
 
 .wod-description-line {
@@ -68,6 +101,10 @@
   padding: 3px 0;
   line-height: 1.4;
   font-size: 0.9rem;
+}
+
+.wod-skeleton {
+  padding: var(--dt-space-md);
 }
 
 @media (min-width: 769px) {

@@ -10,11 +10,14 @@ import {
   IonIcon,
   IonSegment,
   IonSegmentButton,
+  IonAccordion,
+  IonAccordionGroup,
 } from '@ionic/angular';
 import { PageHeaderComponent } from 'src/app/shared/page-header/page-header.component';
 import { PageToolbarComponent } from 'src/app/shared/page-toolbar/page-toolbar.component';
 import { addIcons } from 'ionicons';
 import {
+  chevronDownOutline,
   documentOutline,
   documentTextOutline,
   trophyOutline,
@@ -39,6 +42,8 @@ import { ActivatedRoute } from '@angular/router';
     IonRefresher,
     IonContent,
     IonSkeletonText,
+    IonAccordion,
+    IonAccordionGroup,
   ],
 })
 export class WodsPage implements OnInit {
@@ -65,7 +70,12 @@ export class WodsPage implements OnInit {
   );
 
   constructor() {
-    addIcons({ trophyOutline, documentOutline, documentTextOutline });
+    addIcons({
+      trophyOutline,
+      documentOutline,
+      documentTextOutline,
+      chevronDownOutline,
+    });
   }
 
   ngOnInit() {
