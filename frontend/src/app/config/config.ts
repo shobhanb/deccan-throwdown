@@ -406,7 +406,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 2,
         wodName: "Down 'n Dirty",
-        wodSummary: 'Synchro DB Box Step-Overs & Synchro Burpees',
+        wodSummary: 'For Time: Synchro DB Box Step-Overs & Synchro Burpees',
         categoryWodDescription: {
           Open: [
             'For time:',
@@ -440,7 +440,7 @@ export const appConfig: { [key: string]: AppConfig } = {
       {
         wodNumber: 3,
         wodName: 'Come with me if you want to live',
-        wodSummary: 'Calorie Row & Air Bike, Synchro Dumbell Deadlifts, Wall Walks',
+        wodSummary: '21 Min AMRAP: Calorie Row & Air Bike, Synchro Dumbell Deadlifts, Wall Walks',
         categoryWodDescription: {
           Open: [
             '21 Min AMRAP:',
@@ -512,7 +512,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             'Each athlete will have 4 minutes to complete their respective movement, working independently.'
           ],
         },
-        scoreTypes: ['Weight'],
+        scoreTypes: ['Time', 'Reps' ],
       },
       {
         wodNumber: 5,
