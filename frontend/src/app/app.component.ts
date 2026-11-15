@@ -64,6 +64,18 @@ export class AppComponent {
     { initialValue: false }
   );
 
+  /** Fullscreen TV scoreboard — hide menu, tabs, and split-pane chrome. */
+  displayMode = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) =>
+        (event as NavigationEnd).urlAfterRedirects.startsWith('/display')
+      ),
+      startWith(this.router.url.startsWith('/display'))
+    ),
+    { initialValue: false }
+  );
+
   constructor() {
     merge(
       of(null),
@@ -86,6 +98,13 @@ export class AppComponent {
         this.document.body.classList.toggle(
           'admin-banner-visible',
           this.showAdminBanner()
+        );
+      });
+
+      effect(() => {
+        this.document.body.classList.toggle(
+          'display-mode',
+          this.displayMode()
         );
       });
     }

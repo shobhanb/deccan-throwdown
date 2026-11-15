@@ -24,6 +24,12 @@ const leaderboardSeo: SeoRouteData = {
     'Live team competition leaderboard and scores for Deccan Throwdown at CrossFit Monkey Flag.',
 };
 
+const displaySeo: SeoRouteData = {
+  title: 'Live Display — Deccan Throwdown',
+  description:
+    'Fullscreen live scoreboard display for Deccan Throwdown at CrossFit Monkey Flag.',
+};
+
 const picsSeo: SeoRouteData = {
   title: 'Gallery — Deccan Throwdown Photos',
   description:
@@ -71,6 +77,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./leaderboard/leaderboard.page').then((m) => m.LeaderboardPage),
     data: { seo: leaderboardSeo },
+  },
+  {
+    path: 'display',
+    loadComponent: () =>
+      import('./display/display.page').then((m) => m.DisplayPage),
+    data: { seo: displaySeo },
   },
   {
     path: 'teams',

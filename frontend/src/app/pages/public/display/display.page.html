@@ -1,0 +1,112 @@
+<ion-content [fullscreen]="true" class="display-content">
+  <div class="display-shell">
+    <img
+      src="assets/brand/fortress-mark.svg"
+      alt=""
+      class="display-watermark"
+      aria-hidden="true"
+    />
+
+    <header class="display-header">
+      <div class="display-brand">
+        <img
+          src="icons/logo_192.jpg"
+          alt="Deccan Throwdown logo"
+          class="display-logo"
+        />
+        <div class="display-brand-text">
+          <h1 class="display-event text-display">{{ eventName }}</h1>
+          @if (lastUpdated(); as updated) {
+          <p class="display-updated">
+            Last updated {{ updated | date: 'h:mm:ss a' }}
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="display-meta">
+        @if (isLive()) {
+        <span class="dt-live-badge display-live-badge">Live</span>
+        }
+        @if (currentSlide(); as slide) {
+        <span class="display-category text-display">{{ slide.category }}</span>
+        }
+      </div>
+    </header>
+
+    @if (!leaderboardEnabled) {
+    <div class="display-empty">
+      <p class="text-display">Leaderboard unavailable</p>
+    </div>
+    } @else if (!dataLoaded()) {
+    <div class="display-empty">
+      <p class="text-display">Loading scores…</p>
+    </div>
+    } @else {
+    <div class="display-title-row">
+      <h2 class="display-view-title text-display">{{ viewTitle() }}</h2>
+    </div>
+
+    <div class="display-board" [attr.data-slide]="slideKey()">
+      @if (rows().length === 0) {
+      <div class="display-empty">
+        <p class="text-display">No teams in this category yet</p>
+      </div>
+      } @else {
+      <div class="display-table" role="table">
+        <div class="display-table-head" role="row">
+          <span role="columnheader">Rank</span>
+          <span role="columnheader">Team</span>
+          <span role="columnheader">Score</span>
+          <span role="columnheader">Points</span>
+        </div>
+        @for (row of rows(); track row.teamId) {
+        <div
+          class="display-row"
+          role="row"
+          [class.rank-1]="row.rank === 1"
+          [class.rank-2]="row.rank === 2"
+          [class.rank-3]="row.rank === 3"
+          [class.is-pending]="row.status === 'pending'"
+          [class.is-awaiting]="row.status === 'awaiting'"
+        >
+          <div class="col-rank" role="cell">
+            @if (row.rank != null) {
+            <span
+              class="rank-badge"
+              [class.rank-gold]="row.rank === 1"
+              [class.rank-silver]="row.rank === 2"
+              [class.rank-bronze]="row.rank === 3"
+              >{{ row.rank }}</span
+            >
+            } @else if (row.status === 'pending') {
+            <span class="status-pill pending">Pending</span>
+            } @else {
+            <span class="status-pill awaiting">—</span>
+            }
+          </div>
+          <div class="col-team" role="cell">
+            <strong class="team-name">{{ row.teamName }}</strong>
+            @if (isTtmmView() && row.status === 'verified') {
+            <div class="ttmm-compact">
+              @for (component of getTtmmComponents(row); track component.key) {
+              <span class="ttmm-chip">
+                {{ component.label }}: {{ component.totalReps
+                }}@if (component.rank) { · #{{ component.rank }} }
+              </span>
+              }
+            </div>
+            }
+          </div>
+          <div class="col-score" role="cell">{{ row.scoreLabel }}</div>
+          <div class="col-points" role="cell">
+            {{ row.pointsLabel || '' }}
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</ion-content>

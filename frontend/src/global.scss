@@ -506,6 +506,12 @@ ion-skeleton-text {
   }
 }
 
+body.display-mode {
+  ion-split-pane {
+    --side-width: 0;
+  }
+}
+
 .auth-content {
   --background: transparent;
   --color: #ffffff;

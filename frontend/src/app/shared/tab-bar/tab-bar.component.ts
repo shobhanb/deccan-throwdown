@@ -62,7 +62,11 @@ export class TabBarComponent {
     if (path.startsWith('/auth') || path.startsWith('/admin')) {
       return false;
     }
-    if (path.startsWith('/register') || path.startsWith('/pics')) {
+    if (
+      path.startsWith('/register') ||
+      path.startsWith('/pics') ||
+      path.startsWith('/display')
+    ) {
       return false;
     }
     if (TAB_ROUTES.includes(path)) {
