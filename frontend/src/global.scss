@@ -507,8 +507,18 @@ ion-skeleton-text {
 }
 
 body.display-mode {
+  overflow: hidden;
+
   ion-split-pane {
     --side-width: 0;
+  }
+
+  #main-content {
+    overflow: hidden;
+  }
+
+  ion-content.display-content {
+    --overflow: hidden;
   }
 }
 

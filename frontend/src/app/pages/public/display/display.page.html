@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="display-content">
+<ion-content [fullscreen]="true" [scrollY]="false" class="display-content">
   <div class="display-shell">
     <img
       src="assets/brand/fortress-mark.svg"
@@ -39,6 +39,22 @@
         }
       </div>
     </header>
+
+    @if (showRotateProgress()) {
+    <div
+      class="rotate-progress"
+      role="progressbar"
+      aria-label="Time until next screen"
+      aria-hidden="true"
+    >
+      @for (key of [slideKey()]; track key) {
+      <div
+        class="rotate-progress-bar"
+        [style.animation-duration]="rotateMs + 'ms'"
+      ></div>
+      }
+    </div>
+    }
 
     @if (!leaderboardEnabled) {
     <div class="display-empty">

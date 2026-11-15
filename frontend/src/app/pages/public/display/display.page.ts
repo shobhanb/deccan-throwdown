@@ -62,6 +62,8 @@ export class DisplayPage implements OnInit {
   leaderboardEnabled = this.config?.leaderboardEnabled ?? false;
   categories = this.config?.categories ?? [];
   wods: WodConfig[] = this.config?.wods ?? [];
+  /** Slide duration — drives the next-screen progress bar animation. */
+  readonly rotateMs = ROTATE_MS;
   private wodNumbers = this.wods.map((wod) => wod.wodNumber);
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -103,6 +105,14 @@ export class DisplayPage implements OnInit {
     // Depend on previewEpoch so wrap reshuffles gallery groups.
     void this.previewEpoch();
     return buildPreviewSlides(this.wodNumbers, this.galleryPaths());
+  });
+
+  /** Show progress when the board will advance to another slide. */
+  showRotateProgress = computed(() => {
+    if (this.slides().length > 1) {
+      return true;
+    }
+    return this.isPreviewMode() && this.galleryPaths().length > 0;
   });
 
   currentSlide = computed((): DisplaySlide | null => {
@@ -188,6 +198,7 @@ export class DisplayPage implements OnInit {
       .pipe(startWith(0), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.pollTeams());
 
+    // Timer drives rotation; progress bar is visual and resets via slideKey.
     interval(ROTATE_MS)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.advanceSlide());
