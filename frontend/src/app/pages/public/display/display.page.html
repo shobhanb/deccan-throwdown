@@ -29,7 +29,13 @@
         <span class="dt-live-badge display-live-badge">Live</span>
         }
         @if (currentSlide(); as slide) {
-        <span class="display-category text-display">{{ slide.category }}</span>
+          @if (slide.kind === 'standings') {
+          <span class="display-category text-display">{{ slide.category }}</span>
+          } @else if (slide.kind === 'gallery') {
+          <span class="display-category text-display">Photos</span>
+          } @else {
+          <span class="display-category text-display">Workout</span>
+          }
         }
       </div>
     </header>
@@ -48,62 +54,112 @@
     </div>
 
     <div class="display-board" [attr.data-slide]="slideKey()">
-      @if (rows().length === 0) {
-      <div class="display-empty">
-        <p class="text-display">No teams in this category yet</p>
-      </div>
-      } @else {
-      <div class="display-table" role="table">
-        <div class="display-table-head" role="row">
-          <span role="columnheader">Rank</span>
-          <span role="columnheader">Team</span>
-          <span role="columnheader">Score</span>
-          <span role="columnheader">Points</span>
-        </div>
-        @for (row of rows(); track row.teamId) {
-        <div
-          class="display-row"
-          role="row"
-          [class.rank-1]="row.rank === 1"
-          [class.rank-2]="row.rank === 2"
-          [class.rank-3]="row.rank === 3"
-          [class.is-pending]="row.status === 'pending'"
-          [class.is-awaiting]="row.status === 'awaiting'"
-        >
-          <div class="col-rank" role="cell">
-            @if (row.rank != null) {
-            <span
-              class="rank-badge"
-              [class.rank-gold]="row.rank === 1"
-              [class.rank-silver]="row.rank === 2"
-              [class.rank-bronze]="row.rank === 3"
-              >{{ row.rank }}</span
-            >
-            } @else if (row.status === 'pending') {
-            <span class="status-pill pending">Pending</span>
-            } @else {
-            <span class="status-pill awaiting">—</span>
+      @if (currentSlide(); as slide) {
+        @switch (slide.kind) {
+          @case ('gallery') {
+          <div
+            class="gallery-grid"
+            [class.count-1]="slide.images.length === 1"
+            [class.count-2]="slide.images.length === 2"
+            [class.count-3]="slide.images.length === 3"
+            [class.count-4]="slide.images.length >= 4"
+          >
+            @for (image of slide.images; track image) {
+            <div class="gallery-cell">
+              <img [src]="image" alt="" />
+            </div>
             }
           </div>
-          <div class="col-team" role="cell">
-            <strong class="team-name">{{ row.teamName }}</strong>
-            @if (isTtmmView() && row.status === 'verified') {
-            <div class="ttmm-compact">
-              @for (component of getTtmmComponents(row); track component.key) {
-              <span class="ttmm-chip">
-                {{ component.label }}: {{ component.totalReps
-                }}@if (component.rank) { · #{{ component.rank }} }
-              </span>
+          }
+          @case ('wodInfo') {
+          <div class="wod-info">
+            @if (currentWod(); as wod) {
+            <p class="wod-summary">{{ wod.wodSummary }}</p>
+            <div class="wod-categories">
+              @for (category of categories; track category) {
+              <section class="wod-category-panel">
+                <h3 class="wod-category-title text-display">{{ category }}</h3>
+                @if (wodDescriptionForCategory(category); as lines) {
+                  @if (lines.length) {
+                  <div class="wod-description">
+                    @for (line of lines; track $index) {
+                    <div class="wod-description-line">{{ line }}</div>
+                    }
+                  </div>
+                  } @else {
+                  <p class="wod-description-empty">Standards coming soon</p>
+                  }
+                }
+              </section>
               }
             </div>
             }
           </div>
-          <div class="col-score" role="cell">{{ row.scoreLabel }}</div>
-          <div class="col-points" role="cell">
-            {{ row.pointsLabel || '' }}
-          </div>
-        </div>
+          }
+          @case ('standings') {
+            @if (rows().length === 0) {
+            <div class="display-empty">
+              <p class="text-display">No teams in this category yet</p>
+            </div>
+            } @else {
+            <div class="display-table" role="table">
+              <div class="display-table-head" role="row">
+                <span role="columnheader">Rank</span>
+                <span role="columnheader">Team</span>
+                <span role="columnheader">Score</span>
+                <span role="columnheader">Points</span>
+              </div>
+              @for (row of rows(); track row.teamId) {
+              <div
+                class="display-row"
+                role="row"
+                [class.rank-1]="row.rank === 1"
+                [class.rank-2]="row.rank === 2"
+                [class.rank-3]="row.rank === 3"
+                [class.is-pending]="row.status === 'pending'"
+                [class.is-awaiting]="row.status === 'awaiting'"
+              >
+                <div class="col-rank" role="cell">
+                  @if (row.rank != null) {
+                  <span
+                    class="rank-badge"
+                    [class.rank-gold]="row.rank === 1"
+                    [class.rank-silver]="row.rank === 2"
+                    [class.rank-bronze]="row.rank === 3"
+                    >{{ row.rank }}</span
+                  >
+                  } @else if (row.status === 'pending') {
+                  <span class="status-pill pending">Pending</span>
+                  } @else {
+                  <span class="status-pill awaiting">—</span>
+                  }
+                </div>
+                <div class="col-team" role="cell">
+                  <strong class="team-name">{{ row.teamName }}</strong>
+                  @if (isTtmmView() && row.status === 'verified') {
+                  <div class="ttmm-compact">
+                    @for (component of getTtmmComponents(row); track component.key) {
+                    <span class="ttmm-chip">
+                      {{ component.label }}: {{ component.totalReps
+                      }}@if (component.rank) { · #{{ component.rank }} }
+                    </span>
+                    }
+                  </div>
+                  }
+                </div>
+                <div class="col-score" role="cell">{{ row.scoreLabel }}</div>
+                <div class="col-points" role="cell">
+                  {{ row.pointsLabel || '' }}
+                </div>
+              </div>
+              }
+            </div>
+            }
+          }
         }
+      } @else {
+      <div class="display-empty">
+        <p class="text-display">Waiting for the event to begin</p>
       </div>
       }
     </div>

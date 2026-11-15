@@ -3,14 +3,14 @@ import { apiTeamsOutputDetailModel } from 'src/app/api/models/api-teams-output-d
 
 export type DisplayRowStatus = 'verified' | 'pending' | 'awaiting';
 
-export type DisplaySlideView =
+export type StandingsView =
   | { kind: 'overall' }
   | { kind: 'wod'; wodNumber: number };
 
-export interface DisplaySlide {
-  category: string;
-  view: DisplaySlideView;
-}
+export type DisplaySlide =
+  | { kind: 'standings'; category: string; view: StandingsView }
+  | { kind: 'gallery'; images: string[] }
+  | { kind: 'wodInfo'; wodNumber: number };
 
 export interface DisplayRow {
   teamId: string;
@@ -33,6 +33,11 @@ export function scoreForWod(
   wodNumber: number
 ): apiScoreOutputModel | undefined {
   return team.scores.find((score) => score.wod_number === wodNumber);
+}
+
+/** True when any verified team has at least one score row. */
+export function hasAnyScoreData(teams: apiTeamsOutputDetailModel[]): boolean {
+  return verifiedTeams(teams).some((team) => team.scores.length > 0);
 }
 
 /** True when every verified team has a verified score for this WOD. */
@@ -121,11 +126,19 @@ export function buildIdleSlides(
   const slides: DisplaySlide[] = [];
   for (const category of categories) {
     if (categoryHasOverallData(category, teams)) {
-      slides.push({ category, view: { kind: 'overall' } });
+      slides.push({
+        kind: 'standings',
+        category,
+        view: { kind: 'overall' },
+      });
     }
     for (const wodNumber of completeWods) {
       if (categoryHasWodData(category, wodNumber, teams)) {
-        slides.push({ category, view: { kind: 'wod', wodNumber } });
+        slides.push({
+          kind: 'standings',
+          category,
+          view: { kind: 'wod', wodNumber },
+        });
       }
     }
   }
@@ -145,14 +158,74 @@ export function buildLiveSlides(
   for (const category of categories) {
     if (categoryHasWodData(category, activeWod, teams)) {
       slides.push({
+        kind: 'standings',
         category,
         view: { kind: 'wod', wodNumber: activeWod },
       });
     }
     if (categoryHasOverallData(category, teams)) {
-      slides.push({ category, view: { kind: 'overall' } });
+      slides.push({
+        kind: 'standings',
+        category,
+        view: { kind: 'overall' },
+      });
     }
   }
+  return slides;
+}
+
+export function shuffleArray<T>(
+  array: T[],
+  random: () => number = Math.random
+): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+export function chunkImages(paths: string[], groupSize = 4): string[][] {
+  const groups: string[][] = [];
+  for (let i = 0; i < paths.length; i += groupSize) {
+    groups.push(paths.slice(i, i + groupSize));
+  }
+  return groups;
+}
+
+/**
+ * Pre-score slides: alternate gallery groups (max 4 images) with one WOD
+ * info page each. Re-shuffle paths each call for variety.
+ */
+export function buildPreviewSlides(
+  wodNumbers: number[],
+  imagePaths: string[],
+  options?: { groupSize?: number; random?: () => number }
+): DisplaySlide[] {
+  const groupSize = options?.groupSize ?? 4;
+  const random = options?.random ?? Math.random;
+  const groups = chunkImages(shuffleArray(imagePaths, random), groupSize);
+  const slides: DisplaySlide[] = [];
+  let galleryIndex = 0;
+
+  for (const wodNumber of wodNumbers) {
+    if (groups.length > 0) {
+      slides.push({
+        kind: 'gallery',
+        images: groups[galleryIndex % groups.length],
+      });
+      galleryIndex += 1;
+    }
+    slides.push({ kind: 'wodInfo', wodNumber });
+  }
+
+  if (wodNumbers.length === 0) {
+    for (const images of groups) {
+      slides.push({ kind: 'gallery', images });
+    }
+  }
+
   return slides;
 }
 
@@ -301,6 +374,9 @@ export function buildRowsForSlide(
   slide: DisplaySlide,
   live: boolean
 ): DisplayRow[] {
+  if (slide.kind !== 'standings') {
+    return [];
+  }
   if (live && slide.view.kind === 'wod') {
     return buildLiveRows(teams, slide.category, slide.view.wodNumber);
   }

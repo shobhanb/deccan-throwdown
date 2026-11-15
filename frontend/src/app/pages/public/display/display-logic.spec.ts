@@ -4,8 +4,11 @@ import {
   buildIdleSlides,
   buildLiveRows,
   buildLiveSlides,
+  buildPreviewSlides,
+  chunkImages,
   findActiveWod,
   formatScoreLabel,
+  hasAnyScoreData,
   isWodActive,
   isWodComplete,
 } from './display-logic';
@@ -88,6 +91,7 @@ describe('display-logic', () => {
       expect(isWodComplete(1, teams)).toBe(false);
       expect(isWodActive(1, teams)).toBe(false);
       expect(findActiveWod([1, 2], teams)).toBeNull();
+      expect(hasAnyScoreData(teams)).toBe(false);
     });
 
     it('marks a WOD active when some scores exist but not all verified', () => {
@@ -103,6 +107,7 @@ describe('display-logic', () => {
       expect(isWodActive(1, teams)).toBe(true);
       expect(isWodComplete(1, teams)).toBe(false);
       expect(findActiveWod([1, 2], teams)).toBe(1);
+      expect(hasAnyScoreData(teams)).toBe(true);
     });
 
     it('picks the highest active WOD number', () => {
@@ -162,8 +167,16 @@ describe('display-logic', () => {
     it('builds overall then complete WODs only for categories with data', () => {
       const slides = buildIdleSlides(['Open', 'Scaled'], [1, 2], [openA, openB]);
       expect(slides).toEqual([
-        { category: 'Open', view: { kind: 'overall' } },
-        { category: 'Open', view: { kind: 'wod', wodNumber: 1 } },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'wod', wodNumber: 1 },
+        },
       ]);
     });
 
@@ -213,8 +226,16 @@ describe('display-logic', () => {
         }),
       ];
       expect(buildLiveSlides(['Open', 'Scaled'], 2, teams)).toEqual([
-        { category: 'Open', view: { kind: 'wod', wodNumber: 2 } },
-        { category: 'Open', view: { kind: 'overall' } },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'wod', wodNumber: 2 },
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+        },
       ]);
     });
 
@@ -228,7 +249,52 @@ describe('display-logic', () => {
         }),
       ];
       expect(buildLiveSlides(['Open'], 1, teams)).toEqual([
-        { category: 'Open', view: { kind: 'wod', wodNumber: 1 } },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'wod', wodNumber: 1 },
+        },
+      ]);
+    });
+  });
+
+  describe('buildPreviewSlides', () => {
+    it('alternates gallery groups with one page per WOD', () => {
+      const paths = ['a.jpg', 'b.jpg', 'c.jpg', 'd.jpg', 'e.jpg'];
+      // Keep original order: always pick j === i in Fisher–Yates.
+      const random = () => 0.999;
+      const slides = buildPreviewSlides([1, 2], paths, {
+        groupSize: 4,
+        random,
+      });
+      expect(slides.map((s) => s.kind)).toEqual([
+        'gallery',
+        'wodInfo',
+        'gallery',
+        'wodInfo',
+      ]);
+      expect(slides[0]).toEqual({
+        kind: 'gallery',
+        images: ['a.jpg', 'b.jpg', 'c.jpg', 'd.jpg'],
+      });
+      expect(slides[1]).toEqual({ kind: 'wodInfo', wodNumber: 1 });
+      expect(slides[2]).toEqual({ kind: 'gallery', images: ['e.jpg'] });
+      expect(slides[3]).toEqual({ kind: 'wodInfo', wodNumber: 2 });
+    });
+
+    it('still shows WOD pages when there are no gallery images', () => {
+      expect(buildPreviewSlides([1, 2], [])).toEqual([
+        { kind: 'wodInfo', wodNumber: 1 },
+        { kind: 'wodInfo', wodNumber: 2 },
+      ]);
+    });
+  });
+
+  describe('chunkImages', () => {
+    it('groups images with a max of 4', () => {
+      expect(chunkImages(['1', '2', '3', '4', '5'], 4)).toEqual([
+        ['1', '2', '3', '4'],
+        ['5'],
       ]);
     });
   });
