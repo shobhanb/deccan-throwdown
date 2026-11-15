@@ -372,7 +372,7 @@ export const appConfig: { [key: string]: AppConfig } = {
           '12 Min AMRAP: Partner Wall-Ball Shots, Gymnastics, Max Bar Muscle-Ups',
         categoryWodDescription: {
           Open: [
-            '12 Min AMRAP as a team:',
+            '12 Min AMRAP:',
             '150 Partner Wall-Ball Shots (Pair 1 @ 9kg, Pair 2, 3 @ 6kg)',
             '30 Toes-to-Bar (Split anyhow)',
             '30 Pull-Ups (Split anyhow)',
@@ -389,7 +389,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             'The synchro movements require any 2 athletes working together, but there is no minimum individual work requirement on the gymnastics movements. The gymnastics movements can be divided anyhow, and the working athletes can be changed at any time.',
           ],
           Scaled: [
-            '12 Min AMRAP as a team:',
+            '12 Min AMRAP:',
             '120 Partner Wall-Ball Shots (Pair 1 @ 6kg, Pair 2, 3 @ 4kg)',
             '30 Synchro Sit-Ups (Any 2 athletes at a time)',
             '30 Ring Rows (Split anyhow)',
