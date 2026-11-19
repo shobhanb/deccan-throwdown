@@ -21,6 +21,8 @@ export type { CreateAthleteAthletesPost$Params as CreateAthleteAthletesPost$Para
 export { createAthleteAthletesPost as createAthleteAthletesPost } from './fn/athletes/create-athlete-athletes-post';
 export type { GetTeamsTeamsGet$Params as GetTeamsTeamsGet$Params } from './fn/teams/get-teams-teams-get';
 export { getTeamsTeamsGet as getTeamsTeamsGet } from './fn/teams/get-teams-teams-get';
+export type { GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params as GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params } from './fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
+export { getProvisionalLeaderboardTeamsProvisionalLeaderboardGet as getProvisionalLeaderboardTeamsProvisionalLeaderboardGet } from './fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
 export type { CreateTeamTeamsPost$Params as CreateTeamTeamsPost$Params } from './fn/teams/create-team-teams-post';
 export { createTeamTeamsPost as createTeamTeamsPost } from './fn/teams/create-team-teams-post';
 export type { GetTeamEmailsTeamsEmailsGet$Params as GetTeamEmailsTeamsEmailsGet$Params } from './fn/teams/get-team-emails-teams-emails-get';

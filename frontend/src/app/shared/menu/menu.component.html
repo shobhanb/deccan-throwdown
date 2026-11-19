@@ -126,6 +126,16 @@
           <ion-item
             button
             detail="false"
+            [routerLink]="['/admin', 'leaderboard']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="trophy-outline" slot="start"></ion-icon>
+            <ion-label>Provisional Leaderboard</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
             [routerLink]="['/admin', 'scores']"
             routerLinkActive="menu-active-item"
             [routerLinkActiveOptions]="{ exact: true }"

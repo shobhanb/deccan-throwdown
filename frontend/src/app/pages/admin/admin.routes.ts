@@ -6,6 +6,13 @@ export const routes: Routes = [
     loadChildren: () => import('./teams/teams.routes').then((m) => m.routes),
   },
   {
+    path: 'leaderboard',
+    loadComponent: () =>
+      import('./leaderboard/leaderboard.page').then(
+        (m) => m.AdminLeaderboardPage
+      ),
+  },
+  {
     path: 'scores',
     loadChildren: () => import('./scores/scores.routes').then((m) => m.routes),
   },

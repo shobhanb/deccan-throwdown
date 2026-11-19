@@ -1,0 +1,18 @@
+.provisional-note {
+  margin: 0 var(--dt-space-md) var(--dt-space-md);
+  font-size: 0.85rem;
+  color: var(--ion-color-medium-shade, var(--ion-color-medium));
+}
+
+.unverified-row {
+  --background: color-mix(in srgb, var(--ion-color-warning) 8%, transparent);
+}
+
+h2 .dt-pill {
+  margin-left: var(--dt-space-xs);
+  vertical-align: middle;
+}
+
+.podium-slot .dt-pill {
+  font-size: 0.65rem;
+}

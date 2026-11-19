@@ -1,0 +1,204 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Provisional Leaderboard</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <app-admin-page-header
+    title="Provisional Leaderboard"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  <p class="provisional-note">
+    Includes unverified teams and scores. Does not change the public leaderboard.
+  </p>
+
+  @if (dataLoaded()) {
+  <div class="filter-bar dt-card-scoreboard">
+    <ion-select
+      label="WOD"
+      labelPlacement="stacked"
+      [value]="selectedWod()"
+      (ionChange)="onClickChangeWod($event)"
+      [interface]="selectInterface"
+    >
+      @for (wod of wods || []; track wod.wodNumber) {
+      <ion-select-option [value]="wod.wodNumber"
+        >{{ wod.wodNumber + ': ' + wod.wodName }}</ion-select-option
+      >
+      }
+      <ion-select-option [value]="0">Overall</ion-select-option>
+    </ion-select>
+    <ion-select
+      label="Category"
+      labelPlacement="stacked"
+      [value]="selectedCategory()"
+      (ionChange)="onClickChangeCategory($event)"
+      [interface]="selectInterface"
+    >
+      @for (category of categories || []; track category) {
+      <ion-select-option [value]="category">{{ category }}</ion-select-option>
+      }
+    </ion-select>
+  </div>
+
+  @if (podiumTeams().length > 0) {
+  <div class="podium">
+    @for (team of podiumTeams(); track team.id) {
+    <div class="podium-slot" [class]="'podium-rank-' + team.rank">
+      <span
+        class="stat-badge"
+        [class.rank-gold]="team.rank === 1"
+        [class.rank-silver]="team.rank === 2"
+        [class.rank-bronze]="team.rank === 3"
+        >{{ team.rank }}</span
+      >
+      <strong>{{ team.team_name }}</strong>
+      @if (isRowUnverified(team)) {
+      <span class="dt-pill dt-pill-warning">Unverified</span>
+      }
+    </div>
+    }
+  </div>
+  }
+
+  @if (filteredSortedTeamsData().length === 0) {
+  <app-empty-state
+    icon="trophy-outline"
+    message="No teams in this category yet"
+  ></app-empty-state>
+  } @else {
+  <ion-list [inset]="true" class="dt-card-scoreboard scoreboard-list">
+    @for (team of filteredSortedTeamsData(); track team.id) {
+    @if (team.rank) {
+    <ion-item
+      class="leaderboard-row"
+      [class.ttmm-row]="isTtmmWod()"
+      [class.unverified-row]="isRowUnverified(team)"
+      lines="full"
+    >
+      <div slot="start" class="rank-cell">
+        <span
+          class="stat-badge"
+          [class.rank-gold]="team.rank === 1"
+          [class.rank-silver]="team.rank === 2"
+          [class.rank-bronze]="team.rank === 3"
+          >{{ team.rank }}</span
+        >
+      </div>
+      <ion-label class="team-block">
+        <h2>
+          <strong>{{ team.team_name }}</strong>
+          @if (!team.verified) {
+          <span class="dt-pill dt-pill-warning">Team unverified</span>
+          } @else if (isRowUnverified(team)) {
+          <span class="dt-pill dt-pill-warning">Score unverified</span>
+          }
+        </h2>
+        @for (athlete of team.athletes; track athlete.id) {
+        <p>{{ athlete.first_name }} {{ athlete.last_name }}</p>
+        }
+
+        @if (isTtmmWod()) {
+        <div class="ttmm-detail">
+          @if (getWodScore(team)?.wod_points != null) {
+          <p class="ttmm-wod-points">
+            WOD points: {{ getWodScore(team)!.wod_points }}
+            @if (getTtmmComponentTotal(team) != null) {
+            <span class="ttmm-muted">
+              · component total {{ getTtmmComponentTotal(team) }}
+            </span>
+            }
+          </p>
+          }
+
+          @for (component of getTtmmComponents(team); track component.key) {
+          <div class="ttmm-component" [class.incomplete]="!component.complete">
+            <div class="ttmm-component-header">
+              <strong>{{ component.label }}</strong>
+              <span class="ttmm-component-meta">
+                @if (component.rank) {
+                Rank {{ component.rank }}
+                }
+                @if (component.points) {
+                · {{ component.points }}pts
+                }
+                @if (!component.complete) {
+                · partial
+                }
+              </span>
+            </div>
+            <div class="ttmm-athletes">
+              @for (athlete of component.athletes; track athlete.label) {
+              <span class="ttmm-athlete">
+                {{ athlete.label }}:
+                {{ athlete.reps }}
+                @if (athlete.time) {
+                <span class="ttmm-muted">@ {{ athlete.time }}</span>
+                }
+              </span>
+              }
+            </div>
+            <div class="ttmm-totals">
+              Total: {{ component.totalReps }}
+              @if (component.totalTime) {
+              <span class="ttmm-muted"> · TB {{ component.totalTime }}</span>
+              }
+            </div>
+          </div>
+          } @empty {
+          <p class="ttmm-muted">No TTMM detail entered yet</p>
+          }
+        </div>
+        }
+      </ion-label>
+
+      @if (selectedWod() === 0) {
+      <ion-label slot="end" class="ion-text-end score-column">
+        @for (rank of getOverallScore(team); track $index) {
+        <p class="score-value">{{ rank || 'NA' }}</p>
+        }
+        <p class="score-value total-score">{{ getTotalScore(team) }}</p>
+      </ion-label>
+      } @else if (!isTtmmWod()) {
+      <ion-label slot="end" class="ion-text-end score-column">
+        @if (getWodScore(team)?.reps != null) {
+        <p class="score-value">Reps: {{ getWodScore(team)!.reps }}</p>
+        }
+        @if (getWodScore(team)?.time_s) {
+        <p class="score-value">
+          Time: {{ convertSecondsToMinunites(getWodScore(team)!.time_s) }}
+        </p>
+        }
+        @if (getWodScore(team)?.tiebreak_s) {
+        <p class="score-value">
+          TB: {{ convertSecondsToMinunites(getWodScore(team)!.tiebreak_s) }}
+        </p>
+        }
+      </ion-label>
+      }
+    </ion-item>
+    }
+    }
+  </ion-list>
+  }
+  } @else {
+  <ion-list [inset]="true">
+    @for (item of [1, 2, 3, 4, 5]; track $index) {
+    <ion-item>
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 100%; height: 48px"
+      ></ion-skeleton-text>
+    </ion-item>
+    }
+  </ion-list>
+  }
+</ion-content>

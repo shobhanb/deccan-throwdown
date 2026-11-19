@@ -31,7 +31,7 @@ from app.firebase_auth.dependencies import (
 from app.notifications.service import NotificationService
 from app.scores.models import Score, score_is_verified
 from app.scores.schemas import ScoreOutputModel
-from app.scores.service import rerank_event
+from app.scores.service import provisional_leaderboard_teams, rerank_event
 from app.settings import registration_settings, resend_settings
 from app.teams.registration_pricing import (
     get_registration_pricing,
@@ -119,6 +119,21 @@ async def get_teams(
     )
     include_private = admin_user is not None
     return [serialize_team(team, include_private=include_private) for team in teams]
+
+
+@teams_router.get(
+    "/provisional-leaderboard",
+    status_code=status.HTTP_200_OK,
+    response_model=list[TeamsOutputDetailModel],
+)
+async def get_provisional_leaderboard(
+    db_session: db_dependency,
+    _: admin_user_dependency,
+    event_short_name: str,
+) -> list[TeamsOutputDetailModel]:
+    """Admin preview: ranks including unverified teams and scores (not persisted)."""
+    async with provisional_leaderboard_teams(db_session, event_short_name) as teams:
+        return [serialize_team(team, include_private=True) for team in teams]
 
 
 def format_mailbox(name: str, email: str) -> str:

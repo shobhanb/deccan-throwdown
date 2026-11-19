@@ -21,6 +21,8 @@ import { getTeamInfoTeamsTeamIdGet } from '../fn/teams/get-team-info-teams-team-
 import { GetTeamInfoTeamsTeamIdGet$Params } from '../fn/teams/get-team-info-teams-team-id-get';
 import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
 import { GetTeamsTeamsGet$Params } from '../fn/teams/get-teams-teams-get';
+import { getProvisionalLeaderboardTeamsProvisionalLeaderboardGet } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
+import { GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
 import { getTeamWaiverLinksTeamsWaiverLinksGet } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
 import { GetTeamWaiverLinksTeamsWaiverLinksGet$Params } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
 import { getRegistrationPricingTeamsRegistrationPricingGet } from '../fn/teams/get-registration-pricing-teams-registration-pricing-get';
@@ -74,6 +76,39 @@ export class apiTeamsService extends BaseService {
    */
   getTeamsTeamsGet(params: GetTeamsTeamsGet$Params, context?: HttpContext): Promise<Array<apiTeamsOutputDetailModel>> {
     const resp = this.getTeamsTeamsGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body);
+  }
+
+  /** Path part for operation `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` */
+  static readonly GetProvisionalLeaderboardTeamsProvisionalLeaderboardGetPath = '/teams/provisional-leaderboard';
+
+  /**
+   * Get Provisional Leaderboard.
+   *
+   * Admin preview: ranks including unverified teams and scores (not persisted).
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<StrictHttpResponse<Array<apiTeamsOutputDetailModel>>> {
+    const obs = getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Get Provisional Leaderboard.
+   *
+   * Admin preview: ranks including unverified teams and scores (not persisted).
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<Array<apiTeamsOutputDetailModel>> {
+    const resp = this.getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params, context);
     return resp.then((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body);
   }
 

@@ -30,6 +30,7 @@ import {
   mailOutline,
   notificationsOutline,
   peopleOutline,
+  trophyOutline,
 } from 'ionicons/icons';
 import { AppConfigService } from 'src/app/services/app-config-service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -89,6 +90,7 @@ export class MenuComponent {
       mailOutline,
       callOutline,
       cashOutline,
+      trophyOutline,
     });
 
     this.router.events
