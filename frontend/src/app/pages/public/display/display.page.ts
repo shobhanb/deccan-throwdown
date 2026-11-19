@@ -96,11 +96,28 @@ export class DisplayPage implements OnInit {
     return idle.length === 0;
   });
 
+  /** Header chip: Pre-WOD | WOD N | Standings */
+  modeChip = computed((): { label: string; tone: 'preview' | 'live' | 'idle' } => {
+    const active = this.activeWod();
+    if (active != null) {
+      return { label: `WOD ${active}`, tone: 'live' };
+    }
+    if (this.isPreviewMode()) {
+      return { label: 'Pre-WOD', tone: 'preview' };
+    }
+    return { label: 'Standings', tone: 'idle' };
+  });
+
   slides = computed((): DisplaySlide[] => {
     const active = this.activeWod();
     const teams = this.teamsData();
     if (active != null) {
-      return buildLiveSlides(this.categories, active, teams);
+      // previewEpoch reshuffles gallery groups when interleaved during live.
+      void this.previewEpoch();
+      return buildLiveSlides(this.categories, active, teams, {
+        wodNumbers: this.wodNumbers,
+        imagePaths: this.galleryPaths(),
+      });
     }
     const idle = buildIdleSlides(this.categories, this.wodNumbers, teams);
     if (idle.length > 0) {
@@ -309,7 +326,10 @@ export class DisplayPage implements OnInit {
           const nextPreview = nextActive == null && nextIdle.length === 0;
           const nextSlides =
             nextActive != null
-              ? buildLiveSlides(this.categories, nextActive, data)
+              ? buildLiveSlides(this.categories, nextActive, data, {
+                  wodNumbers: this.wodNumbers,
+                  imagePaths: this.galleryPaths(),
+                })
               : nextIdle.length > 0
                 ? nextIdle
                 : buildPreviewSlides(this.wodNumbers, this.galleryPaths());
@@ -340,14 +360,14 @@ export class DisplayPage implements OnInit {
   private advanceSlide(): void {
     const count = this.slides().length;
     if (count <= 1) {
-      if (this.isPreviewMode() && this.galleryPaths().length > 0) {
+      if (this.galleryPaths().length > 0) {
         this.previewEpoch.update((epoch) => epoch + 1);
         this.slideKey.update((k) => k + 1);
       }
       return;
     }
     const next = (this.slideIndex() + 1) % count;
-    if (next === 0 && this.isPreviewMode()) {
+    if (next === 0 && this.galleryPaths().length > 0) {
       this.previewEpoch.update((epoch) => epoch + 1);
     }
     this.slideIndex.set(next);

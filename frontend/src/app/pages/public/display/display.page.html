@@ -25,9 +25,17 @@
       </div>
 
       <div class="display-meta">
-        @if (isLive()) {
-        <span class="dt-live-badge display-live-badge">Live</span>
-        }
+        <span
+          class="display-mode-chip"
+          [class.tone-preview]="modeChip().tone === 'preview'"
+          [class.tone-live]="modeChip().tone === 'live'"
+          [class.tone-idle]="modeChip().tone === 'idle'"
+        >
+          @if (modeChip().tone === 'live') {
+          <span class="display-mode-dot" aria-hidden="true"></span>
+          }
+          {{ modeChip().label }}
+        </span>
         @if (currentSlide(); as slide) {
           @if (slide.kind === 'standings') {
           <span class="display-category text-display">{{ slide.category }}</span>
@@ -122,8 +130,8 @@
               <div class="display-table-head" role="row">
                 <span role="columnheader">Rank</span>
                 <span role="columnheader">Team</span>
-                <span role="columnheader">Score</span>
-                <span role="columnheader">Points</span>
+                <span class="col-points" role="columnheader">Points</span>
+                <span class="col-score" role="columnheader">Score</span>
               </div>
               @for (row of rows(); track row.teamId) {
               <div
@@ -152,6 +160,17 @@
                 </div>
                 <div class="col-team" role="cell">
                   <strong class="team-name">{{ row.teamName }}</strong>
+                  @if (row.athleteNames.length) {
+                  <div class="athlete-names">
+                    {{ row.athleteNames.join(' · ') }}
+                  </div>
+                  }
+                </div>
+                <div class="col-points" role="cell">
+                  {{ row.pointsLabel || '' }}
+                </div>
+                <div class="col-score" role="cell">
+                  <div class="score-primary">{{ row.scoreLabel }}</div>
                   @if (isTtmmView() && row.status === 'verified') {
                   <div class="detail-compact">
                     @for (component of getTtmmComponents(row); track component.key) {
@@ -169,10 +188,6 @@
                     }
                   </div>
                   }
-                </div>
-                <div class="col-score" role="cell">{{ row.scoreLabel }}</div>
-                <div class="col-points" role="cell">
-                  {{ row.pointsLabel || '' }}
                 </div>
               </div>
               }

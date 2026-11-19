@@ -15,11 +15,20 @@ export type DisplaySlide =
 export interface DisplayRow {
   teamId: string;
   teamName: string;
+  athleteNames: string[];
   rank: number | null;
   status: DisplayRowStatus;
   scoreLabel: string;
   pointsLabel: string | null;
   score: apiScoreOutputModel | null;
+}
+
+export function athleteNamesForTeam(
+  team: apiTeamsOutputDetailModel
+): string[] {
+  return (team.athletes ?? []).map(
+    (athlete) => `${athlete.first_name} ${athlete.last_name}`.trim()
+  );
 }
 
 export function verifiedTeams(
@@ -96,6 +105,38 @@ export function categoryHasWodData(
   );
 }
 
+/** True when a verified team in the category has a verified score for this WOD. */
+export function categoryHasVerifiedWodData(
+  category: string,
+  wodNumber: number,
+  teams: apiTeamsOutputDetailModel[]
+): boolean {
+  return verifiedTeams(teams).some(
+    (team) =>
+      team.category === category && !!scoreForWod(team, wodNumber)?.verified
+  );
+}
+
+/** True when any verified team has a verified score for this WOD. */
+export function wodHasVerifiedScores(
+  wodNumber: number,
+  teams: apiTeamsOutputDetailModel[]
+): boolean {
+  return verifiedTeams(teams).some(
+    (team) => !!scoreForWod(team, wodNumber)?.verified
+  );
+}
+
+/** How many configured WODs have at least one submitted score. */
+export function countWodsWithScores(
+  wodNumbers: number[],
+  teams: apiTeamsOutputDetailModel[]
+): number {
+  return wodNumbers.filter((wodNumber) =>
+    verifiedTeams(teams).some((team) => scoreForWod(team, wodNumber) != null)
+  ).length;
+}
+
 /**
  * True when a verified team in the category has at least one verified score
  * (overall standings have something to show).
@@ -111,18 +152,34 @@ export function categoryHasOverallData(
   );
 }
 
+/** WODs that have at least one verified score, active WOD first when present. */
+export function wodsWithVerifiedLeaderboards(
+  wodNumbers: number[],
+  teams: apiTeamsOutputDetailModel[],
+  activeWod?: number | null
+): number[] {
+  const withVerified = wodNumbers.filter((wodNumber) =>
+    wodHasVerifiedScores(wodNumber, teams)
+  );
+  if (activeWod == null || !withVerified.includes(activeWod)) {
+    return withVerified;
+  }
+  return [
+    activeWod,
+    ...withVerified.filter((wodNumber) => wodNumber !== activeWod),
+  ];
+}
+
 /**
- * Idle slides: per category Overall, then each complete WOD.
- * Skips category/view pairs with no data.
+ * Idle slides: per category Overall, then each WOD with verified scores.
+ * Skips category/view pairs with no verified data.
  */
 export function buildIdleSlides(
   categories: string[],
   wodNumbers: number[],
   teams: apiTeamsOutputDetailModel[]
 ): DisplaySlide[] {
-  const completeWods = wodNumbers.filter((wodNumber) =>
-    isWodComplete(wodNumber, teams)
-  );
+  const leaderboardWods = wodsWithVerifiedLeaderboards(wodNumbers, teams);
   const slides: DisplaySlide[] = [];
   for (const category of categories) {
     if (categoryHasOverallData(category, teams)) {
@@ -132,8 +189,8 @@ export function buildIdleSlides(
         view: { kind: 'overall' },
       });
     }
-    for (const wodNumber of completeWods) {
-      if (categoryHasWodData(category, wodNumber, teams)) {
+    for (const wodNumber of leaderboardWods) {
+      if (categoryHasVerifiedWodData(category, wodNumber, teams)) {
         slides.push({
           kind: 'standings',
           category,
@@ -145,23 +202,47 @@ export function buildIdleSlides(
   return slides;
 }
 
+export interface LiveSlidesOptions {
+  wodNumbers?: number[];
+  imagePaths?: string[];
+  groupSize?: number;
+  random?: () => number;
+}
+
 /**
- * Live slides: per category active WOD, then Overall.
- * Skips category/view pairs with no data.
+ * Live slides while a WOD is active:
+ * - Leaderboard for every WOD that has verified scores
+ * - If the active WOD has none verified yet: WOD info page
+ * - Overall when verified scores exist
+ * - If only one WOD has scores yet: rotate with gallery images
  */
 export function buildLiveSlides(
   categories: string[],
   activeWod: number,
-  teams: apiTeamsOutputDetailModel[]
+  teams: apiTeamsOutputDetailModel[],
+  options?: LiveSlidesOptions
 ): DisplaySlide[] {
   const slides: DisplaySlide[] = [];
+  const wodNumbers = options?.wodNumbers ?? [activeWod];
+  const leaderboardWods = wodsWithVerifiedLeaderboards(
+    wodNumbers,
+    teams,
+    activeWod
+  );
+
+  if (!wodHasVerifiedScores(activeWod, teams)) {
+    slides.push({ kind: 'wodInfo', wodNumber: activeWod });
+  }
+
   for (const category of categories) {
-    if (categoryHasWodData(category, activeWod, teams)) {
-      slides.push({
-        kind: 'standings',
-        category,
-        view: { kind: 'wod', wodNumber: activeWod },
-      });
+    for (const wodNumber of leaderboardWods) {
+      if (categoryHasVerifiedWodData(category, wodNumber, teams)) {
+        slides.push({
+          kind: 'standings',
+          category,
+          view: { kind: 'wod', wodNumber },
+        });
+      }
     }
     if (categoryHasOverallData(category, teams)) {
       slides.push({
@@ -170,6 +251,46 @@ export function buildLiveSlides(
         view: { kind: 'overall' },
       });
     }
+  }
+
+  const imagePaths = options?.imagePaths ?? [];
+  const onlyOneWodInProgress =
+    wodNumbers.length === 0
+      ? true
+      : countWodsWithScores(wodNumbers, teams) <= 1;
+
+  if (onlyOneWodInProgress && imagePaths.length > 0 && slides.length > 0) {
+    return interleaveGalleryBeforeEach(slides, imagePaths, options);
+  }
+
+  return slides;
+}
+
+/** Place a gallery group before each content slide (max 4 images per group). */
+export function interleaveGalleryBeforeEach(
+  contentSlides: DisplaySlide[],
+  imagePaths: string[],
+  options?: { groupSize?: number; random?: () => number }
+): DisplaySlide[] {
+  if (contentSlides.length === 0 || imagePaths.length === 0) {
+    return contentSlides;
+  }
+  const groupSize = options?.groupSize ?? 4;
+  const random = options?.random ?? Math.random;
+  const groups = chunkImages(shuffleArray(imagePaths, random), groupSize);
+  if (groups.length === 0) {
+    return contentSlides;
+  }
+
+  const slides: DisplaySlide[] = [];
+  let galleryIndex = 0;
+  for (const slide of contentSlides) {
+    slides.push({
+      kind: 'gallery',
+      images: groups[galleryIndex % groups.length],
+    });
+    galleryIndex += 1;
+    slides.push(slide);
   }
   return slides;
 }
@@ -284,6 +405,7 @@ export function buildLiveRows(
     verifiedRows.push({
       teamId: team.id,
       teamName: team.team_name,
+      athleteNames: athleteNamesForTeam(team),
       rank: score.wod_rank ?? null,
       status: 'verified',
       scoreLabel: formatScoreLabel(score),
@@ -306,13 +428,22 @@ export function buildIdleOverallRows(
     .filter((team) => team.category === category)
     .map((team) => {
       const points = totalVerifiedPoints(team);
+      const wodBreakdown = team.scores
+        .filter((score) => score.verified)
+        .sort((a, b) => a.wod_number - b.wod_number)
+        .map(
+          (score) =>
+            `W${score.wod_number} #${score.wod_rank ?? '—'} (${score.wod_points ?? 0})`
+        )
+        .join(' · ');
       return {
         teamId: team.id,
         teamName: team.team_name,
+        athleteNames: athleteNamesForTeam(team),
         rank: team.overall_rank ?? null,
         status: 'verified' as const,
-        scoreLabel: `${points} pts`,
-        pointsLabel: null,
+        scoreLabel: wodBreakdown,
+        pointsLabel: `${points} pts`,
         score: null,
       };
     })
@@ -336,6 +467,7 @@ export function buildIdleWodRows(
     rows.push({
       teamId: team.id,
       teamName: team.team_name,
+      athleteNames: athleteNamesForTeam(team),
       rank: score.wod_rank ?? null,
       status: 'verified',
       scoreLabel: formatScoreLabel(score),

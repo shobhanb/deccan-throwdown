@@ -1,9 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        [defaultHref]="['/admin', 'scores', wodNumber()]"
-      ></ion-back-button>
+      <ion-back-button [defaultHref]="['/admin', 'scores', wodNumber()]"></ion-back-button>
     </ion-buttons>
     <ion-title>Edit Score</ion-title>
     <app-toolbar-buttons slot="end"></app-toolbar-buttons>
@@ -18,10 +16,8 @@
   @if (dataLoaded()) {
 
   <div class="admin-score-header">
-    <app-admin-page-header
-      [title]="teamData()?.team_name ?? ''"
-      [subtitle]="getAthleteNames(teamData())"
-    ></app-admin-page-header>
+    <app-admin-page-header [title]="teamData()?.team_name ?? ''"
+      [subtitle]="getAthleteNames(teamData())"></app-admin-page-header>
     <div class="admin-wod-info">
       <strong>
         {{ wod() ? `WOD ${wod()!.wodNumber}: ${wod()!.wodName}` : 'Loading WOD...' }}
@@ -30,11 +26,6 @@
       <div class="wod-summary">{{ wod()?.wodSummary }}</div>
       @if (isVerified()) {
       <p class="admin-hint verified">Verified — editing disabled</p>
-      } @else {
-      <p class="admin-hint">
-        Score not yet verified — partial TTMM entry is allowed; incomplete
-        components are ranked once both athletes are filled in.
-      </p>
       }
     </div>
   </div>
@@ -53,58 +44,20 @@
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('jump_rope', 0) + ' reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.jump_rope.a1.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Min"
-          labelPlacement="stacked"
-          placeholder="4"
-          [formField]="ttmmForm.jump_rope.a1.tiebreak_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Sec"
-          labelPlacement="stacked"
-          placeholder="00"
-          min="0"
-          max="59"
-          [formField]="ttmmForm.jump_rope.a1.tiebreak_seconds"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('jump_rope', 0) + ' reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a1.reps" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Min" labelPlacement="stacked" placeholder="4"
+          [formField]="ttmmForm.jump_rope.a1.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
+          [formField]="ttmmForm.jump_rope.a1.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('jump_rope', 1) + ' reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.jump_rope.a2.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Min"
-          labelPlacement="stacked"
-          placeholder="4"
-          [formField]="ttmmForm.jump_rope.a2.tiebreak_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Sec"
-          labelPlacement="stacked"
-          placeholder="00"
-          min="0"
-          max="59"
-          [formField]="ttmmForm.jump_rope.a2.tiebreak_seconds"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('jump_rope', 1) + ' reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a2.reps" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Min" labelPlacement="stacked" placeholder="4"
+          [formField]="ttmmForm.jump_rope.a2.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
+          [formField]="ttmmForm.jump_rope.a2.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
       </ion-item>
     </ion-list>
 
@@ -116,58 +69,20 @@
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('hold', 0) + ' reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.hold.a1.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Min"
-          labelPlacement="stacked"
-          placeholder="4"
-          [formField]="ttmmForm.hold.a1.tiebreak_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Sec"
-          labelPlacement="stacked"
-          placeholder="00"
-          min="0"
-          max="59"
-          [formField]="ttmmForm.hold.a1.tiebreak_seconds"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('hold', 0) + ' reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a1.reps" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Min" labelPlacement="stacked" placeholder="4"
+          [formField]="ttmmForm.hold.a1.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
+          [formField]="ttmmForm.hold.a1.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('hold', 1) + ' reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.hold.a2.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Min"
-          labelPlacement="stacked"
-          placeholder="4"
-          [formField]="ttmmForm.hold.a2.tiebreak_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Sec"
-          labelPlacement="stacked"
-          placeholder="00"
-          min="0"
-          max="59"
-          [formField]="ttmmForm.hold.a2.tiebreak_seconds"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('hold', 1) + ' reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a2.reps" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Min" labelPlacement="stacked" placeholder="4"
+          [formField]="ttmmForm.hold.a2.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
+          [formField]="ttmmForm.hold.a2.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
       </ion-item>
     </ion-list>
 
@@ -178,22 +93,12 @@
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('yoke', 0) + ' distance / reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.yoke.a1.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('yoke', 0) + ' distance / reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a1.reps" [disabled]="isVerified()"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          [label]="athleteLabel('yoke', 1) + ' distance / reps'"
-          labelPlacement="stacked"
-          [formField]="ttmmForm.yoke.a2.reps"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" [label]="athleteLabel('yoke', 1) + ' distance / reps'" labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a2.reps" [disabled]="isVerified()"></ion-input>
       </ion-item>
     </ion-list>
     } @else {
@@ -210,22 +115,10 @@
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-input
-          type="number"
-          label="Rounds (optional)"
-          labelPlacement="stacked"
-          [formField]="scoreForm.rounds"
-          placeholder="0"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Additional reps"
-          labelPlacement="stacked"
-          [formField]="scoreForm.reps"
-          placeholder="Partial round"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" label="Rounds (optional)" labelPlacement="stacked" [formField]="scoreForm.rounds"
+          placeholder="0" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Additional reps" labelPlacement="stacked" [formField]="scoreForm.reps"
+          placeholder="Partial round" [disabled]="isVerified()"></ion-input>
       </ion-item>
       @if (composedTotalReps() != null) {
       <ion-item lines="none">
@@ -241,119 +134,61 @@
       }
       } @else if (showFlatRepsField()) {
       <ion-item>
-        <ion-input
-          type="number"
-          label="Reps or weight"
-          labelPlacement="stacked"
-          [formField]="scoreForm.reps"
-          placeholder="Enter number of reps or weight"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" label="Reps or weight" labelPlacement="stacked" [formField]="scoreForm.reps"
+          placeholder="Enter number of reps or weight" [disabled]="isVerified()"></ion-input>
       </ion-item>
       }
 
       @if (showTimeField()) {
       <ion-item>
-        <ion-input
-          type="number"
-          label="Time (Minutes)"
-          labelPlacement="stacked"
-          [formField]="scoreForm.time_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Time (Seconds)"
-          labelPlacement="stacked"
-          [formField]="scoreForm.time_seconds"
-          min="0"
-          max="59"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" label="Time (Minutes)" labelPlacement="stacked" [formField]="scoreForm.time_minutes"
+          [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Time (Seconds)" labelPlacement="stacked" [formField]="scoreForm.time_seconds"
+          min="0" max="59" [disabled]="isVerified()"></ion-input>
       </ion-item>
       }
 
       @if (showTiebreakField()) {
       <ion-item>
-        <ion-input
-          type="number"
-          label="Tiebreak (Minutes)"
-          labelPlacement="stacked"
-          [formField]="scoreForm.tiebreak_minutes"
-          [disabled]="isVerified()"
-        ></ion-input>
-        <ion-input
-          type="number"
-          label="Tiebreak (Seconds)"
-          labelPlacement="stacked"
-          [formField]="scoreForm.tiebreak_seconds"
-          min="0"
-          max="59"
-          [disabled]="isVerified()"
-        ></ion-input>
+        <ion-input type="number" label="Tiebreak (Minutes)" labelPlacement="stacked"
+          [formField]="scoreForm.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
+        <ion-input type="number" label="Tiebreak (Seconds)" labelPlacement="stacked"
+          [formField]="scoreForm.tiebreak_seconds" min="0" max="59" [disabled]="isVerified()"></ion-input>
       </ion-item>
       }
     </ion-list>
     }
 
     @if (!isVerified()) {
-    <ion-button
-      expand="block"
-      color="secondary"
-      class="ion-margin"
-      type="submit"
-      [disabled]="!scoreFormValid()"
-    >
+    <ion-button expand="block" color="secondary" class="ion-margin" type="submit" [disabled]="!scoreFormValid()">
       {{ submitLabel() }}
     </ion-button>
     }
 
-    <ion-button
-      expand="block"
-      fill="outline"
-      class="ion-margin"
-      type="button"
-      [routerLink]="['/admin', 'scores', wodNumber()]"
-      routerDirection="back"
-    >
+    <ion-button expand="block" fill="outline" class="ion-margin" type="button"
+      [routerLink]="['/admin', 'scores', wodNumber()]" routerDirection="back">
       Cancel
     </ion-button>
   </form>
 
   @if (isEditing() && !isVerified()) {
-  <ion-button
-    expand="block"
-    class="ion-margin"
-    type="button"
-    color="danger"
-    (click)="onDelete()"
-  >
+  <ion-button expand="block" class="ion-margin" type="button" color="danger" (click)="onDelete()">
     Delete
   </ion-button>
   } } @else {
-  <ion-skeleton-text
-    [animated]="true"
-    style="width: 60%; height: 24px; margin: var(--dt-space-md)"
-  ></ion-skeleton-text>
+  <ion-skeleton-text [animated]="true" style="width: 60%; height: 24px; margin: var(--dt-space-md)"></ion-skeleton-text>
 
   <ion-list [inset]="true" class="dt-admin-list">
     @for (item of [1, 2, 3, 4, 5]; track $index) {
     <ion-item>
-      <ion-skeleton-text
-        [animated]="true"
-        style="width: 100%; height: 48px"
-      ></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" style="width: 100%; height: 48px"></ion-skeleton-text>
     </ion-item>
     }
   </ion-list>
 
-  <ion-skeleton-text
-    [animated]="true"
-    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"
-  ></ion-skeleton-text>
-  <ion-skeleton-text
-    [animated]="true"
-    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"
-  ></ion-skeleton-text>
+  <ion-skeleton-text [animated]="true"
+    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"></ion-skeleton-text>
+  <ion-skeleton-text [animated]="true"
+    style="width: 100%; height: 48px; margin: 16px; border-radius: 8px"></ion-skeleton-text>
   }
 </ion-content>

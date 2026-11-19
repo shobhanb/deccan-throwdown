@@ -193,7 +193,7 @@ describe('display-logic', () => {
       );
     });
 
-    it('builds live active WOD then Overall per category with data', () => {
+    it('shows WOD info + Overall when active WOD has scores but none verified', () => {
       const teams = [
         team({
           id: 'a',
@@ -225,11 +225,18 @@ describe('display-logic', () => {
           ],
         }),
       ];
-      expect(buildLiveSlides(['Open', 'Scaled'], 2, teams)).toEqual([
+      // Two WODs have scores → no forced gallery interleave.
+      // WOD 1 has verified scores → include its leaderboard; WOD 2 info only.
+      expect(
+        buildLiveSlides(['Open', 'Scaled'], 2, teams, {
+          wodNumbers: [1, 2],
+        })
+      ).toEqual([
+        { kind: 'wodInfo', wodNumber: 2 },
         {
           kind: 'standings',
           category: 'Open',
-          view: { kind: 'wod', wodNumber: 2 },
+          view: { kind: 'wod', wodNumber: 1 },
         },
         {
           kind: 'standings',
@@ -239,7 +246,7 @@ describe('display-logic', () => {
       ]);
     });
 
-    it('omits live Overall when category has no verified scores yet', () => {
+    it('omits WOD results and shows WOD info when nothing is verified yet', () => {
       const teams = [
         team({
           id: 'a',
@@ -248,13 +255,78 @@ describe('display-logic', () => {
           scores: [score({ wod_number: 1, verified: false, reps: 50 })],
         }),
       ];
-      expect(buildLiveSlides(['Open'], 1, teams)).toEqual([
-        {
-          kind: 'standings',
+      expect(
+        buildLiveSlides(['Open'], 1, teams, { wodNumbers: [1, 2] })
+      ).toEqual([{ kind: 'wodInfo', wodNumber: 1 }]);
+    });
+
+    it('rotates WOD page with images when only one WOD is in progress', () => {
+      const teams = [
+        team({
+          id: 'a',
+          team_name: 'Alpha',
           category: 'Open',
-          view: { kind: 'wod', wodNumber: 1 },
-        },
+          scores: [score({ wod_number: 1, verified: false, reps: 50 })],
+        }),
+      ];
+      const slides = buildLiveSlides(['Open'], 1, teams, {
+        wodNumbers: [1, 2, 3],
+        imagePaths: ['a.jpg', 'b.jpg', 'c.jpg', 'd.jpg'],
+        random: () => 0.999,
+      });
+      expect(slides.map((s) => s.kind)).toEqual(['gallery', 'wodInfo']);
+      expect(slides[0]).toEqual({
+        kind: 'gallery',
+        images: ['a.jpg', 'b.jpg', 'c.jpg', 'd.jpg'],
+      });
+      expect(slides[1]).toEqual({ kind: 'wodInfo', wodNumber: 1 });
+    });
+
+    it('shows verified WOD results and interleaves images for a single in-progress WOD', () => {
+      const teams = [
+        team({
+          id: 'a',
+          team_name: 'Alpha',
+          category: 'Open',
+          scores: [
+            score({
+              wod_number: 1,
+              verified: true,
+              reps: 100,
+              wod_rank: 1,
+              wod_points: 10,
+            }),
+          ],
+        }),
+        team({
+          id: 'b',
+          team_name: 'Bravo',
+          category: 'Open',
+          scores: [score({ wod_number: 1, verified: false, reps: 80 })],
+        }),
+      ];
+      const slides = buildLiveSlides(['Open'], 1, teams, {
+        wodNumbers: [1, 2],
+        imagePaths: ['a.jpg', 'b.jpg'],
+        groupSize: 2,
+        random: () => 0.999,
+      });
+      expect(slides.map((s) => s.kind)).toEqual([
+        'gallery',
+        'standings',
+        'gallery',
+        'standings',
       ]);
+      expect(slides[1]).toEqual({
+        kind: 'standings',
+        category: 'Open',
+        view: { kind: 'wod', wodNumber: 1 },
+      });
+      expect(slides[3]).toEqual({
+        kind: 'standings',
+        category: 'Open',
+        view: { kind: 'overall' },
+      });
     });
   });
 

@@ -93,9 +93,40 @@
   flex-shrink: 0;
 }
 
-.display-live-badge {
-  font-size: clamp(0.75rem, 1.7vh, 1rem);
+.display-mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: clamp(0.75rem, 1.7vh, 1rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.display-mode-chip.tone-preview {
+  background: rgba(var(--dt-brand-navy-rgb), 0.1);
+  color: var(--dt-brand-steel);
+}
+
+.display-mode-chip.tone-live {
+  background: rgba(var(--dt-brand-gold-rgb), 0.22);
+  color: #9a6a00;
+}
+
+.display-mode-chip.tone-idle {
+  background: var(--dt-brand-navy);
+  color: #fff;
+}
+
+.display-mode-dot {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: currentColor;
+  animation: dt-pulse 1.5s ease-in-out infinite;
 }
 
 .display-category {
@@ -187,9 +218,9 @@
 .display-table-head,
 .display-row {
   display: grid;
-  grid-template-columns: minmax(4.5rem, 6.5rem) minmax(0, 1.7fr) minmax(0, 1fr) minmax(
-      4.5rem,
-      7rem
+  grid-template-columns: minmax(4.5rem, 6.5rem) minmax(0, 1.6fr) minmax(5rem, 7rem) minmax(
+      0,
+      1.2fr
     );
   align-items: center;
   gap: 0.85rem;
@@ -204,6 +235,16 @@
   letter-spacing: 0.08em;
   color: var(--dt-brand-steel);
   padding-bottom: 0.2rem;
+
+  .col-points {
+    font-weight: 700;
+    color: var(--dt-brand-steel);
+  }
+
+  .col-score {
+    font-weight: 700;
+    color: var(--dt-brand-steel);
+  }
 }
 
 .display-row {
@@ -339,43 +380,71 @@
   text-overflow: ellipsis;
 }
 
-.col-score,
-.col-points {
-  font-weight: 700;
-  color: #1a2332;
-  font-variant-numeric: tabular-nums;
+.athlete-names {
+  margin-top: 0.2rem;
+  color: var(--dt-brand-steel);
+  font-size: clamp(0.7rem, 1.45vh, 0.95rem);
+  font-weight: 600;
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .col-points {
-  text-align: right;
+  font-weight: 700;
   color: var(--dt-brand-navy);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-score {
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.score-primary {
+  font-weight: 800;
+  font-size: 1.08em;
+  color: var(--dt-brand-navy);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detail-compact {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  justify-content: flex-end;
+  gap: 0.4rem;
   margin-top: 0.35rem;
 }
 
 .detail-chip {
   display: inline-block;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--dt-brand-navy) 12%, transparent);
-  color: var(--dt-brand-steel);
-  font-size: clamp(0.55rem, 1.1vh, 0.8rem);
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--dt-brand-navy) 14%, transparent);
+  color: var(--dt-brand-navy);
+  font-size: clamp(0.7rem, 1.5vh, 1rem);
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .detail-summary {
   display: block;
-  color: var(--dt-brand-steel);
-  font-size: clamp(0.55rem, 1.1vh, 0.8rem);
+  width: 100%;
+  color: var(--dt-brand-navy);
+  font-size: clamp(0.72rem, 1.55vh, 1.05rem);
+  font-weight: 700;
+  line-height: 1.3;
   white-space: normal;
+  text-align: right;
 }
 
 .display-empty {
