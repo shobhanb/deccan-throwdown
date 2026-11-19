@@ -551,7 +551,7 @@ export const appConfig: { [key: string]: AppConfig } = {
             // 'Men @ 30kg, 35kg, 40kg, 45kg',
           ],
         },
-        scoreTypes: ['Time', 'Reps'],
+        scoreTypes: ['Time', 'Reps', 'Tiebreak'],
       },
     ],
   },
