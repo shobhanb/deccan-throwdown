@@ -135,15 +135,25 @@ export class LeaderboardPage implements OnInit {
       .sort((a, b) => {
         const aRank = a.rank ?? 999999;
         const bRank = b.rank ?? 999999;
-        return aRank - bRank;
+        if (aRank !== bRank) return aRank - bRank;
+        return a.team_name.localeCompare(b.team_name);
       });
   });
 
-  podiumTeams = computed(() =>
-    this.filteredSortedTeamsData()
-      .filter((t) => t.rank && t.rank <= 3)
-      .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0))
-  );
+  podiumTeams = computed(() => {
+    const isOverall = this.selectedWod() === 0;
+
+    return this.filteredSortedTeamsData()
+      .filter((t) => {
+        if (!t.rank || t.rank > 3) return false;
+        if (!isOverall) return true;
+
+        const totalPoints = t.scores
+          .filter((score) => score.wod_points != null)
+          .reduce((sum, score) => sum + (score.wod_points || 0), 0);
+        return totalPoints > 0;
+      });
+  });
 
   convertSecondsToMinunites(seconds: number | null | undefined): string {
     if (seconds == null || isNaN(seconds)) return '';
