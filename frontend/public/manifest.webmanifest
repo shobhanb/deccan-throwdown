@@ -3,23 +3,24 @@
   "short_name": "DT Teams",
   "id": "deccan-throwdown",
   "description": "Deccan Throwdown team competition at CrossFit Monkey Flag — WODs, registration, teams, and leaderboard.",
-  "categories": ["fitness", "sports", "crossfit"],
+  "categories": ["fitness", "sports"],
+  "lang": "en",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",
   "start_url": "./",
   "icons": [
     {
-      "src": "icons/logo_192.jpg",
+      "src": "icons/logo_192.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
-      "purpose": "maskable any"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icons/logo_512.jpg",
+      "src": "icons/logo_512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "maskable any"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "theme_color": "#2b4c6f",
