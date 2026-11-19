@@ -49,6 +49,10 @@ import {
   TtmmScoreboardComponentView,
   TtmmScoreDetail,
 } from 'src/app/shared/score-detail/ttmm';
+import {
+  resolveStationScheme,
+  stationSummaryLines,
+} from 'src/app/shared/score-detail/stations';
 
 @Component({
   selector: 'app-leaderboard',
@@ -100,6 +104,9 @@ export class LeaderboardPage implements OnInit {
   );
   isTtmmWod = computed(
     () => this.selectedWodConfig()?.scoreDetailType === 'ttmm'
+  );
+  isStationsWod = computed(
+    () => this.selectedWodConfig()?.scoreDetailType === 'stations'
   );
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -207,6 +214,15 @@ export class LeaderboardPage implements OnInit {
     return (
       this.getTtmmDetail(team)?.results?.total_component_points ?? null
     );
+  }
+
+  getStationSummary(team: apiTeamsOutputDetailModel): string[] {
+    const score = this.getWodScore(team);
+    const scheme = resolveStationScheme(
+      this.selectedWodConfig(),
+      team.category
+    );
+    return stationSummaryLines(score?.reps, scheme);
   }
 
   constructor() {

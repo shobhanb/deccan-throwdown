@@ -1,10 +1,27 @@
 type ScoreType = 'Reps' | 'Weight' | 'Time' | 'Tiebreak';
 
-/** Discriminator for structured score_detail JSON. Extensible for display-only types later. */
-export type ScoreDetailType = 'ttmm';
+/**
+ * Discriminator for score detail UI.
+ * - `ttmm`: structured score_detail JSON that affects ranking
+ * - `stations`: display-only breakdown computed from flat reps + stationScheme
+ */
+export type ScoreDetailType = 'ttmm' | 'stations';
 
 export type EventType = 'teams' | 'pairs';
 export type RegistrationStatus = 'open' | 'closed' | 'coming-soon';
+
+export interface WodStation {
+  key: string;
+  label: string;
+  /** Required reps before next station; omit for open-ended max effort */
+  reps?: number;
+}
+
+export interface StationScheme {
+  /** `linear` = walk once (WOD 1/2/5); `amrap` = repeat stations (WOD 4) */
+  mode: 'linear' | 'amrap';
+  stations: WodStation[];
+}
 
 export interface AppConfig {
   eventName: string;
@@ -36,8 +53,10 @@ export interface WodConfig {
   wodDescription?: string[];
   categoryWodDescription?: Record<string, string[]>;
   scoreTypes: ScoreType[];
-  /** When set, admin/leaderboard use typed score_detail; may affect ranking (e.g. ttmm). */
+  /** When set, admin/leaderboard use typed score detail UI (ttmm ranks; stations display-only). */
   scoreDetailType?: ScoreDetailType;
+  /** Per-category station scheme for display-only breakdown from flat reps. */
+  stationScheme?: Record<string, StationScheme>;
 }
 
 export const appConfig: { [key: string]: AppConfig } = {
@@ -407,6 +426,31 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
         },
         scoreTypes: ['Reps', 'Tiebreak'],
+        scoreDetailType: 'stations',
+        stationScheme: {
+          Open: {
+            mode: 'linear',
+            stations: [
+              { key: 'wall_ball', label: 'Partner Wall-Ball', reps: 150 },
+              { key: 'ttb', label: 'Toes-to-Bar', reps: 30 },
+              { key: 'pull_ups', label: 'Pull-Ups', reps: 30 },
+              { key: 'synchro_ttb', label: 'Synchro Toes-to-Bar', reps: 30 },
+              { key: 'synchro_pu', label: 'Synchro Pull-Ups', reps: 30 },
+              { key: 'bmu', label: 'Bar Muscle-Ups' },
+            ],
+          },
+          Scaled: {
+            mode: 'linear',
+            stations: [
+              { key: 'wall_ball', label: 'Partner Wall-Ball', reps: 120 },
+              { key: 'synchro_su_1', label: 'Synchro Sit-Ups', reps: 30 },
+              { key: 'ring_rows_1', label: 'Ring Rows', reps: 30 },
+              { key: 'synchro_su_2', label: 'Synchro Sit-Ups', reps: 30 },
+              { key: 'ring_rows_2', label: 'Ring Rows', reps: 30 },
+              { key: 'ttb', label: 'Toes-to-Bar' },
+            ],
+          },
+        },
       },
       {
         wodNumber: 2,
@@ -441,7 +485,47 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
         },
         scoreTypes: ['Time', 'Reps'],
-      }, {
+        scoreDetailType: 'stations',
+        stationScheme: {
+          Open: {
+            mode: 'linear',
+            stations: [
+              {
+                key: 'bso_1',
+                label: 'Synchro DB Box Step-Overs (MMF1)',
+                reps: 70,
+              },
+              {
+                key: 'burpees',
+                label: 'Synchro Bar Facing Burpees',
+                reps: 50,
+              },
+              {
+                key: 'bso_2',
+                label: 'Synchro DB Box Step-Overs (MMF2)',
+                reps: 70,
+              },
+            ],
+          },
+          Scaled: {
+            mode: 'linear',
+            stations: [
+              {
+                key: 'bso_1',
+                label: 'Synchro Box Step-Overs (MMF1)',
+                reps: 60,
+              },
+              { key: 'burpees', label: 'Synchro Burpees', reps: 40 },
+              {
+                key: 'bso_2',
+                label: 'Synchro Box Step-Overs (MMF2)',
+                reps: 60,
+              },
+            ],
+          },
+        },
+      },
+      {
         wodNumber: 3,
         wodName: 'T-T-M-M',
         wodSummary: 'Double Unders, Tuck L-sit and Yoke Carry',
@@ -516,6 +600,33 @@ export const appConfig: { [key: string]: AppConfig } = {
           ],
         },
         scoreTypes: ['Reps'],
+        scoreDetailType: 'stations',
+        stationScheme: {
+          Open: {
+            mode: 'amrap',
+            stations: [
+              { key: 'cals', label: 'Cal Row & Air Bike', reps: 140 },
+              {
+                key: 'deadlifts',
+                label: 'Synchro DB Deadlifts',
+                reps: 20,
+              },
+              { key: 'wall_walks', label: 'Wall Walks', reps: 10 },
+            ],
+          },
+          Scaled: {
+            mode: 'amrap',
+            stations: [
+              { key: 'cals', label: 'Cal Row & Air Bike', reps: 90 },
+              {
+                key: 'deadlifts',
+                label: 'Synchro DB Deadlifts',
+                reps: 20,
+              },
+              { key: 'seal_walks', label: 'Seal Walks', reps: 10 },
+            ],
+          },
+        },
       },
       {
         wodNumber: 5,
@@ -532,7 +643,8 @@ export const appConfig: { [key: string]: AppConfig } = {
             '',
             'Workout Flow:',
             'All athletes complete 6 Ground-to-Overheads with Weight 1, the team then moves on to Weight 2, where all athletes must complete 4 repetitions each, then 2 repetitions each at Weight 3 and finally 1 repetition each at Weight 4.',
-            'Weights to be announced at the event'
+            'Tiebreak will be recorded on completion of Weight 2.',
+            'Weights to be announced at the event',
             // 'Women @ 30kg, 35kg, 40kg, 45kg',
             // 'Men @ 40kg, 50kg, 60kg, 70kg',
           ],
@@ -546,12 +658,34 @@ export const appConfig: { [key: string]: AppConfig } = {
             '',
             'Workout Flow:',
             'All athletes complete 6 Ground-to-Overheads with Weight 1, the team then moves on to Weight 2, where all athletes must complete 4 repetitions each, then 2 repetitions each at Weight 3 and finally 1 repetition each at Weight 4.',
-            'Weights to be announced at the event'
+            'Tiebreak will be recorded on completion of Weight 2.',
+            'Weights to be announced at the event',
             // 'Women @ 20kg, 25kg, 30kg, 35kg',
             // 'Men @ 30kg, 35kg, 40kg, 45kg',
           ],
         },
         scoreTypes: ['Time', 'Reps', 'Tiebreak'],
+        scoreDetailType: 'stations',
+        stationScheme: {
+          Open: {
+            mode: 'linear',
+            stations: [
+              { key: 'gto_w1', label: 'GTO Weight 1', reps: 36 },
+              { key: 'gto_w2', label: 'GTO Weight 2', reps: 24 },
+              { key: 'gto_w3', label: 'GTO Weight 3', reps: 12 },
+              { key: 'gto_w4', label: 'GTO Weight 4', reps: 6 },
+            ],
+          },
+          Scaled: {
+            mode: 'linear',
+            stations: [
+              { key: 'gto_w1', label: 'GTO Weight 1', reps: 36 },
+              { key: 'gto_w2', label: 'GTO Weight 2', reps: 24 },
+              { key: 'gto_w3', label: 'GTO Weight 3', reps: 12 },
+              { key: 'gto_w4', label: 'GTO Weight 4', reps: 6 },
+            ],
+          },
+        },
       },
     ],
   },

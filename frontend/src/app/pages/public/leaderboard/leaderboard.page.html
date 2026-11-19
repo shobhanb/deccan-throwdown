@@ -53,7 +53,11 @@
   <ion-list [inset]="true" class="dt-card-scoreboard scoreboard-list">
     @for (team of filteredSortedTeamsData(); track team.id) {
     @if (team.rank) {
-    <ion-item class="leaderboard-row" [class.ttmm-row]="isTtmmWod()" lines="full">
+    <ion-item
+      class="leaderboard-row"
+      [class.ttmm-row]="isTtmmWod() || isStationsWod()"
+      lines="full"
+    >
       <div slot="start" class="rank-cell">
         <span class="stat-badge" [class.rank-gold]="team.rank === 1" [class.rank-silver]="team.rank === 2" [class.rank-bronze]="team.rank === 3">{{ team.rank }}</span>
       </div>
@@ -112,6 +116,14 @@
           </div>
           } @empty {
           <p class="ttmm-muted">No TTMM detail entered yet</p>
+          }
+        </div>
+        }
+
+        @if (isStationsWod()) {
+        <div class="stations-detail">
+          @for (line of getStationSummary(team); track $index) {
+          <p class="station-summary">{{ line }}</p>
           }
         </div>
         }

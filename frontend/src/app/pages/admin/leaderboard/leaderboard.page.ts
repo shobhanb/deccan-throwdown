@@ -41,6 +41,10 @@ import {
   TtmmScoreboardComponentView,
   TtmmScoreDetail,
 } from 'src/app/shared/score-detail/ttmm';
+import {
+  resolveStationScheme,
+  stationSummaryLines,
+} from 'src/app/shared/score-detail/stations';
 
 @Component({
   selector: 'app-admin-leaderboard',
@@ -96,6 +100,9 @@ export class AdminLeaderboardPage implements OnInit {
   );
   isTtmmWod = computed(
     () => this.selectedWodConfig()?.scoreDetailType === 'ttmm'
+  );
+  isStationsWod = computed(
+    () => this.selectedWodConfig()?.scoreDetailType === 'stations'
   );
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
@@ -189,6 +196,15 @@ export class AdminLeaderboardPage implements OnInit {
 
   getTtmmComponentTotal(team: apiTeamsOutputDetailModel): number | null {
     return this.getTtmmDetail(team)?.results?.total_component_points ?? null;
+  }
+
+  getStationSummary(team: apiTeamsOutputDetailModel): string[] {
+    const score = this.getWodScore(team);
+    const scheme = resolveStationScheme(
+      this.selectedWodConfig(),
+      team.category
+    );
+    return stationSummaryLines(score?.reps, scheme);
   }
 
   isRowUnverified(team: apiTeamsOutputDetailModel): boolean {

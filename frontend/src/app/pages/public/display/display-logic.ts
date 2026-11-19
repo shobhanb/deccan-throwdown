@@ -275,50 +275,27 @@ export function buildLiveRows(
   );
 
   const verifiedRows: DisplayRow[] = [];
-  const pendingRows: DisplayRow[] = [];
-  const awaitingRows: DisplayRow[] = [];
 
   for (const team of categoryTeams) {
     const score = scoreForWod(team, wodNumber) ?? null;
-    if (score?.verified) {
-      verifiedRows.push({
-        teamId: team.id,
-        teamName: team.team_name,
-        rank: score.wod_rank ?? null,
-        status: 'verified',
-        scoreLabel: formatScoreLabel(score),
-        pointsLabel:
-          score.wod_points != null ? `${score.wod_points} pts` : null,
-        score,
-      });
-    } else if (score) {
-      pendingRows.push({
-        teamId: team.id,
-        teamName: team.team_name,
-        rank: null,
-        status: 'pending',
-        scoreLabel: formatScoreLabel(score),
-        pointsLabel: null,
-        score,
-      });
-    } else {
-      awaitingRows.push({
-        teamId: team.id,
-        teamName: team.team_name,
-        rank: null,
-        status: 'awaiting',
-        scoreLabel: '—',
-        pointsLabel: null,
-        score: null,
-      });
+    if (!score?.verified) {
+      continue;
     }
+    verifiedRows.push({
+      teamId: team.id,
+      teamName: team.team_name,
+      rank: score.wod_rank ?? null,
+      status: 'verified',
+      scoreLabel: formatScoreLabel(score),
+      pointsLabel:
+        score.wod_points != null ? `${score.wod_points} pts` : null,
+      score,
+    });
   }
 
-  verifiedRows.sort((a, b) => (a.rank ?? 999999) - (b.rank ?? 999999));
-  pendingRows.sort((a, b) => a.teamName.localeCompare(b.teamName));
-  awaitingRows.sort((a, b) => a.teamName.localeCompare(b.teamName));
-
-  return [...verifiedRows, ...pendingRows, ...awaitingRows];
+  return verifiedRows.sort(
+    (a, b) => (a.rank ?? 999999) - (b.rank ?? 999999)
+  );
 }
 
 export function buildIdleOverallRows(

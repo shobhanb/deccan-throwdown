@@ -70,6 +70,11 @@
                   }}
                 </h3>
                 }
+                @if (isStationsWod()) {
+                @for (line of getStationSummary(team.id, category[0]); track $index) {
+                <p class="station-summary">{{ line }}</p>
+                }
+                }
                 }
               </ion-label>
               <ion-checkbox
@@ -105,6 +110,11 @@
                   convertSecondsToMinunites(getScore(team.id)?.tiebreak_s ?? 0)
                   }}
                 </h3>
+                }
+                @if (isStationsWod()) {
+                @for (line of getStationSummary(team.id, category[0]); track $index) {
+                <p class="station-summary">{{ line }}</p>
+                }
                 }
                 } @if (getScore(team.id)?.verified) {
                 <p>Verified</p>

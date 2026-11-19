@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import {
+  applyWhen,
   form,
   FormField,
   max,
@@ -54,6 +55,13 @@ import {
   ttmmDetailToForm,
   ttmmFormToDetailJson,
 } from 'src/app/shared/score-detail/ttmm';
+import {
+  composeAmrapReps,
+  decomposeAmrapReps,
+  resolveStationScheme,
+  stationRepsPerRound,
+  stationSummaryLines,
+} from 'src/app/shared/score-detail/stations';
 
 @Component({
   selector: 'app-score',
@@ -108,7 +116,34 @@ export class ScorePage {
   teamId = signal<string>('');
   teamData = signal<apiTeamsOutputDetailModel | null>(null);
 
+  stationScheme = computed(() =>
+    resolveStationScheme(this.wod(), this.teamData()?.category)
+  );
+  isAmrapStations = computed(
+    () =>
+      this.wod()?.scoreDetailType === 'stations' &&
+      this.stationScheme()?.mode === 'amrap'
+  );
+  repsPerRound = computed(() => stationRepsPerRound(this.stationScheme()));
+  composedTotalReps = computed(() => {
+    if (!this.isAmrapStations()) {
+      return this.scoreModel().reps;
+    }
+    return composeAmrapReps(
+      this.scoreModel().rounds,
+      this.scoreModel().reps,
+      this.stationScheme()
+    );
+  });
+  amrapPreviewLines = computed(() => {
+    if (!this.isAmrapStations()) {
+      return [] as string[];
+    }
+    return stationSummaryLines(this.composedTotalReps(), this.stationScheme());
+  });
+
   scoreModel = signal<ScoreFormModel>({
+    rounds: null,
     reps: null,
     time_minutes: null,
     time_seconds: null,
@@ -120,6 +155,14 @@ export class ScorePage {
   ttmmModel = signal<TtmmFormModel>(emptyTtmmForm());
 
   scoreForm = form(this.scoreModel, (schemaPath) => {
+    // Rounds only applies to AMRAP station WODs (e.g. WOD 4).
+    applyWhen(
+      schemaPath,
+      () => this.isAmrapStations(),
+      (path) => {
+        min(path.rounds, 0, { message: 'Rounds must be 0 or greater' });
+      }
+    );
     min(schemaPath.reps, 0, { message: 'Reps must be 0 or greater' });
     min(schemaPath.time_minutes, 0, { message: 'Minutes must be 0 or greater' });
     min(schemaPath.time_seconds, 0, { message: 'Seconds must be 0 or greater' });
@@ -159,7 +202,13 @@ export class ScorePage {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data: apiTeamsOutputDetailModel) => this.teamData.set(data),
+        next: (data: apiTeamsOutputDetailModel) => {
+          this.teamData.set(data);
+          const score = this.scoreData();
+          if (score && !this.scoreForm().dirty()) {
+            this.populateScoreForm(score);
+          }
+        },
         error: () => {
           this.teamData.set(null);
           this.toastService.showError('Failed to load team data');
@@ -175,24 +224,7 @@ export class ScorePage {
       next: (data: apiScoreOutputModel) => {
         this.scoreData.set(data);
         this.dataLoaded.set(true);
-        this.scoreModel.set({
-          reps: data.reps ?? null,
-          time_minutes:
-            data.time_s != null && data.time_s > 0
-              ? Math.floor(data.time_s / 60)
-              : null,
-          time_seconds:
-            data.time_s != null && data.time_s > 0 ? data.time_s % 60 : null,
-          tiebreak_minutes:
-            data.tiebreak_s != null && data.tiebreak_s > 0
-              ? Math.floor(data.tiebreak_s / 60)
-              : null,
-          tiebreak_seconds:
-            data.tiebreak_s != null && data.tiebreak_s > 0
-              ? data.tiebreak_s % 60
-              : null,
-          score_detail: data.score_detail || '',
-        });
+        this.populateScoreForm(data);
         this.ttmmModel.set(
           ttmmDetailToForm(parseTtmmScoreDetail(data.score_detail))
         );
@@ -200,8 +232,55 @@ export class ScorePage {
       error: () => {
         this.scoreData.set(null);
         this.dataLoaded.set(true);
+        this.scoreModel.set({
+          rounds: null,
+          reps: null,
+          time_minutes: null,
+          time_seconds: null,
+          tiebreak_minutes: null,
+          tiebreak_seconds: null,
+          score_detail: '',
+        });
         this.ttmmModel.set(emptyTtmmForm());
       },
+    });
+  }
+
+  private populateScoreForm(data: apiScoreOutputModel) {
+    const scheme = resolveStationScheme(this.wod(), this.teamData()?.category);
+    let rounds: number | null = null;
+    let reps = data.reps ?? null;
+
+    if (
+      this.wod()?.scoreDetailType === 'stations' &&
+      scheme?.mode === 'amrap' &&
+      reps != null
+    ) {
+      const parts = decomposeAmrapReps(reps, scheme);
+      if (parts) {
+        rounds = parts.rounds;
+        reps = parts.partialReps;
+      }
+    }
+
+    this.scoreModel.set({
+      rounds,
+      reps,
+      time_minutes:
+        data.time_s != null && data.time_s > 0
+          ? Math.floor(data.time_s / 60)
+          : null,
+      time_seconds:
+        data.time_s != null && data.time_s > 0 ? data.time_s % 60 : null,
+      tiebreak_minutes:
+        data.tiebreak_s != null && data.tiebreak_s > 0
+          ? Math.floor(data.tiebreak_s / 60)
+          : null,
+      tiebreak_seconds:
+        data.tiebreak_s != null && data.tiebreak_s > 0
+          ? data.tiebreak_s % 60
+          : null,
+      score_detail: data.score_detail || '',
     });
   }
 
@@ -240,8 +319,16 @@ export class ScorePage {
         (formValue.tiebreak_minutes || 0) * 60 +
         (formValue.tiebreak_seconds || 0);
 
+      const reps = this.isAmrapStations()
+        ? composeAmrapReps(
+            formValue.rounds,
+            formValue.reps,
+            this.stationScheme()
+          )
+        : formValue.reps;
+
       scoreSubmission = {
-        reps: formValue.reps,
+        reps,
         time_s: timeInSeconds > 0 ? timeInSeconds : null,
         tiebreak_s: tiebreakInSeconds > 0 ? tiebreakInSeconds : null,
         score_detail: formValue.score_detail || null,
@@ -352,6 +439,29 @@ export class ScorePage {
     if (this.isTtmm()) {
       return 'Scoring: TTMM (3 components)';
     }
+    if (this.isAmrapStations()) {
+      const perRound = this.repsPerRound();
+      return perRound > 0
+        ? `Scoring: Rounds + reps (${perRound} reps/round)`
+        : 'Scoring: Rounds + reps';
+    }
     return 'Scoring: ' + (this.wod()?.scoreTypes ?? []);
+  }
+
+  showFlatRepsField(): boolean {
+    const types = this.wod()?.scoreTypes ?? [];
+    return types.includes('Reps') || types.includes('Weight');
+  }
+
+  showTimeField(): boolean {
+    return !!this.wod()?.scoreTypes?.includes('Time');
+  }
+
+  showTiebreakField(): boolean {
+    return !!this.wod()?.scoreTypes?.includes('Tiebreak');
+  }
+
+  submitLabel(): string {
+    return this.isEditing() ? 'Update Score' : 'Submit Score';
   }
 }

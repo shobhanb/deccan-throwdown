@@ -153,12 +153,19 @@
                 <div class="col-team" role="cell">
                   <strong class="team-name">{{ row.teamName }}</strong>
                   @if (isTtmmView() && row.status === 'verified') {
-                  <div class="ttmm-compact">
+                  <div class="detail-compact">
                     @for (component of getTtmmComponents(row); track component.key) {
-                    <span class="ttmm-chip">
+                    <span class="detail-chip">
                       {{ component.label }}: {{ component.totalReps
                       }}@if (component.rank) { · #{{ component.rank }} }
                     </span>
+                    }
+                  </div>
+                  }
+                  @if (isStationsView() && row.status === 'verified') {
+                  <div class="detail-compact">
+                    @for (line of getStationSummary(row); track $index) {
+                    <span class="detail-summary">{{ line }}</span>
                     }
                   </div>
                   }

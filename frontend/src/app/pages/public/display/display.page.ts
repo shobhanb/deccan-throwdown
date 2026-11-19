@@ -26,6 +26,10 @@ import {
   TtmmScoreboardComponentView,
 } from 'src/app/shared/score-detail/ttmm';
 import {
+  resolveStationScheme,
+  stationSummaryLines,
+} from 'src/app/shared/score-detail/stations';
+import {
   buildIdleSlides,
   buildLiveSlides,
   buildPreviewSlides,
@@ -186,6 +190,21 @@ export class DisplayPage implements OnInit {
     );
   });
 
+  isStationsView = computed(() => {
+    const slide = this.currentSlide();
+    if (!slide || slide.kind !== 'standings') {
+      return false;
+    }
+    const view = slide.view;
+    if (view.kind !== 'wod') {
+      return false;
+    }
+    return (
+      this.wods.find((w) => w.wodNumber === view.wodNumber)?.scoreDetailType ===
+      'stations'
+    );
+  });
+
   ngOnInit(): void {
     this.loadGalleryImages();
 
@@ -213,6 +232,20 @@ export class DisplayPage implements OnInit {
       parseTtmmScoreDetail(row.score.score_detail),
       slide.category
     );
+  }
+
+  getStationSummary(row: DisplayRow): string[] {
+    const slide = this.currentSlide();
+    if (!row.score || !slide || slide.kind !== 'standings') {
+      return [];
+    }
+    const view = slide.view;
+    if (view.kind !== 'wod') {
+      return [];
+    }
+    const wod = this.wods.find((w) => w.wodNumber === view.wodNumber);
+    const scheme = resolveStationScheme(wod, slide.category);
+    return stationSummaryLines(row.score.reps, scheme);
   }
 
   wodDescriptionForCategory(category: string): string[] {

@@ -300,7 +300,7 @@ describe('display-logic', () => {
   });
 
   describe('buildLiveRows', () => {
-    it('orders verified, then pending, then awaiting', () => {
+    it('includes only verified scores ranked by wod_rank', () => {
       const teams = [
         team({
           id: 'await',
@@ -330,14 +330,10 @@ describe('display-logic', () => {
         }),
       ];
       const rows = buildLiveRows(teams, 'Open', 1);
-      expect(rows.map((r) => r.status)).toEqual([
-        'verified',
-        'pending',
-        'awaiting',
-      ]);
+      expect(rows.map((r) => r.status)).toEqual(['verified']);
+      expect(rows.map((r) => r.teamId)).toEqual(['verified']);
       expect(rows[0].rank).toBe(1);
-      expect(rows[1].scoreLabel).toBe('50');
-      expect(rows[2].scoreLabel).toBe('—');
+      expect(rows[0].scoreLabel).toBe('100');
     });
   });
 

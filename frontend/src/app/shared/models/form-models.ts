@@ -49,6 +49,12 @@ export interface AdminTeamFormModel {
 }
 
 export interface ScoreFormModel {
+  /** Full rounds for AMRAP station WODs (e.g. WOD 4); unused otherwise. */
+  rounds: number | null;
+  /**
+   * Flat reps/weight, or for AMRAP station WODs the additional reps
+   * beyond completed rounds (partial round).
+   */
   reps: number | null;
   time_minutes: number | null;
   time_seconds: number | null;

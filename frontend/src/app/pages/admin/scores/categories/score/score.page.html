@@ -198,8 +198,48 @@
     </ion-list>
     } @else {
     <ion-list [inset]="true" class="dt-admin-list score-entry-list">
-      @if (wod()?.scoreTypes?.includes('Reps') ||
-      wod()?.scoreTypes?.includes('Weight')) {
+      @if (isAmrapStations()) {
+      <ion-item lines="none">
+        <ion-label>
+          <p class="admin-hint">
+            Optional rounds plus extra reps in the partial round.
+            @if (repsPerRound() > 0) {
+            One round = {{ repsPerRound() }} reps.
+            }
+          </p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          type="number"
+          label="Rounds (optional)"
+          labelPlacement="stacked"
+          [formField]="scoreForm.rounds"
+          placeholder="0"
+          [disabled]="isVerified()"
+        ></ion-input>
+        <ion-input
+          type="number"
+          label="Additional reps"
+          labelPlacement="stacked"
+          [formField]="scoreForm.reps"
+          placeholder="Partial round"
+          [disabled]="isVerified()"
+        ></ion-input>
+      </ion-item>
+      @if (composedTotalReps() != null) {
+      <ion-item lines="none">
+        <ion-label>
+          <p>
+            Total reps: <strong>{{ composedTotalReps() }}</strong>
+            @if (amrapPreviewLines().length) {
+            · {{ amrapPreviewLines()[0] }}
+            }
+          </p>
+        </ion-label>
+      </ion-item>
+      }
+      } @else if (showFlatRepsField()) {
       <ion-item>
         <ion-input
           type="number"
@@ -207,17 +247,20 @@
           labelPlacement="stacked"
           [formField]="scoreForm.reps"
           placeholder="Enter number of reps or weight"
+          [disabled]="isVerified()"
         ></ion-input>
       </ion-item>
-      } @if (wod()?.scoreTypes?.includes('Time') ) {
+      }
+
+      @if (showTimeField()) {
       <ion-item>
         <ion-input
           type="number"
           label="Time (Minutes)"
           labelPlacement="stacked"
           [formField]="scoreForm.time_minutes"
+          [disabled]="isVerified()"
         ></ion-input>
-
         <ion-input
           type="number"
           label="Time (Seconds)"
@@ -225,18 +268,20 @@
           [formField]="scoreForm.time_seconds"
           min="0"
           max="59"
+          [disabled]="isVerified()"
         ></ion-input>
       </ion-item>
+      }
 
-      } @if (wod()?.scoreTypes?.includes('Tiebreak') ) {
+      @if (showTiebreakField()) {
       <ion-item>
         <ion-input
           type="number"
           label="Tiebreak (Minutes)"
           labelPlacement="stacked"
           [formField]="scoreForm.tiebreak_minutes"
+          [disabled]="isVerified()"
         ></ion-input>
-
         <ion-input
           type="number"
           label="Tiebreak (Seconds)"
@@ -244,6 +289,7 @@
           [formField]="scoreForm.tiebreak_seconds"
           min="0"
           max="59"
+          [disabled]="isVerified()"
         ></ion-input>
       </ion-item>
       }
@@ -257,8 +303,9 @@
       class="ion-margin"
       type="submit"
       [disabled]="!scoreFormValid()"
-      >{{ isEditing() ? "Update Score" : "Submit Score" }}</ion-button
     >
+      {{ submitLabel() }}
+    </ion-button>
     }
 
     <ion-button
@@ -268,8 +315,9 @@
       type="button"
       [routerLink]="['/admin', 'scores', wodNumber()]"
       routerDirection="back"
-      >Cancel</ion-button
     >
+      Cancel
+    </ion-button>
   </form>
 
   @if (isEditing() && !isVerified()) {
@@ -279,8 +327,9 @@
     type="button"
     color="danger"
     (click)="onDelete()"
-    >Delete</ion-button
   >
+    Delete
+  </ion-button>
   } } @else {
   <ion-skeleton-text
     [animated]="true"

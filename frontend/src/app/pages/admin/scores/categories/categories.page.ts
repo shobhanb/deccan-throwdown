@@ -33,6 +33,10 @@ import {
   parseTtmmScoreDetail,
   ttmmSummaryLines,
 } from 'src/app/shared/score-detail/ttmm';
+import {
+  resolveStationScheme,
+  stationSummaryLines,
+} from 'src/app/shared/score-detail/stations';
 
 @Component({
   selector: 'app-categories',
@@ -191,6 +195,10 @@ export class CategoriesPage implements OnInit {
     return this.wod()?.scoreDetailType === 'ttmm';
   }
 
+  isStationsWod(): boolean {
+    return this.wod()?.scoreDetailType === 'stations';
+  }
+
   scoringLabel(): string {
     if (this.isTtmmWod()) {
       return 'Scoring: TTMM (3 components)';
@@ -201,5 +209,11 @@ export class CategoriesPage implements OnInit {
   getTtmmSummary(teamId: string): string[] {
     const score = this.getScore(teamId);
     return ttmmSummaryLines(parseTtmmScoreDetail(score?.score_detail));
+  }
+
+  getStationSummary(teamId: string, category: string): string[] {
+    const score = this.getScore(teamId);
+    const scheme = resolveStationScheme(this.wod(), category);
+    return stationSummaryLines(score?.reps, scheme);
   }
 }

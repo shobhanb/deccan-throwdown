@@ -354,8 +354,28 @@
   color: var(--dt-brand-navy);
 }
 
-.ttmm-compact {
-  display: none;
+.detail-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.detail-chip {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--dt-brand-navy) 12%, transparent);
+  color: var(--dt-brand-steel);
+  font-size: clamp(0.55rem, 1.1vh, 0.8rem);
+  white-space: nowrap;
+}
+
+.detail-summary {
+  display: block;
+  color: var(--dt-brand-steel);
+  font-size: clamp(0.55rem, 1.1vh, 0.8rem);
+  white-space: normal;
 }
 
 .display-empty {
