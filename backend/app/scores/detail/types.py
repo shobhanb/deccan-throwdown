@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -11,6 +12,7 @@ TTMM_DEFAULT_TIEBREAK_S = 4 * 60
 
 
 class TtmmAthleteScore(BaseModel):
+    athlete_id: UUID | None = None
     reps: int | None = Field(default=None, ge=0)
     tiebreak_s: int | None = Field(default=None, ge=0)
 
@@ -34,11 +36,18 @@ class TtmmComponents(BaseModel):
     yoke: TtmmComponentInput | None = None
 
 
-class TtmmComponentResult(BaseModel):
-    total_reps: int | None = None
-    total_tiebreak_s: int | None = None
+class TtmmAthleteResult(BaseModel):
+    athlete_id: UUID | None = None
+    reps: int | None = None
+    tiebreak_s: int | None = None
     rank: int | None = None
     points: int | None = None
+
+
+class TtmmComponentResult(BaseModel):
+    athletes: list[TtmmAthleteResult] = Field(default_factory=list)
+    total_reps: int | None = None
+    total_tiebreak_s: int | None = None
     complete: bool = False
 
 
@@ -88,18 +97,19 @@ def _padded_athletes(component: TtmmComponentInput | None) -> list[TtmmAthleteSc
     return athletes[:2]
 
 
+def athlete_is_scorable(athlete: TtmmAthleteScore, *, timed: bool) -> bool:
+    if athlete.reps is None:
+        return False
+    return not (timed and athlete.tiebreak_s is None)
+
+
 def component_is_complete(
     component: TtmmComponentInput | None,
     *,
     timed: bool,
 ) -> bool:
     athletes = _padded_athletes(component)
-    for athlete in athletes:
-        if athlete.reps is None:
-            return False
-        if timed and athlete.tiebreak_s is None:
-            return False
-    return True
+    return all(athlete_is_scorable(athlete, timed=timed) for athlete in athletes)
 
 
 def component_totals(
@@ -119,9 +129,35 @@ def component_totals(
     return total_reps, total_tiebreak
 
 
-def timed_component_sort_key(total_reps: int, total_tiebreak_s: int) -> tuple[float, float]:
-    return (-total_reps, float(total_tiebreak_s))
+def timed_component_sort_key(reps: int, tiebreak_s: int) -> tuple[float, float]:
+    return (-reps, float(tiebreak_s))
 
 
-def yoke_component_sort_key(total_reps: int) -> tuple[float]:
-    return (-total_reps,)
+def yoke_component_sort_key(reps: int) -> tuple[float]:
+    return (-reps,)
+
+
+def iter_ttmm_athlete_ids(detail: TtmmScoreDetail) -> list[UUID]:
+    ids: list[UUID] = []
+    for key in TTMM_COMPONENT_KEYS:
+        component = getattr(detail.components, key)
+        if component is None:
+            continue
+        for athlete in component.athletes:
+            if athlete.athlete_id is not None:
+                ids.append(athlete.athlete_id)
+    return ids
+
+
+def validate_ttmm_roster_ids(
+    detail: TtmmScoreDetail,
+    team_athlete_ids: set[UUID],
+) -> None:
+    """Ensure assigned athlete_ids belong to the team and appear at most once."""
+    seen: set[UUID] = set()
+    for athlete_id in iter_ttmm_athlete_ids(detail):
+        if athlete_id not in team_athlete_ids:
+            raise ValueError(f"athlete_id {athlete_id} is not on this team")
+        if athlete_id in seen:
+            raise ValueError(f"athlete_id {athlete_id} is assigned more than once")
+        seen.add(athlete_id)

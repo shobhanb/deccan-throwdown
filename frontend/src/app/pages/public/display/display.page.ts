@@ -245,9 +245,15 @@ export class DisplayPage implements OnInit {
     if (!row.score || !slide || slide.kind !== 'standings') {
       return [];
     }
+    const team = this.teamsData().find((entry) => entry.id === row.teamId);
+    const nameById: Record<string, string> = {};
+    for (const athlete of team?.athletes ?? []) {
+      nameById[athlete.id] = `${athlete.first_name} ${athlete.last_name}`;
+    }
     return ttmmScoreboardComponents(
       parseTtmmScoreDetail(row.score.score_detail),
-      slide.category
+      slide.category,
+      nameById
     );
   }
 

@@ -124,11 +124,8 @@
             <div class="ttmm-component-header">
               <strong>{{ component.label }}</strong>
               <span class="ttmm-component-meta">
-                @if (component.rank) {
-                Rank {{ component.rank }}
-                }
                 @if (component.points) {
-                · {{ component.points }}pts
+                {{ component.points }}pts
                 }
                 @if (!component.complete) {
                 · partial
@@ -136,12 +133,18 @@
               </span>
             </div>
             <div class="ttmm-athletes">
-              @for (athlete of component.athletes; track athlete.label) {
+              @for (athlete of component.athletes; track athlete.athleteId || athlete.label) {
               <span class="ttmm-athlete">
                 {{ athlete.label }}:
                 {{ athlete.reps }}
                 @if (athlete.time) {
                 <span class="ttmm-muted">@ {{ athlete.time }}</span>
+                }
+                @if (athlete.rank) {
+                <span class="ttmm-muted"> · #{{ athlete.rank }}</span>
+                }
+                @if (athlete.points) {
+                <span class="ttmm-muted"> · {{ athlete.points }}pts</span>
                 }
               </span>
               }

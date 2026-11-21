@@ -29,6 +29,8 @@ import {
   IonSkeletonText,
   IonRouterLink,
   IonLabel,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular';
 import { ToolbarButtonsComponent } from 'src/app/shared/toolbar-buttons/toolbar-buttons.component';
 import { AdminPageHeaderComponent } from 'src/app/shared/admin-page-header/admin-page-header.component';
@@ -36,6 +38,7 @@ import { apiScoresService, apiTeamsService } from 'src/app/api/services';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from 'src/app/services/toast.service';
 import {
+  apiAthleteOutputModel,
   apiScoreOutputModel,
   apiTeamsOutputDetailModel,
 } from 'src/app/api/models';
@@ -48,11 +51,13 @@ import {
   emptyTtmmForm,
   isTtmmFormValidPartial,
   parseTtmmScoreDetail,
+  TTMM_COMPONENT_KEYS,
   TtmmComponentKey,
   TtmmFormModel,
   ttmmAthleteLabels,
   ttmmComponentLabel,
   ttmmDetailToForm,
+  ttmmFormHasUniqueAthletes,
   ttmmFormToDetailJson,
 } from 'src/app/shared/score-detail/ttmm';
 import {
@@ -76,6 +81,8 @@ import {
     IonItem,
     IonList,
     IonLabel,
+    IonSelect,
+    IonSelectOption,
     IonRefresherContent,
     IonRefresher,
     IonBackButton,
@@ -292,6 +299,39 @@ export class ScorePage {
     return ttmmAthleteLabels(key)[slot];
   }
 
+  rosterAthletes(): apiAthleteOutputModel[] {
+    return this.teamData()?.athletes ?? [];
+  }
+
+  availableRosterAthletes(
+    key: TtmmComponentKey,
+    slot: 0 | 1
+  ): apiAthleteOutputModel[] {
+    const selectedId =
+      slot === 0
+        ? this.ttmmModel()[key].a1.athlete_id
+        : this.ttmmModel()[key].a2.athlete_id;
+    const usedElsewhere = new Set<string>();
+    for (const componentKey of TTMM_COMPONENT_KEYS) {
+      for (const slotKey of ['a1', 'a2'] as const) {
+        if (componentKey === key && (slotKey === 'a1') === (slot === 0)) {
+          continue;
+        }
+        const id = this.ttmmModel()[componentKey][slotKey].athlete_id;
+        if (id) {
+          usedElsewhere.add(id);
+        }
+      }
+    }
+    return this.rosterAthletes().filter(
+      (athlete) => athlete.id === selectedId || !usedElsewhere.has(athlete.id)
+    );
+  }
+
+  athleteDisplayName(athlete: apiAthleteOutputModel): string {
+    return `${athlete.first_name} ${athlete.last_name}`;
+  }
+
   submitScore() {
     if (!this.scoreFormValid()) {
       return;
@@ -391,7 +431,8 @@ export class ScorePage {
       return (
         this.ttmmForm().valid() &&
         this.ttmmForm().dirty() &&
-        isTtmmFormValidPartial(this.ttmmModel())
+        isTtmmFormValidPartial(this.ttmmModel()) &&
+        ttmmFormHasUniqueAthletes(this.ttmmModel())
       );
     }
     return this.scoreForm().valid() && this.scoreForm().dirty();

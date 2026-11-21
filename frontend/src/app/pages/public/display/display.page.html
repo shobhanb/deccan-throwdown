@@ -176,7 +176,7 @@
                     @for (component of getTtmmComponents(row); track component.key) {
                     <span class="detail-chip">
                       {{ component.label }}: {{ component.totalReps
-                      }}@if (component.rank) { · #{{ component.rank }} }
+                      }}@if (component.points) { · {{ component.points }}pts }
                     </span>
                     }
                   </div>

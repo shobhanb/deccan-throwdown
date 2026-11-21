@@ -36,12 +36,18 @@
       <ion-item lines="none">
         <ion-label>
           <h2>{{ componentLabel('jump_rope') }}</h2>
-        </ion-label>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-label>
           <p class="admin-hint">Time defaults to 4:00 if left blank when reps are entered</p>
         </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-select label="{{ athleteLabel('jump_rope', 0) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a1.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('jump_rope', 0); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-input type="number" [label]="athleteLabel('jump_rope', 0) + ' reps'" labelPlacement="stacked"
@@ -50,6 +56,16 @@
           [formField]="ttmmForm.jump_rope.a1.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
         <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
           [formField]="ttmmForm.jump_rope.a1.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="{{ athleteLabel('jump_rope', 1) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.jump_rope.a2.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('jump_rope', 1); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-input type="number" [label]="athleteLabel('jump_rope', 1) + ' reps'" labelPlacement="stacked"
@@ -69,12 +85,32 @@
         </ion-label>
       </ion-item>
       <ion-item>
+        <ion-select label="{{ athleteLabel('hold', 0) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a1.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('hold', 0); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      <ion-item>
         <ion-input type="number" [label]="athleteLabel('hold', 0) + ' reps'" labelPlacement="stacked"
           [formField]="ttmmForm.hold.a1.reps" [disabled]="isVerified()"></ion-input>
         <ion-input type="number" label="Min" labelPlacement="stacked" placeholder="4"
           [formField]="ttmmForm.hold.a1.tiebreak_minutes" [disabled]="isVerified()"></ion-input>
         <ion-input type="number" label="Sec" labelPlacement="stacked" placeholder="00" min="0" max="59"
           [formField]="ttmmForm.hold.a1.tiebreak_seconds" [disabled]="isVerified()"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="{{ athleteLabel('hold', 1) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.hold.a2.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('hold', 1); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-input type="number" [label]="athleteLabel('hold', 1) + ' reps'" labelPlacement="stacked"
@@ -93,8 +129,28 @@
         </ion-label>
       </ion-item>
       <ion-item>
+        <ion-select label="{{ athleteLabel('yoke', 0) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a1.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('yoke', 0); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      <ion-item>
         <ion-input type="number" [label]="athleteLabel('yoke', 0) + ' distance / reps'" labelPlacement="stacked"
           [formField]="ttmmForm.yoke.a1.reps" [disabled]="isVerified()"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="{{ athleteLabel('yoke', 1) }} athlete" labelPlacement="stacked"
+          [formField]="ttmmForm.yoke.a2.athlete_id" placeholder="Select athlete" interface="action-sheet"
+          [disabled]="isVerified()">
+          <ion-select-option value="">Unassigned</ion-select-option>
+          @for (athlete of availableRosterAthletes('yoke', 1); track athlete.id) {
+          <ion-select-option [value]="athlete.id">{{ athleteDisplayName(athlete) }}</ion-select-option>
+          }
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-input type="number" [label]="athleteLabel('yoke', 1) + ' distance / reps'" labelPlacement="stacked"

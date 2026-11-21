@@ -204,9 +204,14 @@ export class LeaderboardPage implements OnInit {
   getTtmmComponents(
     team: apiTeamsOutputDetailModel
   ): TtmmScoreboardComponentView[] {
+    const nameById: Record<string, string> = {};
+    for (const athlete of team.athletes ?? []) {
+      nameById[athlete.id] = `${athlete.first_name} ${athlete.last_name}`;
+    }
     return ttmmScoreboardComponents(
       this.getTtmmDetail(team),
-      team.category
+      team.category,
+      nameById
     );
   }
 

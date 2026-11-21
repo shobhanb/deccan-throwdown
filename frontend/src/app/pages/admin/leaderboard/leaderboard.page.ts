@@ -191,7 +191,15 @@ export class AdminLeaderboardPage implements OnInit {
   getTtmmComponents(
     team: apiTeamsOutputDetailModel
   ): TtmmScoreboardComponentView[] {
-    return ttmmScoreboardComponents(this.getTtmmDetail(team), team.category);
+    const nameById: Record<string, string> = {};
+    for (const athlete of team.athletes ?? []) {
+      nameById[athlete.id] = `${athlete.first_name} ${athlete.last_name}`;
+    }
+    return ttmmScoreboardComponents(
+      this.getTtmmDetail(team),
+      team.category,
+      nameById
+    );
   }
 
   getTtmmComponentTotal(team: apiTeamsOutputDetailModel): number | null {

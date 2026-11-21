@@ -1,16 +1,39 @@
 from uuid import UUID
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.athletes.models import Athlete
 from app.database.dependencies import db_dependency
 from app.exceptions import conflict_exception
 from app.firebase_auth.dependencies import admin_user_dependency
+from app.scores.detail.registry import parse_ttmm_detail
+from app.scores.detail.types import validate_ttmm_roster_ids
 
 from .models import Score
 from .schemas import ScoreCreateModel, ScoreOutputModel, ScoreUpdateModel
 from .service import update_ranks
 
 scores_router = APIRouter(prefix="/scores", tags=["scores"])
+
+
+async def _assert_ttmm_roster_ids(
+    db_session: AsyncSession,
+    *,
+    team_id: UUID,
+    score_detail: str | None,
+) -> None:
+    detail = parse_ttmm_detail(score_detail)
+    if detail is None:
+        return
+    athletes = await Athlete.find_all(async_session=db_session, team_id=team_id)
+    try:
+        validate_ttmm_roster_ids(detail, {athlete.id for athlete in athletes})
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc
 
 
 @scores_router.get(
@@ -48,6 +71,12 @@ async def create_score(
     if score_exists:
         raise conflict_exception()
 
+    await _assert_ttmm_roster_ids(
+        db_session,
+        team_id=score.team_id,
+        score_detail=score.score_detail,
+    )
+
     new_score = Score(
         reps=score.reps,
         time_s=score.time_s,
@@ -79,6 +108,14 @@ async def update_score(
 
     # Update only the fields that are provided
     update_dict = update_data.model_dump(exclude_unset=True)
+    next_detail = update_dict.get("score_detail", score.score_detail)
+    if "score_detail" in update_dict:
+        await _assert_ttmm_roster_ids(
+            db_session,
+            team_id=score.team_id,
+            score_detail=next_detail,
+        )
+
     for field, value in update_dict.items():
         setattr(score, field, value)
 
