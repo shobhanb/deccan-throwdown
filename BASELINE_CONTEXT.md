@@ -51,7 +51,7 @@ Use this document as the source of truth when modernizing another CF Games–fam
 **Not in this baseline:** Alembic, pytest suite, GraphQL, Redis, Postgres (SQLite is intentional for this scale).
 
 ### Infrastructure
-- **Docker Compose:** `backend` + `nginx:alpine` + `certbot/certbot`
+- **Docker Compose:** `backend` + `nginx:1.31.9-alpine` + `certbot/certbot`
 - **Edge:** nginx serves `frontend/www`, TLS via Let’s Encrypt, proxies `/api/` → backend `:8000`
 - **Backend root path:** `--root-path /api` (public URL `/api/...`)
 - **Deploy:** DigitalOcean droplet; `scripts/deploy.sh` builds frontend locally, rsyncs `www/`, rebuilds compose on server
