@@ -41,10 +41,14 @@ import {
 } from './display-logic';
 import {
   defaultHeatsDisplayConfig,
+  isTtmmHeatsKey,
   normalizeHeatsDisplayConfig,
+  splitHeatsColumns,
 } from './heats-logic';
 import {
   HeatsDisplayConfig,
+  HeatsHeatView,
+  HeatsKey,
   HeatsPayload,
 } from './heats-types';
 
@@ -311,6 +315,15 @@ export class DisplayPage implements OnInit {
     );
   }
 
+  isTtmmHeatsSlide(heatsKey: HeatsKey): boolean {
+    return isTtmmHeatsKey(heatsKey);
+  }
+
+  heatsColumns(heats: HeatsHeatView[]): HeatsHeatView[][] {
+    const [left, right] = splitHeatsColumns(heats);
+    return right.length > 0 ? [left, right] : [left];
+  }
+
   getStationSummary(row: DisplayRow): string[] {
     const slide = this.currentSlide();
     if (!row.score || !slide || slide.kind !== 'standings') {
@@ -467,7 +480,8 @@ export class DisplayPage implements OnInit {
   }
 
   private advanceSlide(): void {
-    const count = this.slides().length;
+    const list = this.slides();
+    const count = list.length;
     const hasPics = this.picsEnabled() && this.galleryPaths().length > 0;
     if (count <= 1) {
       if (hasPics) {
@@ -477,7 +491,9 @@ export class DisplayPage implements OnInit {
       return;
     }
     const next = (this.slideIndex() + 1) % count;
-    if (next === 0 && hasPics) {
+    const landingOnGallery = list[next]?.kind === 'gallery';
+    // Reshuffle before switching so Pics never flashes the previous set.
+    if (hasPics && landingOnGallery) {
       this.previewEpoch.update((epoch) => epoch + 1);
     }
     this.slideIndex.set(next);

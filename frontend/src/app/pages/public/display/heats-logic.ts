@@ -14,7 +14,10 @@ export type HeatsSlideSection = {
   heats: HeatsHeatView[];
 };
 
-/** One slide = one heats key, with all matching division/station sections. */
+/**
+ * One slide = one heats key.
+ * WOD 4 (TTMM) stations are split one division per slide to avoid overflow.
+ */
 export type HeatsSlideRef = {
   kind: 'heats';
   wodNumber: number;
@@ -300,6 +303,27 @@ function primaryWodLabel(blocks: HeatsBlock[]): string {
   return labels.join(' / ');
 }
 
+export function isTtmmHeatsKey(key: HeatsKey): boolean {
+  return key.startsWith('4');
+}
+
+/** Split heats into left / right columns (first half, second half). */
+export function splitHeatsColumns<T>(heats: T[]): [T[], T[]] {
+  if (heats.length <= 1) {
+    return [heats, []];
+  }
+  const mid = Math.ceil(heats.length / 2);
+  return [heats.slice(0, mid), heats.slice(mid)];
+}
+
+function sectionFromBlock(block: HeatsBlock): HeatsSlideSection {
+  return {
+    division: block.division,
+    wodLabel: block.wodLabel,
+    heats: heatsWithNumbers(block.heats),
+  };
+}
+
 /** Build heats slides for explicitly enabled heats keys only. */
 export function buildHeatsSlides(
   payload: HeatsPayload | null | undefined,
@@ -317,16 +341,27 @@ export function buildHeatsSlides(
     if (matched.length === 0) {
       continue;
     }
+
+    // TTMM stations put Open + Scaled on separate pages (too tall together).
+    if (isTtmmHeatsKey(key) && matched.length > 1) {
+      for (const block of matched) {
+        slides.push({
+          kind: 'heats',
+          wodNumber: wodNumberForHeatsKey(key),
+          wodLabel: block.wodLabel || primaryWodLabel([block]),
+          heatsKey: key,
+          sections: [sectionFromBlock(block)],
+        });
+      }
+      continue;
+    }
+
     slides.push({
       kind: 'heats',
       wodNumber: wodNumberForHeatsKey(key),
       wodLabel: primaryWodLabel(matched),
       heatsKey: key,
-      sections: matched.map((block) => ({
-        division: block.division,
-        wodLabel: block.wodLabel,
-        heats: heatsWithNumbers(block.heats),
-      })),
+      sections: matched.map(sectionFromBlock),
     });
   }
 

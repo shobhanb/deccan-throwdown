@@ -531,9 +531,11 @@ export function buildFlagDrivenSlides(
   const slides: DisplaySlide[] = [];
 
   if (config.pics && imagePaths.length > 0) {
+    // One random group per rebuild; display bumps previewEpoch whenever
+    // this slide is shown so photos reshuffle every rotation through Pics.
     const groups = chunkImages(shuffleArray(imagePaths, random), groupSize);
-    for (const images of groups) {
-      slides.push({ kind: 'gallery', images });
+    if (groups.length > 0) {
+      slides.push({ kind: 'gallery', images: groups[0] });
     }
   }
 

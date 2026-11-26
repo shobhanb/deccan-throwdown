@@ -248,6 +248,22 @@
   overflow: auto;
 }
 
+.heats-heats-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.5vw, 1.25rem);
+  align-items: start;
+  overflow: hidden;
+}
+
+.heats-heats-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1.4vh, 0.95rem);
+  min-width: 0;
+  min-height: 0;
+}
+
 .heats-heat {
   display: flex;
   flex-direction: column;
@@ -332,5 +348,10 @@
 @media (orientation: portrait) {
   .heats-board-multi {
     grid-template-columns: 1fr;
+  }
+
+  .heats-heats-split {
+    grid-template-columns: 1fr;
+    overflow: auto;
   }
 }

@@ -37,7 +37,7 @@
           {{ modeChip().label }}
         </span>
         @if (slideIdentity(); as identity) {
-          @if (identity.kind) {
+          @if (identity.kind && identity.kind !== modeChip().label) {
           <span class="display-kind-chip text-display">{{ identity.kind }}</span>
           }
           @if (identity.category) {
@@ -161,43 +161,57 @@
                   }
                 </h3>
               </header>
-              <div class="heats-heats">
-                @for (heat of section.heats; track heat.heatNumber) {
-                <div class="heats-heat">
-                  <div class="heats-heat-head">
-                    <h4 class="heats-heat-title text-display">
-                      Heat {{ heat.heatNumber }}
-                    </h4>
-                    @if (heat.startTime) {
-                    <time class="heats-heat-time text-display">{{
-                      heat.startTime
-                    }}</time>
-                    }
-                  </div>
-                  <div
-                    class="heats-table"
-                    [class.heats-table-no-judge]="!boardConfig().showJudges"
-                    role="table"
-                  >
-                    <div class="heats-table-head" role="row">
-                      <span role="columnheader">Team</span>
-                      @if (boardConfig().showJudges) {
-                      <span role="columnheader">Judge</span>
+              <div
+                class="heats-heats"
+                [class.heats-heats-split]="isTtmmHeatsSlide(slide.heatsKey)"
+              >
+                @for (
+                  column of isTtmmHeatsSlide(slide.heatsKey)
+                    ? heatsColumns(section.heats)
+                    : [section.heats];
+                  track $index
+                ) {
+                <div class="heats-heats-column">
+                  @for (heat of column; track heat.heatNumber) {
+                  <div class="heats-heat">
+                    <div class="heats-heat-head">
+                      <h4 class="heats-heat-title text-display">
+                        Heat {{ heat.heatNumber }}
+                      </h4>
+                      @if (heat.startTime) {
+                      <time class="heats-heat-time text-display">{{
+                        heat.startTime
+                      }}</time>
                       }
                     </div>
-                    @for (entry of heat.entries; track $index) {
-                    <div class="heats-row" role="row">
-                      <div class="heats-team" role="cell">
-                        <strong class="team-name">{{ entry.teamName }}</strong>
+                    <div
+                      class="heats-table"
+                      [class.heats-table-no-judge]="!boardConfig().showJudges"
+                      role="table"
+                    >
+                      <div class="heats-table-head" role="row">
+                        <span role="columnheader">Team</span>
+                        @if (boardConfig().showJudges) {
+                        <span role="columnheader">Judge</span>
+                        }
                       </div>
-                      @if (boardConfig().showJudges) {
-                      <div class="heats-judge" role="cell">
-                        {{ entry.judge || '—' }}
+                      @for (entry of heat.entries; track $index) {
+                      <div class="heats-row" role="row">
+                        <div class="heats-team" role="cell">
+                          <strong class="team-name">{{
+                            entry.teamName
+                          }}</strong>
+                        </div>
+                        @if (boardConfig().showJudges) {
+                        <div class="heats-judge" role="cell">
+                          {{ entry.judge || '—' }}
+                        </div>
+                        }
                       </div>
                       }
                     </div>
-                    }
                   </div>
+                  }
                 </div>
                 }
               </div>
