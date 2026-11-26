@@ -10,6 +10,7 @@ import { apiAthletesService } from './services/api-athletes.service';
 import { apiTeamsService } from './services/api-teams.service';
 import { apiScoresService } from './services/api-scores.service';
 import { apiNotificationsService } from './services/api-notifications.service';
+import { apiHeatsService } from './services/api-heats.service';
 
 /**
  * Module that provides all services and configuration.
@@ -24,6 +25,7 @@ import { apiNotificationsService } from './services/api-notifications.service';
     apiTeamsService,
     apiScoresService,
     apiNotificationsService,
+    apiHeatsService,
     ApiConfiguration
   ],
 })

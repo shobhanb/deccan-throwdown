@@ -3,15 +3,16 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  PLATFORM_ID,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { IonContent } from '@ionic/angular';
-import { catchError, forkJoin, interval, of, startWith } from 'rxjs';
+import { catchError, firstValueFrom, forkJoin, interval, of, startWith } from 'rxjs';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models';
 import {
   appConfig,
@@ -19,7 +20,9 @@ import {
   galleryEventShortNames,
   WodConfig,
 } from 'src/app/config/config';
+import { DisplayChromeService } from 'src/app/services/display-chrome.service';
 import { EventTeamsDataService } from 'src/app/services/event-teams-data.service';
+import { HeatsDataService } from 'src/app/services/heats-data.service';
 import {
   parseTtmmScoreDetail,
   ttmmScoreboardComponents,
@@ -30,20 +33,31 @@ import {
   stationSummaryLines,
 } from 'src/app/shared/score-detail/stations';
 import {
-  buildIdleSlides,
-  buildLiveSlides,
-  buildPreviewSlides,
+  buildFlagDrivenSlides,
   buildRowsForSlide,
   DisplayRow,
   DisplaySlide,
-  findActiveWod,
+  shuffleArray,
 } from './display-logic';
+import {
+  defaultHeatsDisplayConfig,
+  normalizeHeatsDisplayConfig,
+} from './heats-logic';
+import {
+  HeatsDisplayConfig,
+  HeatsPayload,
+} from './heats-types';
 
 const POLL_MS = 15_000;
-const ROTATE_MS = 12_000;
 
 interface ImageListData {
   images: Array<{ path: string }>;
+}
+
+interface SlideIdentity {
+  kind: string;
+  category: string | null;
+  title: string;
 }
 
 @Component({
@@ -56,21 +70,25 @@ interface ImageListData {
 })
 export class DisplayPage implements OnInit {
   private eventTeamsData = inject(EventTeamsDataService);
+  private heatsData = inject(HeatsDataService);
   private http = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
+  private displayChrome = inject(DisplayChromeService);
+  private platformId = inject(PLATFORM_ID);
 
   private readonly eventShortName = defaultConfig;
   private readonly config = appConfig[this.eventShortName];
+  private rotateTimer: ReturnType<typeof setInterval> | null = null;
 
   eventName = this.config?.eventName ?? 'Deccan Throwdown';
   leaderboardEnabled = this.config?.leaderboardEnabled ?? false;
   categories = this.config?.categories ?? [];
   wods: WodConfig[] = this.config?.wods ?? [];
-  /** Slide duration — drives the next-screen progress bar animation. */
-  readonly rotateMs = ROTATE_MS;
-  private wodNumbers = this.wods.map((wod) => wod.wodNumber);
+  wodNumbers = this.wods.map((wod) => wod.wodNumber);
 
   teamsData = signal<apiTeamsOutputDetailModel[]>([]);
+  heatsPayload = signal<HeatsPayload | null>(null);
+  heatsDisplay = signal<HeatsDisplayConfig>(defaultHeatsDisplayConfig());
   galleryPaths = signal<string[]>([]);
   previewEpoch = signal(0);
   dataLoaded = signal(false);
@@ -78,63 +96,31 @@ export class DisplayPage implements OnInit {
   slideIndex = signal(0);
   slideKey = signal(0);
 
-  activeWod = computed(() =>
-    findActiveWod(this.wodNumbers, this.teamsData())
+  boardConfig = computed((): HeatsDisplayConfig =>
+    normalizeHeatsDisplayConfig(this.heatsDisplay())
   );
 
-  isLive = computed(() => this.activeWod() != null);
+  /** Slide duration — drives the next-screen progress bar animation. */
+  rotateMs = computed(() => this.boardConfig().rotateSeconds * 1000);
 
-  isPreviewMode = computed(() => {
-    if (this.activeWod() != null) {
-      return false;
-    }
-    const idle = buildIdleSlides(
-      this.categories,
-      this.wodNumbers,
-      this.teamsData()
-    );
-    return idle.length === 0;
-  });
+  rotateSeconds = computed(() => this.boardConfig().rotateSeconds);
 
-  /** Header chip: Pre-WOD | WOD N | Standings */
-  modeChip = computed((): { label: string; tone: 'preview' | 'live' | 'idle' } => {
-    const active = this.activeWod();
-    if (active != null) {
-      return { label: `WOD ${active}`, tone: 'live' };
-    }
-    if (this.isPreviewMode()) {
-      return { label: 'Pre-WOD', tone: 'preview' };
-    }
-    return { label: 'Standings', tone: 'idle' };
-  });
+  picsEnabled = computed(() => this.boardConfig().pics);
 
   slides = computed((): DisplaySlide[] => {
-    const active = this.activeWod();
-    const teams = this.teamsData();
-    if (active != null) {
-      // previewEpoch reshuffles gallery groups when interleaved during live.
-      void this.previewEpoch();
-      return buildLiveSlides(this.categories, active, teams, {
-        wodNumbers: this.wodNumbers,
-        imagePaths: this.galleryPaths(),
-      });
-    }
-    const idle = buildIdleSlides(this.categories, this.wodNumbers, teams);
-    if (idle.length > 0) {
-      return idle;
-    }
-    // Depend on previewEpoch so wrap reshuffles gallery groups.
+    // previewEpoch reshuffles gallery groups when the rotation wraps.
     void this.previewEpoch();
-    return buildPreviewSlides(this.wodNumbers, this.galleryPaths());
+    return buildFlagDrivenSlides({
+      categories: this.categories,
+      teams: this.teamsData(),
+      heatsPayload: this.heatsPayload(),
+      display: this.boardConfig(),
+      imagePaths: this.galleryPaths(),
+    });
   });
 
   /** Show progress when the board will advance to another slide. */
-  showRotateProgress = computed(() => {
-    if (this.slides().length > 1) {
-      return true;
-    }
-    return this.isPreviewMode() && this.galleryPaths().length > 0;
-  });
+  showRotateProgress = computed(() => this.slides().length > 1);
 
   currentSlide = computed((): DisplaySlide | null => {
     const list = this.slides();
@@ -144,12 +130,41 @@ export class DisplayPage implements OnInit {
     return list[this.slideIndex() % list.length] ?? null;
   });
 
+  nextSlide = computed((): DisplaySlide | null => {
+    const list = this.slides();
+    if (list.length <= 1) {
+      return null;
+    }
+    return list[(this.slideIndex() + 1) % list.length] ?? null;
+  });
+
+  /** Header chip mirrors the current slide kind. */
+  modeChip = computed((): { label: string; tone: 'preview' | 'live' | 'idle' } => {
+    const slide = this.currentSlide();
+    if (!slide) {
+      return { label: 'Waiting', tone: 'preview' };
+    }
+    if (slide.kind === 'gallery') {
+      return { label: 'Photos', tone: 'preview' };
+    }
+    if (slide.kind === 'wodInfo') {
+      return { label: `WOD ${slide.wodNumber}`, tone: 'live' };
+    }
+    if (slide.kind === 'heats') {
+      return { label: `Heats ${slide.heatsKey}`, tone: 'live' };
+    }
+    if (slide.view.kind === 'overall') {
+      return { label: 'Overall', tone: 'idle' };
+    }
+    return { label: `WOD ${slide.view.wodNumber}`, tone: 'idle' };
+  });
+
   rows = computed((): DisplayRow[] => {
     const slide = this.currentSlide();
     if (!slide || slide.kind !== 'standings') {
       return [];
     }
-    return buildRowsForSlide(this.teamsData(), slide, this.isLive());
+    return buildRowsForSlide(this.teamsData(), slide, false);
   });
 
   currentWod = computed((): WodConfig | null => {
@@ -169,27 +184,30 @@ export class DisplayPage implements OnInit {
     return null;
   });
 
-  viewTitle = computed(() => {
-    const slide = this.currentSlide();
-    if (!slide) {
-      return '';
+  /** Clear on-screen identity for the current slide. */
+  slideIdentity = computed((): SlideIdentity =>
+    this.identityForSlide(this.currentSlide())
+  );
+
+  /** Short label for the upcoming slide (shown when rotation has a next). */
+  upNextLabel = computed((): string | null => {
+    const next = this.nextSlide();
+    if (!next) {
+      return null;
     }
-    if (slide.kind === 'gallery') {
-      return 'Gallery';
+    if (next.kind === 'gallery') {
+      return 'Pics';
     }
-    if (slide.kind === 'wodInfo') {
-      const wod = this.currentWod();
-      return wod
-        ? `WOD ${wod.wodNumber} — ${wod.wodName}`
-        : `WOD ${slide.wodNumber}`;
+    if (next.kind === 'wodInfo') {
+      return `WOD${next.wodNumber} description`;
     }
-    const view = slide.view;
-    if (view.kind === 'overall') {
-      return 'Overall Standings';
+    if (next.kind === 'heats') {
+      return `WOD${next.wodNumber} heats`;
     }
-    const wod = this.wods.find((w) => w.wodNumber === view.wodNumber);
-    const name = wod?.wodName ?? `WOD ${view.wodNumber}`;
-    return `WOD ${view.wodNumber} — ${name}`;
+    if (next.view.kind === 'overall') {
+      return 'Overall Leaderboard';
+    }
+    return `WOD${next.view.wodNumber} Leaderboard`;
   });
 
   isTtmmView = computed(() => {
@@ -222,22 +240,58 @@ export class DisplayPage implements OnInit {
     );
   });
 
+  constructor() {
+    // Cover first paint before Ionic fires ionViewWillEnter.
+    this.displayChrome.fullscreen.set(true);
+    // Ionic keeps pages in the stack; leave hooks clear chrome (not only destroy).
+    this.destroyRef.onDestroy(() => {
+      this.displayChrome.fullscreen.set(false);
+      this.clearRotateTimer();
+    });
+  }
+
+  /** Hide app chrome while this page is the active Ionic view. */
+  ionViewWillEnter(): void {
+    this.displayChrome.fullscreen.set(true);
+  }
+
+  ionViewWillLeave(): void {
+    this.displayChrome.fullscreen.set(false);
+  }
+
   ngOnInit(): void {
     this.loadGalleryImages();
 
-    if (!this.leaderboardEnabled) {
-      this.dataLoaded.set(true);
-      return;
-    }
-
     interval(POLL_MS)
       .pipe(startWith(0), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.pollTeams());
+      .subscribe(() => {
+        this.pollHeats();
+        if (this.leaderboardEnabled) {
+          this.pollTeams();
+        } else {
+          this.dataLoaded.set(true);
+        }
+      });
 
-    // Timer drives rotation; progress bar is visual and resets via slideKey.
-    interval(ROTATE_MS)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.advanceSlide());
+    this.restartRotateTimer();
+  }
+
+  private restartRotateTimer(): void {
+    this.clearRotateTimer();
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.rotateTimer = setInterval(
+      () => this.advanceSlide(),
+      this.rotateMs()
+    );
+  }
+
+  private clearRotateTimer(): void {
+    if (this.rotateTimer != null) {
+      clearInterval(this.rotateTimer);
+      this.rotateTimer = null;
+    }
   }
 
   getTtmmComponents(row: DisplayRow): TtmmScoreboardComponentView[] {
@@ -281,16 +335,8 @@ export class DisplayPage implements OnInit {
     );
   }
 
-  private gallerySourceEvents(): string[] {
-    const eventType = this.config?.eventType;
-    const matching = galleryEventShortNames.filter(
-      (name) => appConfig[name]?.eventType === eventType
-    );
-    return matching.length > 0 ? matching : [...galleryEventShortNames];
-  }
-
   private loadGalleryImages(): void {
-    const sources = this.gallerySourceEvents();
+    const sources = [...galleryEventShortNames];
     if (sources.length === 0) {
       return;
     }
@@ -307,8 +353,39 @@ export class DisplayPage implements OnInit {
         const paths = lists.flatMap((list) =>
           (list.images ?? []).map((image) => image.path)
         );
-        this.galleryPaths.set(paths);
+        // Mix teams + pairs (and any other past galleries) into one random pool.
+        this.galleryPaths.set(shuffleArray(paths));
       });
+  }
+
+  private async pollHeats(): Promise<void> {
+    try {
+      const doc = await firstValueFrom(
+        this.heatsData.getHeats(this.eventShortName).pipe(catchError(() => of(null)))
+      );
+      if (!doc?.payload) {
+        return;
+      }
+      const previousCount = this.slides().length;
+      const previousRotate = this.rotateSeconds();
+      this.heatsPayload.set(doc.payload);
+      this.heatsDisplay.set(normalizeHeatsDisplayConfig(doc.display));
+      const nextCount = this.slides().length;
+      const nextRotate = this.rotateSeconds();
+      if (previousRotate !== nextRotate) {
+        this.restartRotateTimer();
+        this.slideKey.update((k) => k + 1);
+      }
+      if (previousCount !== nextCount) {
+        this.slideIndex.set(0);
+        this.slideKey.update((k) => k + 1);
+      } else if (nextCount > 0 && this.slideIndex() >= nextCount) {
+        this.slideIndex.set(0);
+        this.slideKey.update((k) => k + 1);
+      }
+    } catch {
+      /* keep last known heats payload */
+    }
   }
 
   private pollTeams(): void {
@@ -317,39 +394,18 @@ export class DisplayPage implements OnInit {
       this.eventShortName,
       {
         onData: (data) => {
-          const previousActive = this.activeWod();
-          const previousPreview = this.isPreviewMode();
           const previousSlideCount = this.slides().length;
           this.teamsData.set(data);
           this.lastUpdated.set(new Date());
           this.dataLoaded.set(true);
 
-          const nextActive = findActiveWod(this.wodNumbers, data);
-          const nextIdle =
-            nextActive == null
-              ? buildIdleSlides(this.categories, this.wodNumbers, data)
-              : [];
-          const nextPreview = nextActive == null && nextIdle.length === 0;
-          const nextSlides =
-            nextActive != null
-              ? buildLiveSlides(this.categories, nextActive, data, {
-                  wodNumbers: this.wodNumbers,
-                  imagePaths: this.galleryPaths(),
-                })
-              : nextIdle.length > 0
-                ? nextIdle
-                : buildPreviewSlides(this.wodNumbers, this.galleryPaths());
-
-          if (
-            previousActive !== nextActive ||
-            previousPreview !== nextPreview ||
-            previousSlideCount !== nextSlides.length
-          ) {
+          const nextSlideCount = this.slides().length;
+          if (previousSlideCount !== nextSlideCount) {
             this.slideIndex.set(0);
             this.slideKey.update((k) => k + 1);
           } else if (
-            nextSlides.length > 0 &&
-            this.slideIndex() >= nextSlides.length
+            nextSlideCount > 0 &&
+            this.slideIndex() >= nextSlideCount
           ) {
             this.slideIndex.set(0);
             this.slideKey.update((k) => k + 1);
@@ -363,17 +419,65 @@ export class DisplayPage implements OnInit {
     );
   }
 
+  private identityForSlide(slide: DisplaySlide | null): SlideIdentity {
+    if (!slide) {
+      return { kind: '', category: null, title: '' };
+    }
+    if (slide.kind === 'gallery') {
+      return { kind: 'Photos', category: null, title: 'Event gallery' };
+    }
+    if (slide.kind === 'wodInfo') {
+      const wod = this.wods.find((w) => w.wodNumber === slide.wodNumber);
+      const title = wod
+        ? `WOD ${wod.wodNumber} — ${wod.wodName}`
+        : `WOD ${slide.wodNumber}`;
+      return {
+        kind: 'Workout standards',
+        category: null,
+        title,
+      };
+    }
+    if (slide.kind === 'heats') {
+      const divisions = [
+        ...new Set(
+          slide.sections.map((section) => section.division).filter(Boolean)
+        ),
+      ];
+      return {
+        kind: 'Heats',
+        category: divisions.length === 1 ? divisions[0] : null,
+        title: `WOD ${slide.wodNumber} — ${slide.wodLabel}`,
+      };
+    }
+    const view = slide.view;
+    if (view.kind === 'overall') {
+      return {
+        kind: 'Leaderboard',
+        category: slide.category,
+        title: 'Overall standings',
+      };
+    }
+    const wod = this.wods.find((w) => w.wodNumber === view.wodNumber);
+    const name = wod?.wodName ?? `WOD ${view.wodNumber}`;
+    return {
+      kind: 'Leaderboard',
+      category: slide.category,
+      title: `WOD ${view.wodNumber} — ${name}`,
+    };
+  }
+
   private advanceSlide(): void {
     const count = this.slides().length;
+    const hasPics = this.picsEnabled() && this.galleryPaths().length > 0;
     if (count <= 1) {
-      if (this.galleryPaths().length > 0) {
+      if (hasPics) {
         this.previewEpoch.update((epoch) => epoch + 1);
         this.slideKey.update((k) => k + 1);
       }
       return;
     }
     const next = (this.slideIndex() + 1) % count;
-    if (next === 0 && this.galleryPaths().length > 0) {
+    if (next === 0 && hasPics) {
       this.previewEpoch.update((epoch) => epoch + 1);
     }
     this.slideIndex.set(next);

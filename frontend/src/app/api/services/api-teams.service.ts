@@ -13,29 +13,32 @@ import { createTeamTeamsPost } from '../fn/teams/create-team-teams-post';
 import { CreateTeamTeamsPost$Params } from '../fn/teams/create-team-teams-post';
 import { deleteTeamTeamsTeamIdDelete } from '../fn/teams/delete-team-teams-team-id-delete';
 import { DeleteTeamTeamsTeamIdDelete$Params } from '../fn/teams/delete-team-teams-team-id-delete';
-import { getTeamEmailsTeamsEmailsGet } from '../fn/teams/get-team-emails-teams-emails-get';
-import { GetTeamEmailsTeamsEmailsGet$Params } from '../fn/teams/get-team-emails-teams-emails-get';
+import { getProvisionalLeaderboardTeamsProvisionalLeaderboardGet } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
+import { GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
 import { getSentEmailDeliveriesTeamsEmailDeliveriesGet } from '../fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
 import { GetSentEmailDeliveriesTeamsEmailDeliveriesGet$Params } from '../fn/teams/get-sent-email-deliveries-teams-email-deliveries-get';
+import { getTeamEmailsTeamsEmailsGet } from '../fn/teams/get-team-emails-teams-emails-get';
+import { GetTeamEmailsTeamsEmailsGet$Params } from '../fn/teams/get-team-emails-teams-emails-get';
 import { getTeamInfoTeamsTeamIdGet } from '../fn/teams/get-team-info-teams-team-id-get';
 import { GetTeamInfoTeamsTeamIdGet$Params } from '../fn/teams/get-team-info-teams-team-id-get';
 import { getTeamsTeamsGet } from '../fn/teams/get-teams-teams-get';
 import { GetTeamsTeamsGet$Params } from '../fn/teams/get-teams-teams-get';
-import { getProvisionalLeaderboardTeamsProvisionalLeaderboardGet } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
-import { GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params } from '../fn/teams/get-provisional-leaderboard-teams-provisional-leaderboard-get';
 import { getTeamWaiverLinksTeamsWaiverLinksGet } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
 import { GetTeamWaiverLinksTeamsWaiverLinksGet$Params } from '../fn/teams/get-team-waiver-links-teams-waiver-links-get';
-import { getRegistrationPricingTeamsRegistrationPricingGet } from '../fn/teams/get-registration-pricing-teams-registration-pricing-get';
-import { GetRegistrationPricingTeamsRegistrationPricingGet$Params } from '../fn/teams/get-registration-pricing-teams-registration-pricing-get';
-import { updateRegistrationPricingTeamsRegistrationPricingPatch } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
-import { UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
+import { readRegistrationPricingTeamsRegistrationPricingGet } from '../fn/teams/read-registration-pricing-teams-registration-pricing-get';
+import { ReadRegistrationPricingTeamsRegistrationPricingGet$Params } from '../fn/teams/read-registration-pricing-teams-registration-pricing-get';
+import { readTeamPaymentLinkTeamsPaymentLinkGet } from '../fn/teams/read-team-payment-link-teams-payment-link-get';
+import { ReadTeamPaymentLinkTeamsPaymentLinkGet$Params } from '../fn/teams/read-team-payment-link-teams-payment-link-get';
 import { registerTeamTeamsRegisterPost } from '../fn/teams/register-team-teams-register-post';
 import { RegisterTeamTeamsRegisterPost$Params } from '../fn/teams/register-team-teams-register-post';
 import { apiRegistrationPricingModel } from '../models/api-registration-pricing-model';
 import { apiSentEmailDeliveryListModel } from '../models/api-sent-email-delivery-list-model';
+import { apiTeamPaymentLinkModel } from '../models/api-team-payment-link-model';
 import { apiTeamRegistrationResponseModel } from '../models/api-team-registration-response-model';
 import { apiTeamsOutputDetailModel } from '../models/api-teams-output-detail-model';
 import { apiTeamsOutputModel } from '../models/api-teams-output-model';
+import { updateRegistrationPricingTeamsRegistrationPricingPatch } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
+import { UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params } from '../fn/teams/update-registration-pricing-teams-registration-pricing-patch';
 import { updateTeamTeamsTeamIdPatch } from '../fn/teams/update-team-teams-team-id-patch';
 import { UpdateTeamTeamsTeamIdPatch$Params } from '../fn/teams/update-team-teams-team-id-patch';
 import { apiWaiverLinkModel } from '../models/api-waiver-link-model';
@@ -79,39 +82,6 @@ export class apiTeamsService extends BaseService {
     return resp.then((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body);
   }
 
-  /** Path part for operation `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` */
-  static readonly GetProvisionalLeaderboardTeamsProvisionalLeaderboardGetPath = '/teams/provisional-leaderboard';
-
-  /**
-   * Get Provisional Leaderboard.
-   *
-   * Admin preview: ranks including unverified teams and scores (not persisted).
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<StrictHttpResponse<Array<apiTeamsOutputDetailModel>>> {
-    const obs = getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(this.http, this.rootUrl, params, context);
-    return firstValueFrom(obs);
-  }
-
-  /**
-   * Get Provisional Leaderboard.
-   *
-   * Admin preview: ranks including unverified teams and scores (not persisted).
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<Array<apiTeamsOutputDetailModel>> {
-    const resp = this.getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params, context);
-    return resp.then((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body);
-  }
-
   /** Path part for operation `createTeamTeamsPost()` */
   static readonly CreateTeamTeamsPostPath = '/teams/';
 
@@ -145,13 +115,46 @@ export class apiTeamsService extends BaseService {
     return resp.then((r: StrictHttpResponse<apiTeamsOutputModel>): apiTeamsOutputModel => r.body);
   }
 
+  /** Path part for operation `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` */
+  static readonly GetProvisionalLeaderboardTeamsProvisionalLeaderboardGetPath = '/teams/provisional-leaderboard';
+
+  /**
+   * Get Provisional Leaderboard.
+   *
+   * Admin preview: ranks including unverified teams and scores (not persisted).
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<StrictHttpResponse<Array<apiTeamsOutputDetailModel>>> {
+    const obs = getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Get Provisional Leaderboard.
+   *
+   * Admin preview: ranks including unverified teams and scores (not persisted).
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getProvisionalLeaderboardTeamsProvisionalLeaderboardGet(params: GetProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Params, context?: HttpContext): Promise<Array<apiTeamsOutputDetailModel>> {
+    const resp = this.getProvisionalLeaderboardTeamsProvisionalLeaderboardGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<Array<apiTeamsOutputDetailModel>>): Array<apiTeamsOutputDetailModel> => r.body);
+  }
+
   /** Path part for operation `getTeamEmailsTeamsEmailsGet()` */
   static readonly GetTeamEmailsTeamsEmailsGetPath = '/teams/emails';
 
   /**
    * Get Team Emails.
    *
-   *
+   * Comma-separated `Name <email>` addresses, safe to paste into To or Bcc.
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `getTeamEmailsTeamsEmailsGet()` instead.
@@ -166,7 +169,7 @@ export class apiTeamsService extends BaseService {
   /**
    * Get Team Emails.
    *
-   *
+   * Comma-separated `Name <email>` addresses, safe to paste into To or Bcc.
    *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `getTeamEmailsTeamsEmailsGet$Response()` instead.
@@ -176,6 +179,105 @@ export class apiTeamsService extends BaseService {
   getTeamEmailsTeamsEmailsGet(params: GetTeamEmailsTeamsEmailsGet$Params, context?: HttpContext): Promise<string> {
     const resp = this.getTeamEmailsTeamsEmailsGet$Response(params, context);
     return resp.then((r: StrictHttpResponse<string>): string => r.body);
+  }
+
+  /** Path part for operation `readRegistrationPricingTeamsRegistrationPricingGet()` */
+  static readonly ReadRegistrationPricingTeamsRegistrationPricingGetPath = '/teams/registration-pricing';
+
+  /**
+   * Read Registration Pricing.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `readRegistrationPricingTeamsRegistrationPricingGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  readRegistrationPricingTeamsRegistrationPricingGet$Response(params?: ReadRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
+    const obs = readRegistrationPricingTeamsRegistrationPricingGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Read Registration Pricing.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `readRegistrationPricingTeamsRegistrationPricingGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  readRegistrationPricingTeamsRegistrationPricingGet(params?: ReadRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
+    const resp = this.readRegistrationPricingTeamsRegistrationPricingGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
+  }
+
+  /** Path part for operation `updateRegistrationPricingTeamsRegistrationPricingPatch()` */
+  static readonly UpdateRegistrationPricingTeamsRegistrationPricingPatchPath = '/teams/registration-pricing';
+
+  /**
+   * Update Registration Pricing.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateRegistrationPricingTeamsRegistrationPricingPatch()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
+    const obs = updateRegistrationPricingTeamsRegistrationPricingPatch(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Update Registration Pricing.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateRegistrationPricingTeamsRegistrationPricingPatch$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateRegistrationPricingTeamsRegistrationPricingPatch(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
+    const resp = this.updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
+  }
+
+  /** Path part for operation `readTeamPaymentLinkTeamsPaymentLinkGet()` */
+  static readonly ReadTeamPaymentLinkTeamsPaymentLinkGetPath = '/teams/payment-link';
+
+  /**
+   * Read Team Payment Link.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `readTeamPaymentLinkTeamsPaymentLinkGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  readTeamPaymentLinkTeamsPaymentLinkGet$Response(params: ReadTeamPaymentLinkTeamsPaymentLinkGet$Params, context?: HttpContext): Promise<StrictHttpResponse<apiTeamPaymentLinkModel>> {
+    const obs = readTeamPaymentLinkTeamsPaymentLinkGet(this.http, this.rootUrl, params, context);
+    return firstValueFrom(obs);
+  }
+
+  /**
+   * Read Team Payment Link.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `readTeamPaymentLinkTeamsPaymentLinkGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  readTeamPaymentLinkTeamsPaymentLinkGet(params: ReadTeamPaymentLinkTeamsPaymentLinkGet$Params, context?: HttpContext): Promise<apiTeamPaymentLinkModel> {
+    const resp = this.readTeamPaymentLinkTeamsPaymentLinkGet$Response(params, context);
+    return resp.then((r: StrictHttpResponse<apiTeamPaymentLinkModel>): apiTeamPaymentLinkModel => r.body);
   }
 
   /** Path part for operation `getSentEmailDeliveriesTeamsEmailDeliveriesGet()` */
@@ -374,32 +476,6 @@ export class apiTeamsService extends BaseService {
   registerTeamTeamsRegisterPost(params: RegisterTeamTeamsRegisterPost$Params, context?: HttpContext): Promise<apiTeamRegistrationResponseModel> {
     const resp = this.registerTeamTeamsRegisterPost$Response(params, context);
     return resp.then((r: StrictHttpResponse<apiTeamRegistrationResponseModel>): apiTeamRegistrationResponseModel => r.body);
-  }
-
-  /** Path part for operation `getRegistrationPricingTeamsRegistrationPricingGet()` */
-  static readonly GetRegistrationPricingTeamsRegistrationPricingGetPath = '/teams/registration-pricing';
-
-  getRegistrationPricingTeamsRegistrationPricingGet$Response(params?: GetRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
-    const obs = getRegistrationPricingTeamsRegistrationPricingGet(this.http, this.rootUrl, params, context);
-    return firstValueFrom(obs);
-  }
-
-  getRegistrationPricingTeamsRegistrationPricingGet(params?: GetRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
-    const resp = this.getRegistrationPricingTeamsRegistrationPricingGet$Response(params, context);
-    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
-  }
-
-  /** Path part for operation `updateRegistrationPricingTeamsRegistrationPricingPatch()` */
-  static readonly UpdateRegistrationPricingTeamsRegistrationPricingPatchPath = '/teams/registration-pricing';
-
-  updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<StrictHttpResponse<apiRegistrationPricingModel>> {
-    const obs = updateRegistrationPricingTeamsRegistrationPricingPatch(this.http, this.rootUrl, params, context);
-    return firstValueFrom(obs);
-  }
-
-  updateRegistrationPricingTeamsRegistrationPricingPatch(params: UpdateRegistrationPricingTeamsRegistrationPricingPatch$Params, context?: HttpContext): Promise<apiRegistrationPricingModel> {
-    const resp = this.updateRegistrationPricingTeamsRegistrationPricingPatch$Response(params, context);
-    return resp.then((r: StrictHttpResponse<apiRegistrationPricingModel>): apiRegistrationPricingModel => r.body);
   }
 
 }

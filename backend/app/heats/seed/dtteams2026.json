@@ -1,0 +1,827 @@
+{
+  "display": {
+    "pics": true,
+    "wod_desc_1": true,
+    "wod_desc_2": true,
+    "wod_desc_3": true,
+    "wod_desc_4": true,
+    "wod_desc_5": true,
+    "heats_wod_1": false,
+    "heats_wod_2": false,
+    "heats_wod_3": false,
+    "heats_wod_4_ttmm": false,
+    "heats_wod_4_rope": false,
+    "heats_wod_4_hold": false,
+    "heats_wod_5": false,
+    "leaderboard_wod_1": false,
+    "leaderboard_wod_2": false,
+    "leaderboard_wod_3": false,
+    "leaderboard_wod_4": false,
+    "leaderboard_wod_5": false,
+    "leaderboard_overall": false,
+    "rotate_seconds": 12,
+    "show_judges": false
+  },
+  "blocks": [
+    {
+      "wodNumber": 1,
+      "wodLabel": "Shoot for the Stars",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO!",
+              "judge": "Falguni"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "Domin8",
+              "judge": "Aayush"
+            }
+          ],
+          "startTime": "4:30pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Kabhi PR Kabhi ER",
+              "judge": "Jayendra"
+            },
+            {
+              "teamName": "RepTilians",
+              "judge": "Sahil"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती !",
+              "judge": "Kavita"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 1,
+      "wodLabel": "Shoot for the Stars",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Domin8",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "Manasik Dabaaw",
+              "judge": "Ram"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai",
+              "judge": "Aayush"
+            },
+            {
+              "teamName": "More Rowdy",
+              "judge": "Arman"
+            }
+          ],
+          "startTime": "5:15pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Six Pistols",
+              "judge": "Sahil"
+            },
+            {
+              "teamName": "Soremates",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "WOD lag gayi",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "उडता तीर",
+              "judge": "Tanaya"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 2,
+      "wodLabel": "Down n Dirty",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO!",
+              "judge": "Parag"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "Domin8",
+              "judge": "Sahil"
+            }
+          ],
+          "startTime": "6:00pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Kabhi PR Kabhi ER",
+              "judge": "Rutuja"
+            },
+            {
+              "teamName": "RepTilians",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती !",
+              "judge": "Kavita"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 2,
+      "wodLabel": "Down n Dirty",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Domin8",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Manasik Dabaaw",
+              "judge": "Sahil"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "More Rowdy",
+              "judge": "Ankit"
+            }
+          ],
+          "startTime": "6:45pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Six Pistols",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Soremates",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "WOD lag gayi",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "उडता तीर",
+              "judge": "Revati"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Yoke Carry",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO! A1",
+              "judge": "Himanshu"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A1",
+              "judge": "Rutuja"
+            },
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A1",
+              "judge": "Falguni"
+            }
+          ],
+          "startTime": "7:30pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "RepTilians A1",
+              "judge": "Jayendra"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A1",
+              "judge": "Aniruddha S"
+            },
+            {
+              "teamName": "3-2-1 GO! A2",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A2",
+              "judge": "Shree"
+            }
+          ]
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A2",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A2",
+              "judge": "Parag"
+            },
+            {
+              "teamName": "RepTilians A2",
+              "judge": "Kavita"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A2",
+              "judge": "DM"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Yoke Carry",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "Manasik Dabaaw A1",
+              "judge": "Himanshu"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A1",
+              "judge": "DM"
+            },
+            {
+              "teamName": "More Rowdy A1",
+              "judge": "Kavita"
+            }
+          ],
+          "startTime": "8:00pm"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Six Pistols A1",
+              "judge": "Rutuja"
+            },
+            {
+              "teamName": "Soremates A1",
+              "judge": "Jayendra"
+            },
+            {
+              "teamName": "WOD lag gayi A1",
+              "judge": "Falguni"
+            },
+            {
+              "teamName": "उडता तीर A1",
+              "judge": "Revati"
+            }
+          ]
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A2",
+              "judge": "DM"
+            },
+            {
+              "teamName": "Manasik Dabaaw A2",
+              "judge": "Kavita"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A2",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "More Rowdy A2",
+              "judge": "Himanshu"
+            }
+          ]
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Six Pistols A2",
+              "judge": "Jayendra"
+            },
+            {
+              "teamName": "Soremates A2",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "WOD lag gayi A2",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "उडता तीर A2",
+              "judge": "Falguni"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 3,
+      "wodLabel": "Come with me if you want to live",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Rank 6",
+              "judge": "Aniruddha S / Falguni"
+            },
+            {
+              "teamName": "Rank 5",
+              "judge": "Shree / Himanshu"
+            },
+            {
+              "teamName": "Rank 4",
+              "judge": "Ashwin / Parag"
+            }
+          ],
+          "startTime": "7:30am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Rank 3",
+              "judge": "Revati / Shradha"
+            },
+            {
+              "teamName": "Rank 2",
+              "judge": "Sachin / Aniruddha T"
+            },
+            {
+              "teamName": "Rank 1",
+              "judge": "Pratik / Siddharth N"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 3,
+      "wodLabel": "Come with me if you want to live",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Rank 8",
+              "judge": "Tanaya / DM"
+            },
+            {
+              "teamName": "Rank 7",
+              "judge": "Shree / Aniruddha T"
+            },
+            {
+              "teamName": "Rank 6",
+              "judge": "Shobhan / Rutuja"
+            },
+            {
+              "teamName": "Rank 5",
+              "judge": "Pratik / Siddharth N"
+            }
+          ],
+          "startTime": "8:30am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Rank 4",
+              "judge": "Ankit / Rajlaxmi"
+            },
+            {
+              "teamName": "Rank 3",
+              "judge": "Ashwin / Kavita"
+            },
+            {
+              "teamName": "Rank 2",
+              "judge": "Sachin / Shradha"
+            },
+            {
+              "teamName": "Rank 1",
+              "judge": "Revati / Falguni"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Single-Unders",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO! A1",
+              "judge": "Rutuja"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A1",
+              "judge": "DM"
+            },
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Kavita"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A1",
+              "judge": "Himanshu"
+            },
+            {
+              "teamName": "RepTilians A1",
+              "judge": "Parag"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A1",
+              "judge": "Revati"
+            }
+          ],
+          "startTime": "9:30am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO! A2",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A2",
+              "judge": "Falguni"
+            },
+            {
+              "teamName": "Domin8 A2",
+              "judge": "Aniruddha T"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A2",
+              "judge": "Siddharth N"
+            },
+            {
+              "teamName": "RepTilians A2",
+              "judge": "Shradha"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A2",
+              "judge": "Aniruddha S"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Double-Unders",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "Manasik Dabaaw A1",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A1",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "More Rowdy A1",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "Six Pistols A1",
+              "judge": "Sachin"
+            },
+            {
+              "teamName": "Soremates A1",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "WOD lag gayi A1",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "उडता तीर A1",
+              "judge": "Tanaya"
+            }
+          ],
+          "startTime": "9:45am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A2",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Manasik Dabaaw A2",
+              "judge": "Sachin"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A2",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "More Rowdy A2",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "Six Pistols A2",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "Soremates A2",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "WOD lag gayi A2",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "उडता तीर A2",
+              "judge": "Ankit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Support Hold",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO! A1",
+              "judge": "Himanshu"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A1",
+              "judge": "Parag"
+            },
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Kavita"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A1",
+              "judge": "Rutuja"
+            },
+            {
+              "teamName": "RepTilians A1",
+              "judge": "DM"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A1",
+              "judge": "Falguni"
+            }
+          ],
+          "startTime": "10:00am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "3-2-1 GO! A2",
+              "judge": "Siddharth N"
+            },
+            {
+              "teamName": "Aa Bail Mujhe Maar A2",
+              "judge": "Shradha"
+            },
+            {
+              "teamName": "Domin8 A2",
+              "judge": "Aniruddha S"
+            },
+            {
+              "teamName": "Kabhi PR Kabhi ER A2",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "RepTilians A2",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "मनात हाय निसंत, पन बॉडी नाय म्हणती ! A2",
+              "judge": "Aniruddha T"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 4,
+      "wodLabel": "T-T-M-M Tuck Hold",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A1",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "Manasik Dabaaw A1",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A1",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "More Rowdy A1",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "Six Pistols A1",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Soremates A1",
+              "judge": "Sachin"
+            },
+            {
+              "teamName": "WOD lag gayi A1",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "उडता तीर A1",
+              "judge": "Revati"
+            }
+          ],
+          "startTime": "10:15am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Domin8 A2",
+              "judge": "Sachin"
+            },
+            {
+              "teamName": "Manasik Dabaaw A2",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "Meri ek tang Nakli Hai A2",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "More Rowdy A2",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Six Pistols A2",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "Soremates A2",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "WOD lag gayi A2",
+              "judge": "Ashwin"
+            },
+            {
+              "teamName": "उडता तीर A2",
+              "judge": "Shobhan"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 5,
+      "wodLabel": "Utha Le… Utha Le…",
+      "division": "Scaled",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Rank 6",
+              "judge": "Shree"
+            },
+            {
+              "teamName": "Rank 5",
+              "judge": "Rajlaxmi"
+            },
+            {
+              "teamName": "Rank 4",
+              "judge": "Kavita"
+            }
+          ],
+          "startTime": "10:30am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Rank 3",
+              "judge": "Sachin"
+            },
+            {
+              "teamName": "Rank 2",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "Rank 1",
+              "judge": "Aniruddha S"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "wodNumber": 5,
+      "wodLabel": "Utha Le… Utha Le…",
+      "division": "Open",
+      "heats": [
+        {
+          "entries": [
+            {
+              "teamName": "Rank 8",
+              "judge": "Revati"
+            },
+            {
+              "teamName": "Rank 7",
+              "judge": "Ashwin"
+            }
+          ],
+          "startTime": "11:00am"
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Rank 6",
+              "judge": "Shobhan"
+            },
+            {
+              "teamName": "Rank 5",
+              "judge": "Ankit"
+            },
+            {
+              "teamName": "Rank 4",
+              "judge": "Sachin"
+            }
+          ]
+        },
+        {
+          "entries": [
+            {
+              "teamName": "Rank 3",
+              "judge": "Tanaya"
+            },
+            {
+              "teamName": "Rank 2",
+              "judge": "Pratik"
+            },
+            {
+              "teamName": "Rank 1",
+              "judge": "Arman"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

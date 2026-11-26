@@ -43,6 +43,16 @@ export const routes: Routes = [
       import('./registration/registration.page').then((m) => m.RegistrationPage),
   },
   {
+    path: 'display',
+    loadComponent: () =>
+      import('./display/display.page').then((m) => m.AdminDisplayPage),
+  },
+  {
+    path: 'heats',
+    loadComponent: () =>
+      import('./heats/heats.page').then((m) => m.HeatsPage),
+  },
+  {
     path: '',
     redirectTo: 'teams',
     pathMatch: 'full',

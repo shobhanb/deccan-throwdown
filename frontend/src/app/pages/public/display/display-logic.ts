@@ -1,5 +1,11 @@
 import { apiScoreOutputModel } from 'src/app/api/models/api-score-output-model';
 import { apiTeamsOutputDetailModel } from 'src/app/api/models/api-teams-output-detail-model';
+import {
+  buildHeatsSlides,
+  HeatsSlideRef,
+  normalizeHeatsDisplayConfig,
+} from './heats-logic';
+import { HeatsDisplayConfig, HeatsPayload } from './heats-types';
 
 export type DisplayRowStatus = 'verified' | 'pending' | 'awaiting';
 
@@ -10,7 +16,8 @@ export type StandingsView =
 export type DisplaySlide =
   | { kind: 'standings'; category: string; view: StandingsView }
   | { kind: 'gallery'; images: string[] }
-  | { kind: 'wodInfo'; wodNumber: number };
+  | { kind: 'wodInfo'; wodNumber: number }
+  | HeatsSlideRef;
 
 export interface DisplayRow {
   teamId: string;
@@ -493,4 +500,83 @@ export function buildRowsForSlide(
     return buildIdleOverallRows(teams, slide.category);
   }
   return buildIdleWodRows(teams, slide.category, slide.view.wodNumber);
+}
+
+export interface FlagDrivenSlidesOptions {
+  categories: string[];
+  teams: apiTeamsOutputDetailModel[];
+  heatsPayload: HeatsPayload | null | undefined;
+  display: HeatsDisplayConfig;
+  imagePaths: string[];
+  groupSize?: number;
+  random?: () => number;
+}
+
+/**
+ * TV rotation driven only by display flags.
+ * Leaderboard slides are omitted when the category has no verified data.
+ */
+export function buildFlagDrivenSlides(
+  options: FlagDrivenSlidesOptions
+): DisplaySlide[] {
+  const {
+    categories,
+    teams,
+    heatsPayload,
+    imagePaths,
+    groupSize = 4,
+  } = options;
+  const config = normalizeHeatsDisplayConfig(options.display);
+  const random = options.random ?? Math.random;
+  const slides: DisplaySlide[] = [];
+
+  if (config.pics && imagePaths.length > 0) {
+    const groups = chunkImages(shuffleArray(imagePaths, random), groupSize);
+    for (const images of groups) {
+      slides.push({ kind: 'gallery', images });
+    }
+  }
+
+  const descFlags: Array<[number, boolean]> = [
+    [1, config.wodDesc1],
+    [2, config.wodDesc2],
+    [3, config.wodDesc3],
+    [4, config.wodDesc4],
+    [5, config.wodDesc5],
+  ];
+  for (const [wodNumber, enabled] of descFlags) {
+    if (enabled) {
+      slides.push({ kind: 'wodInfo', wodNumber });
+    }
+  }
+
+  slides.push(...buildHeatsSlides(heatsPayload, config));
+
+  const leaderboardWods: Array<[number, boolean]> = [
+    [1, config.leaderboardWod1],
+    [2, config.leaderboardWod2],
+    [3, config.leaderboardWod3],
+    [4, config.leaderboardWod4],
+    [5, config.leaderboardWod5],
+  ];
+  for (const category of categories) {
+    for (const [wodNumber, enabled] of leaderboardWods) {
+      if (enabled && categoryHasVerifiedWodData(category, wodNumber, teams)) {
+        slides.push({
+          kind: 'standings',
+          category,
+          view: { kind: 'wod', wodNumber },
+        });
+      }
+    }
+    if (config.leaderboardOverall && categoryHasOverallData(category, teams)) {
+      slides.push({
+        kind: 'standings',
+        category,
+        view: { kind: 'overall' },
+      });
+    }
+  }
+
+  return slides;
 }

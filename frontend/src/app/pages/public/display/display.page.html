@@ -36,17 +36,23 @@
           }
           {{ modeChip().label }}
         </span>
-        @if (currentSlide(); as slide) {
-          @if (slide.kind === 'standings') {
-          <span class="display-category text-display">{{ slide.category }}</span>
-          } @else if (slide.kind === 'gallery') {
-          <span class="display-category text-display">Photos</span>
-          } @else {
-          <span class="display-category text-display">Workout</span>
+        @if (slideIdentity(); as identity) {
+          @if (identity.kind) {
+          <span class="display-kind-chip text-display">{{ identity.kind }}</span>
+          }
+          @if (identity.category) {
+          <span class="display-category text-display">{{ identity.category }}</span>
           }
         }
       </div>
     </header>
+
+    @if (upNextLabel(); as upNext) {
+    <p class="display-up-next" aria-label="Up next: {{ upNext }}">
+      <span class="display-up-next-tag">Up next</span>
+      <span class="display-up-next-value">{{ upNext }}</span>
+    </p>
+    }
 
     @if (showRotateProgress()) {
     <div
@@ -58,7 +64,7 @@
       @for (key of [slideKey()]; track key) {
       <div
         class="rotate-progress-bar"
-        [style.animation-duration]="rotateMs + 'ms'"
+        [style.animation-duration]="rotateMs() + 'ms'"
       ></div>
       }
     </div>
@@ -73,9 +79,21 @@
       <p class="text-display">Loading scores…</p>
     </div>
     } @else {
+    @if (slideIdentity(); as identity) {
     <div class="display-title-row">
-      <h2 class="display-view-title text-display">{{ viewTitle() }}</h2>
+      <div class="display-title-meta">
+        @if (identity.kind) {
+        <span class="display-title-kind">{{ identity.kind }}</span>
+        }
+        @if (identity.category) {
+        <span class="display-title-category text-display">{{
+          identity.category
+        }}</span>
+        }
+      </div>
+      <h2 class="display-view-title text-display">{{ identity.title }}</h2>
     </div>
+    }
 
     <div class="display-board" [attr.data-slide]="slideKey()">
       @if (currentSlide(); as slide) {
@@ -102,7 +120,10 @@
             <div class="wod-categories">
               @for (category of categories; track category) {
               <section class="wod-category-panel">
-                <h3 class="wod-category-title text-display">{{ category }}</h3>
+                <h3 class="wod-category-title text-display">
+                  {{ category }}
+                  <span class="wod-category-label">division</span>
+                </h3>
                 @if (wodDescriptionForCategory(category); as lines) {
                   @if (lines.length) {
                   <div class="wod-description">
@@ -120,10 +141,77 @@
             }
           </div>
           }
+          @case ('heats') {
+          <div
+            class="heats-board"
+            [class.heats-board-multi]="slide.sections.length > 1"
+          >
+            <p class="heats-live-note text-display">
+              Heat assignments are not refreshed live. Please listen to MC for
+              live updates.
+            </p>
+            @for (section of slide.sections; track section.division + section.wodLabel) {
+            <section class="heats-section">
+              <header class="heats-section-head">
+                <p class="heats-section-eyebrow">Division</p>
+                <h3 class="heats-section-title text-display">
+                  {{ section.division }}
+                  @if (section.wodLabel !== slide.wodLabel) {
+                  <span class="heats-section-sub">· {{ section.wodLabel }}</span>
+                  }
+                </h3>
+              </header>
+              <div class="heats-heats">
+                @for (heat of section.heats; track heat.heatNumber) {
+                <div class="heats-heat">
+                  <div class="heats-heat-head">
+                    <h4 class="heats-heat-title text-display">
+                      Heat {{ heat.heatNumber }}
+                    </h4>
+                    @if (heat.startTime) {
+                    <time class="heats-heat-time text-display">{{
+                      heat.startTime
+                    }}</time>
+                    }
+                  </div>
+                  <div
+                    class="heats-table"
+                    [class.heats-table-no-judge]="!boardConfig().showJudges"
+                    role="table"
+                  >
+                    <div class="heats-table-head" role="row">
+                      <span role="columnheader">Team</span>
+                      @if (boardConfig().showJudges) {
+                      <span role="columnheader">Judge</span>
+                      }
+                    </div>
+                    @for (entry of heat.entries; track $index) {
+                    <div class="heats-row" role="row">
+                      <div class="heats-team" role="cell">
+                        <strong class="team-name">{{ entry.teamName }}</strong>
+                      </div>
+                      @if (boardConfig().showJudges) {
+                      <div class="heats-judge" role="cell">
+                        {{ entry.judge || '—' }}
+                      </div>
+                      }
+                    </div>
+                    }
+                  </div>
+                </div>
+                }
+              </div>
+            </section>
+            }
+          </div>
+          }
           @case ('standings') {
             @if (rows().length === 0) {
             <div class="display-empty">
-              <p class="text-display">No teams in this category yet</p>
+              <p class="text-display">
+                No teams in
+                {{ slideIdentity().category || 'this category' }} yet
+              </p>
             </div>
             } @else {
             <div class="display-table" role="table">
@@ -197,7 +285,7 @@
         }
       } @else {
       <div class="display-empty">
-        <p class="text-display">Waiting for the event to begin</p>
+        <p class="text-display">No display slides enabled</p>
       </div>
       }
     </div>

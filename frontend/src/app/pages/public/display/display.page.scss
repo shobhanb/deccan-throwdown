@@ -89,8 +89,11 @@
 .display-meta {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  flex-shrink: 0;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .display-mode-chip {
@@ -129,6 +132,19 @@
   animation: dt-pulse 1.5s ease-in-out infinite;
 }
 
+.display-kind-chip {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(var(--dt-brand-navy-rgb), 0.1);
+  color: var(--dt-brand-navy);
+  font-size: clamp(0.85rem, 2.2vh, 1.2rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
 .display-category {
   display: inline-block;
   padding: 0.3rem 0.8rem;
@@ -136,8 +152,37 @@
   background: var(--dt-brand-navy);
   color: #fff;
   font-size: clamp(1rem, 2.8vh, 1.5rem);
+  font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1.1;
+}
+
+.display-up-next {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--dt-brand-steel);
+  font-size: clamp(0.7rem, 1.5vh, 0.9rem);
+  line-height: 1.2;
+  text-align: right;
+}
+
+.display-up-next-tag {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.display-up-next-value {
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .rotate-progress {
@@ -175,6 +220,40 @@
 
 .display-title-row {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.display-title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.75rem;
+  min-width: 0;
+}
+
+.display-title-kind {
+  font-size: clamp(0.7rem, 1.7vh, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dt-brand-steel);
+  line-height: 1.1;
+}
+
+.display-title-category {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(var(--dt-brand-gold-rgb), 0.22);
+  color: #7a5400;
+  font-size: clamp(0.95rem, 2.5vh, 1.35rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
 }
 
 .display-view-title {
@@ -570,6 +649,16 @@
   line-height: 1;
 }
 
+.wod-category-label {
+  margin-left: 0.35rem;
+  font-size: 0.55em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dt-brand-steel);
+  vertical-align: middle;
+}
+
 .wod-description {
   display: flex;
   flex-direction: column;
@@ -617,6 +706,179 @@
   }
 
   .wod-categories {
+    grid-template-columns: 1fr;
+  }
+}
+
+.heats-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(0.85rem, 2vw, 1.5rem);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  align-content: start;
+}
+
+.heats-board-multi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.heats-live-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: clamp(0.45rem, 1.2vh, 0.75rem) clamp(0.7rem, 1.4vw, 1.1rem);
+  border-radius: 10px;
+  background: rgba(var(--dt-brand-gold-rgb), 0.28);
+  border: 2px solid rgba(154, 106, 0, 0.45);
+  color: #6b4800;
+  font-size: clamp(0.85rem, 2.2vh, 1.25rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+/* Match WOD Open/Scaled category panels */
+.heats-section {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 14px;
+  border-left: 5px solid var(--dt-brand-gold);
+  box-shadow: 0 2px 12px rgba(43, 76, 111, 0.1);
+  padding: clamp(0.55rem, 1.4vh, 1rem) clamp(0.7rem, 1.2vw, 1.15rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1.3vh, 0.9rem);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.heats-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex-shrink: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(43, 76, 111, 0.12);
+}
+
+.heats-section-eyebrow {
+  margin: 0;
+  font-size: clamp(0.65rem, 1.5vh, 0.85rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dt-brand-steel);
+  line-height: 1;
+}
+
+.heats-section-title {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vh, 1.85rem);
+  letter-spacing: 0.05em;
+  color: var(--dt-brand-navy);
+  line-height: 1;
+}
+
+.heats-section-sub {
+  font-weight: 500;
+  color: var(--dt-brand-steel);
+  font-size: 0.8em;
+  letter-spacing: 0.02em;
+}
+
+.heats-heats {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.65rem, 1.6vh, 1.1rem);
+  min-height: 0;
+  overflow: auto;
+}
+
+.heats-heat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: clamp(0.45rem, 1.1vh, 0.75rem);
+  border-radius: 10px;
+  background: rgba(43, 76, 111, 0.05);
+  border: 1px solid rgba(43, 76, 111, 0.1);
+}
+
+.heats-heat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.heats-heat-title {
+  margin: 0;
+  font-size: clamp(0.9rem, 2.1vh, 1.25rem);
+  letter-spacing: 0.04em;
+  color: var(--dt-brand-navy);
+}
+
+.heats-heat-time {
+  margin: 0;
+  padding: 0.2rem 0.65rem;
+  border-radius: 8px;
+  background: var(--dt-brand-navy);
+  color: #fff;
+  font-size: clamp(1rem, 2.6vh, 1.55rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.heats-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-height: 0;
+}
+
+.heats-table-head,
+.heats-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(0.35rem, 1vw, 0.85rem);
+  align-items: baseline;
+  padding: clamp(0.2rem, 0.7vh, 0.45rem) clamp(0.25rem, 0.8vw, 0.55rem);
+}
+
+.heats-table-no-judge .heats-table-head,
+.heats-table-no-judge .heats-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.heats-table-head {
+  font-size: clamp(0.65rem, 1.5vh, 0.85rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dt-brand-steel);
+  border-bottom: 1px solid rgba(43, 76, 111, 0.2);
+}
+
+.heats-row {
+  font-size: clamp(0.85rem, 2.2vh, 1.25rem);
+  border-bottom: 1px solid rgba(43, 76, 111, 0.08);
+}
+
+.heats-team .team-name {
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.heats-judge {
+  color: var(--dt-brand-steel);
+}
+
+@media (orientation: portrait) {
+  .heats-board-multi {
     grid-template-columns: 1fr;
   }
 }

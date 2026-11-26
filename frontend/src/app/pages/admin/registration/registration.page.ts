@@ -72,7 +72,7 @@ export class RegistrationPage {
     this.loading.set(true);
     try {
       const pricing = await firstValueFrom(
-        fromApi(this.apiTeams.getRegistrationPricingTeamsRegistrationPricingGet())
+        fromApi(this.apiTeams.readRegistrationPricingTeamsRegistrationPricingGet())
       );
       this.pricing.set(pricing);
     } catch (err) {

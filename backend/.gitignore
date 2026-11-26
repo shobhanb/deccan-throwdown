@@ -2,6 +2,7 @@
 *.db
 *.csv
 *.json
+!app/heats/seed/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

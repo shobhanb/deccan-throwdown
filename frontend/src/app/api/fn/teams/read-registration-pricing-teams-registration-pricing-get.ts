@@ -9,11 +9,11 @@ import { RequestBuilder } from '../../request-builder';
 
 import { apiRegistrationPricingModel } from '../../models/api-registration-pricing-model';
 
-export interface GetRegistrationPricingTeamsRegistrationPricingGet$Params {
+export interface ReadRegistrationPricingTeamsRegistrationPricingGet$Params {
 }
 
-export function getRegistrationPricingTeamsRegistrationPricingGet(http: HttpClient, rootUrl: string, params?: GetRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiRegistrationPricingModel>> {
-  const rb = new RequestBuilder(rootUrl, getRegistrationPricingTeamsRegistrationPricingGet.PATH, 'get');
+export function readRegistrationPricingTeamsRegistrationPricingGet(http: HttpClient, rootUrl: string, params?: ReadRegistrationPricingTeamsRegistrationPricingGet$Params, context?: HttpContext): Observable<StrictHttpResponse<apiRegistrationPricingModel>> {
+  const rb = new RequestBuilder(rootUrl, readRegistrationPricingTeamsRegistrationPricingGet.PATH, 'get');
   if (params) {
   }
 
@@ -27,4 +27,4 @@ export function getRegistrationPricingTeamsRegistrationPricingGet(http: HttpClie
   );
 }
 
-getRegistrationPricingTeamsRegistrationPricingGet.PATH = '/teams/registration-pricing';
+readRegistrationPricingTeamsRegistrationPricingGet.PATH = '/teams/registration-pricing';

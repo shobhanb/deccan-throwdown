@@ -2,6 +2,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   PLATFORM_ID,
@@ -17,6 +18,7 @@ import { IonSplitPane } from '@ionic/angular';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlertService } from './services/alert.service';
+import { DisplayChromeService } from './services/display-chrome.service';
 import { SeoService } from './services/seo.service';
 import { SeoRouteData } from './config/seo.config';
 
@@ -40,6 +42,7 @@ export class AppComponent {
   private document = inject(DOCUMENT);
   private platformId = inject(PLATFORM_ID);
   private seoService = inject(SeoService);
+  private displayChrome = inject(DisplayChromeService);
 
   /** iOS slide transitions render at viewport width and flash on centered desktop layout. */
   pageAnimationsEnabled = isPlatformBrowser(this.platformId)
@@ -64,8 +67,8 @@ export class AppComponent {
     { initialValue: false }
   );
 
-  /** Fullscreen TV scoreboard — hide menu, tabs, and split-pane chrome. */
-  displayMode = toSignal(
+  /** Route-based fullscreen flag (may lag Ionic stack briefly). */
+  private displayRoute = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((event) =>
@@ -74,6 +77,11 @@ export class AppComponent {
       startWith(this.router.url.startsWith('/display'))
     ),
     { initialValue: false }
+  );
+
+  /** Fullscreen TV scoreboard — hide menu, tabs, and split-pane chrome. */
+  displayMode = computed(
+    () => this.displayChrome.fullscreen() || this.displayRoute()
   );
 
   constructor() {

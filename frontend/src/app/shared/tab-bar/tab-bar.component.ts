@@ -25,6 +25,7 @@ import {
   menuOutline,
   peopleOutline,
 } from 'ionicons/icons';
+import { DisplayChromeService } from 'src/app/services/display-chrome.service';
 
 const TAB_ROUTES = ['/', '/home', '/wods', '/leaderboard', '/teams'];
 
@@ -47,6 +48,7 @@ export class TabBarComponent {
   private menuController = inject(MenuController);
   private document = inject(DOCUMENT);
   private platformId = inject(PLATFORM_ID);
+  private displayChrome = inject(DisplayChromeService);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -58,6 +60,9 @@ export class TabBarComponent {
   );
 
   tabBarVisible = computed(() => {
+    if (this.displayChrome.fullscreen()) {
+      return false;
+    }
     const path = this.currentUrl().split('?')[0];
     if (path.startsWith('/auth') || path.startsWith('/admin')) {
       return false;
@@ -91,11 +96,12 @@ export class TabBarComponent {
     });
 
     if (isPlatformBrowser(this.platformId)) {
-      effect(() => {
-        this.document.body.classList.toggle(
-          'tab-bar-visible',
-          this.tabBarVisible()
-        );
+      effect((onCleanup) => {
+        const visible = this.tabBarVisible();
+        this.document.body.classList.toggle('tab-bar-visible', visible);
+        onCleanup(() => {
+          this.document.body.classList.remove('tab-bar-visible');
+        });
       });
     }
   }

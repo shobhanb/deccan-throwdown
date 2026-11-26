@@ -1,0 +1,71 @@
+.heats-status {
+  padding: 1rem 1.25rem;
+  color: var(--ion-color-medium);
+}
+
+.heats-filter {
+  padding: 0 1rem 0.75rem;
+}
+
+.heats-section {
+  margin-bottom: 0.5rem;
+}
+
+.heats-section-head {
+  padding: 0.5rem 1.25rem 0.25rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0.15rem 0 0;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+.heats-heat-list {
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.heats-heat-header {
+  --background: var(--ion-color-light);
+
+  h3 {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0.1rem 0 0;
+    color: var(--ion-color-medium);
+  }
+}
+
+.heats-col-head {
+  --min-height: 2rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ion-color-medium);
+}
+
+.heats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  width: 100%;
+}
+
+.heats-row-head {
+  font-weight: 600;
+}
+
+.heats-judge {
+  color: var(--ion-color-medium-shade, var(--ion-color-medium));
+}

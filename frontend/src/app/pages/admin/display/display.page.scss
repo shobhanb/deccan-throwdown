@@ -1,0 +1,39 @@
+.display-status {
+  padding: 1rem 1.25rem;
+  color: var(--ion-color-medium);
+}
+
+.display-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem 1.5rem;
+}
+
+.display-json {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  --padding-start: 0.75rem;
+  --padding-end: 0.75rem;
+  --background: var(--ion-color-light);
+  border-radius: 8px;
+  min-height: 28rem;
+}
+
+.display-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.display-actions-board {
+  padding: 0 1rem 1rem;
+}
+
+.display-scope-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 0.25rem;
+}

@@ -8,6 +8,7 @@ __pycache__/
 .env.*
 *.db
 *.json
+!app/heats/seed/*.json
 *.md
 .python-version
 Dockerfile

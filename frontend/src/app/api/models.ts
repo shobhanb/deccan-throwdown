@@ -12,6 +12,9 @@ export type { apiFcmTokenRegisterModel } from './models/api-fcm-token-register-m
 export type { apiFcmTokenRegisterResponseModel } from './models/api-fcm-token-register-response-model';
 export type { apiFirebaseCustomClaims } from './models/api-firebase-custom-claims';
 export type { apiFirebaseUserRecord } from './models/api-firebase-user-record';
+export type { apiHeatsDisplayConfigModel } from './models/api-heats-display-config-model';
+export type { apiHeatsDocumentModel } from './models/api-heats-document-model';
+export type { apiHeatsDocumentPutModel } from './models/api-heats-document-put-model';
 export type { apiHttpValidationError } from './models/api-http-validation-error';
 export type { apiRegistrationPricingModel } from './models/api-registration-pricing-model';
 export type { apiRegistrationPricingUpdateModel } from './models/api-registration-pricing-update-model';
@@ -20,6 +23,7 @@ export type { apiScoreOutputModel } from './models/api-score-output-model';
 export type { apiScoreUpdateModel } from './models/api-score-update-model';
 export type { apiSentEmailDeliveryListModel } from './models/api-sent-email-delivery-list-model';
 export type { apiSentEmailDeliveryModel } from './models/api-sent-email-delivery-model';
+export type { apiTeamPaymentLinkModel } from './models/api-team-payment-link-model';
 export type { apiTeamRegistrationModel } from './models/api-team-registration-model';
 export type { apiTeamRegistrationResponseModel } from './models/api-team-registration-response-model';
 export type { apiTeamsCreateModel } from './models/api-teams-create-model';

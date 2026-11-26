@@ -520,6 +520,13 @@ body.display-mode {
   ion-content.display-content {
     --overflow: hidden;
   }
+
+  /* Menu stays in the DOM for router stability; hide it visually in TV mode. */
+  app-menu.display-chrome-hidden,
+  ion-menu {
+    display: none !important;
+    pointer-events: none !important;
+  }
 }
 
 .auth-content {

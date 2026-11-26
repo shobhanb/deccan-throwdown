@@ -203,6 +203,26 @@
             <ion-icon name="cash-outline" slot="start"></ion-icon>
             <ion-label>Registration</ion-label>
           </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'display']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="desktop-outline" slot="start"></ion-icon>
+            <ion-label>Display</ion-label>
+          </ion-item>
+          <ion-item
+            button
+            detail="false"
+            [routerLink]="['/admin', 'heats']"
+            routerLinkActive="menu-active-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label>Heats</ion-label>
+          </ion-item>
         </ion-list>
         }
 

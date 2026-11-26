@@ -6,9 +6,8 @@
     contentId="main-content"
     [when]="displayMode() ? false : '(min-width: 769px)'"
   >
-    @if (!displayMode()) {
-    <app-menu></app-menu>
-    }
+    <!-- Keep menu mounted; remounting beside ion-router-outlet can desync Ionic URL/stack. -->
+    <app-menu [class.display-chrome-hidden]="displayMode()"></app-menu>
     <ion-router-outlet
       id="main-content"
       [animated]="!displayMode() && pageAnimationsEnabled && !suppressPageAnimationForHistoryNav"

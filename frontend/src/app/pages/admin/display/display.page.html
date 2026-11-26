@@ -1,0 +1,147 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Display</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-admin-page-header
+    title="Display board"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  @if (loading()) {
+  <p class="display-status">Loading display…</p>
+  } @else {
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Slides</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label>
+        <p>
+          Explicit switches for /display. Only enabled slides rotate. Leaderboard
+          slides are skipped when that category has no verified scores.
+        </p>
+      </ion-label>
+    </ion-item>
+
+    @for (group of displayToggleGroups; track group.title) {
+    <ion-list-header>
+      <ion-label>{{ group.title }}</ion-label>
+    </ion-list-header>
+    @for (toggle of group.toggles; track toggle.key) {
+    <ion-item>
+      <ion-label>{{ toggle.label }}</ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="displayConfig()[toggle.key]"
+        [disabled]="busy()"
+        (ionChange)="onDisplayToggle(toggle.key, $event)"
+      ></ion-toggle>
+    </ion-item>
+    }
+    }
+
+    <ion-list-header>
+      <ion-label>Transition</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label position="stacked">Transition (seconds)</ion-label>
+      <ion-input
+        type="number"
+        inputmode="numeric"
+        min="3"
+        max="120"
+        [value]="rotateSecondsValue()"
+        [disabled]="busy()"
+        (ionChange)="onRotateSecondsChange($event)"
+      ></ion-input>
+    </ion-item>
+
+    @if (updatedAt()) {
+    <ion-item>
+      <ion-label>
+        <h2>Last saved</h2>
+        <p>{{ updatedAt() }}</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+
+  <div class="display-actions display-actions-board">
+    <ion-button fill="outline" (click)="loadHeats()" [disabled]="busy()">
+      Reload
+    </ion-button>
+    <ion-button (click)="saveDisplay()" [disabled]="busy()">
+      {{ savingDisplay() ? 'Saving…' : 'Save display' }}
+    </ion-button>
+  </div>
+
+  <div class="display-editor">
+    <ion-list-header>
+      <ion-label>Schedule JSON</ion-label>
+    </ion-list-header>
+    <ion-item lines="none" class="display-scope-item">
+      <ion-select
+        label="Editor scope"
+        labelPlacement="stacked"
+        interface="popover"
+        [value]="editorScope()"
+        [disabled]="busy()"
+        (ionChange)="onEditorScopeChange($event)"
+      >
+        @for (option of editorScopeOptions; track option.value) {
+        <ion-select-option [value]="option.value">{{
+          option.label
+        }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+    <ion-note color="medium">
+      @if (isPartialScope()) {
+      Editing {{ editorScopeLabel() }} only. Save replaces that WOD’s blocks in
+      the full schedule. Heat order = heat number; WOD 4 stations are inferred
+      from the label (Yoke / Unders / Hold).
+      } @else {
+      Full schedule: blocks with wodNumber, wodLabel, division, and heats
+      (optional startTime + entries). Heat order = heat number.
+      }
+    </ion-note>
+    <div class="display-actions">
+      <ion-button
+        fill="outline"
+        (click)="copyJson()"
+        [disabled]="busy() || !jsonText()"
+      >
+        Copy
+      </ion-button>
+      <ion-button fill="outline" (click)="pasteJson()" [disabled]="busy()">
+        Paste
+      </ion-button>
+      <ion-button fill="outline" (click)="loadHeats()" [disabled]="busy()">
+        Reload
+      </ion-button>
+      <ion-button (click)="saveJson()" [disabled]="busy()">
+        {{
+          savingJson()
+            ? 'Saving…'
+            : isPartialScope()
+              ? 'Save WOD'
+              : 'Save schedule'
+        }}
+      </ion-button>
+    </div>
+    <ion-textarea
+      class="display-json"
+      [value]="jsonText()"
+      (ionInput)="onJsonInput($event)"
+      [autoGrow]="true"
+      [rows]="24"
+      spellcheck="false"
+    ></ion-textarea>
+  </div>
+  }
+</ion-content>

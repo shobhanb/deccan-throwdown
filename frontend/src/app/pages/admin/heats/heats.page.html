@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button menu="main-menu" slot="start"></ion-menu-button>
+    <ion-title>Heats</ion-title>
+    <app-toolbar-buttons slot="end"></app-toolbar-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <app-admin-page-header
+    title="Heats"
+    [subtitle]="eventName"
+  ></app-admin-page-header>
+
+  @if (loading()) {
+  <p class="heats-status">Loading heats…</p>
+  } @else {
+  <div class="heats-filter">
+    <ion-select
+      label="WOD"
+      labelPlacement="stacked"
+      interface="popover"
+      [value]="selectedWodLabel()"
+      (ionChange)="onWodChange($event)"
+    >
+      @for (option of wodOptions(); track option.value) {
+      <ion-select-option [value]="option.value">{{
+        option.label
+      }}</ion-select-option>
+      }
+    </ion-select>
+  </div>
+
+  @if (wodOptions().length === 0) {
+  <app-empty-state
+    icon="people-outline"
+    message="No heats schedule loaded yet"
+  ></app-empty-state>
+  } @else if (sections().length === 0) {
+  <app-empty-state
+    icon="people-outline"
+    message="No heats for this WOD yet"
+  ></app-empty-state>
+  } @else {
+  @for (section of sections(); track section.division + section.wodLabel) {
+  <section class="heats-section">
+    <header class="heats-section-head">
+      <h2>{{ section.division }}</h2>
+    </header>
+
+    @for (heat of section.heats; track heat.heatNumber) {
+    <ion-list [inset]="true" class="heats-heat-list">
+      <ion-item lines="full" class="heats-heat-header">
+        <ion-label>
+          <h3>Heat {{ heat.heatNumber }}</h3>
+          @if (heat.startTime) {
+          <p>{{ heat.startTime }}</p>
+          }
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none" class="heats-col-head">
+        <ion-label>
+          <div class="heats-row heats-row-head">
+            <span>Team</span>
+            <span>Judge</span>
+          </div>
+        </ion-label>
+      </ion-item>
+      @for (entry of heat.entries; track $index) {
+      <ion-item [lines]="$last ? 'none' : 'inset'">
+        <ion-label>
+          <div class="heats-row">
+            <strong>{{ entry.teamName }}</strong>
+            <span class="heats-judge">{{ entry.judge || '—' }}</span>
+          </div>
+        </ion-label>
+      </ion-item>
+      }
+    </ion-list>
+    }
+  </section>
+  }
+  }
+  }
+</ion-content>

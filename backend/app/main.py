@@ -13,6 +13,9 @@ from app.athletes.views import athletes_router
 from app.database.base import Base
 from app.database.core import session_manager
 from app.firebase_auth.views import firebase_auth_router
+from app.heats import models as heats_models  # noqa: F401
+from app.heats.service import ensure_heats_display_columns
+from app.heats.views import heats_router
 from app.notifications import models as notifications_models  # noqa: F401
 from app.notifications.views import notifications_router
 from app.scores.views import scores_router
@@ -39,6 +42,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator:
     else:
         async with session_manager.connect() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            await ensure_heats_display_columns(conn)
 
     yield
 
@@ -53,6 +57,7 @@ app.include_router(athletes_router)
 app.include_router(teams_router)
 app.include_router(scores_router)
 app.include_router(notifications_router)
+app.include_router(heats_router)
 
 app.add_middleware(
     CORSMiddleware,

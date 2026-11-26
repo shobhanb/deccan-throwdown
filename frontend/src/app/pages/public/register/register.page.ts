@@ -127,7 +127,7 @@ export class RegisterPage {
 
   private loadRegistrationPricing() {
     this.apiTeams
-      .getRegistrationPricingTeamsRegistrationPricingGet()
+      .readRegistrationPricingTeamsRegistrationPricingGet()
       .then((pricing: apiRegistrationPricingModel) =>
         this.registrationPricing.set(pricing)
       )
