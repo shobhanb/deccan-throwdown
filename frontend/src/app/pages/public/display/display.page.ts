@@ -63,7 +63,7 @@ interface SlideIdentity {
 @Component({
   selector: 'app-display',
   templateUrl: './display.page.html',
-  styleUrls: ['./display.page.scss'],
+  styleUrls: ['./display.page.scss', './display-views.page.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, DatePipe],
