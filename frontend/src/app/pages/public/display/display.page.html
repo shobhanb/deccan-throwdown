@@ -228,7 +228,13 @@
               </p>
             </div>
             } @else {
-            <div class="display-table" role="table">
+            <div
+              class="display-table"
+              [class.has-score-detail]="
+                isTtmmView() || isStationsView() || isOverallView()
+              "
+              role="table"
+            >
               <div class="display-table-head" role="row">
                 <span role="columnheader">Rank</span>
                 <span role="columnheader">Team</span>
@@ -244,6 +250,9 @@
                 [class.rank-3]="row.rank === 3"
                 [class.is-pending]="row.status === 'pending'"
                 [class.is-awaiting]="row.status === 'awaiting'"
+                [class.has-score-detail]="
+                  isTtmmView() || isStationsView() || isOverallView()
+                "
               >
                 <div class="col-rank" role="cell">
                   @if (row.rank != null) {
@@ -272,14 +281,57 @@
                   {{ row.pointsLabel || '' }}
                 </div>
                 <div class="col-score" role="cell">
-                  <div class="score-primary">{{ row.scoreLabel }}</div>
+                  @if (!isTtmmView()) {
+                  <div
+                    class="score-primary"
+                    [class.score-detail-compact]="isOverallView()"
+                  >
+                    {{ row.scoreLabel }}
+                  </div>
+                  }
                   @if (isTtmmView() && row.status === 'verified') {
-                  <div class="detail-compact">
-                    @for (component of getTtmmComponents(row); track component.key) {
-                    <span class="detail-chip">
-                      {{ component.label }}: {{ component.totalReps
-                      }}@if (component.points) { · {{ component.points }}pts }
-                    </span>
+                  <div class="ttmm-detail">
+                    @for (
+                      component of getTtmmComponents(row);
+                      track component.key
+                    ) {
+                    <div
+                      class="ttmm-component"
+                      [class.incomplete]="!component.complete"
+                    >
+                      <span class="ttmm-component-label detail-summary">
+                        <strong>{{ component.label }}</strong>
+                        @if (!component.complete) {
+                        <span class="ttmm-muted"> · partial</span>
+                        }
+                      </span>
+                      <div class="ttmm-athletes">
+                        @for (
+                          athlete of component.athletes;
+                          track athlete.athleteId || athlete.label
+                        ) {
+                        <span class="ttmm-athlete detail-summary">
+                          {{ athlete.label }}:
+                          {{ athlete.reps }}
+                          @if (athlete.time) {
+                          <span class="ttmm-muted">@ {{ athlete.time }}</span>
+                          }
+                          @if (athlete.rank) {
+                          <span class="ttmm-muted"> · #{{ athlete.rank }}</span>
+                          }
+                          @if (athlete.points) {
+                          <span class="ttmm-muted">
+                            · {{ athlete.points }}pts</span
+                          >
+                          }
+                        </span>
+                        }
+                      </div>
+                    </div>
+                    } @empty {
+                    <p class="ttmm-muted detail-summary">
+                      No TTMM detail entered yet
+                    </p>
                     }
                   </div>
                   }

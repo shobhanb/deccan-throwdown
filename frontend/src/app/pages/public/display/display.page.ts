@@ -214,6 +214,15 @@ export class DisplayPage implements OnInit {
     return `WOD${next.view.wodNumber} Leaderboard`;
   });
 
+  isOverallView = computed(() => {
+    const slide = this.currentSlide();
+    return (
+      !!slide &&
+      slide.kind === 'standings' &&
+      slide.view.kind === 'overall'
+    );
+  });
+
   isTtmmView = computed(() => {
     const slide = this.currentSlide();
     if (!slide || slide.kind !== 'standings') {
