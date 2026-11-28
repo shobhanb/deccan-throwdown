@@ -11,6 +11,8 @@ import {
   hasAnyScoreData,
   isWodActive,
   isWodComplete,
+  sliceRowsForHalf,
+  standingsSlidesFor,
 } from './display-logic';
 
 function score(
@@ -163,6 +165,46 @@ describe('display-logic', () => {
     });
   });
 
+  describe('sliceRowsForHalf / standingsSlidesFor', () => {
+    it('puts the larger half on top when the count is odd', () => {
+      const rows = [1, 2, 3, 4, 5].map((rank) => ({
+        teamId: String(rank),
+        teamName: `T${rank}`,
+        athleteNames: [],
+        rank,
+        status: 'verified' as const,
+        scoreLabel: '',
+        pointsLabel: null,
+        score: null,
+      }));
+      expect(sliceRowsForHalf(rows, 'top').map((r) => r.rank)).toEqual([
+        1, 2, 3,
+      ]);
+      expect(sliceRowsForHalf(rows, 'bottom').map((r) => r.rank)).toEqual([
+        4, 5,
+      ]);
+    });
+
+    it('emits top and bottom slides when a category has multiple teams', () => {
+      expect(
+        standingsSlidesFor('Open', { kind: 'overall' }, [openA, openB])
+      ).toEqual([
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+          half: 'top',
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+          half: 'bottom',
+        },
+      ]);
+    });
+  });
+
   describe('buildIdleSlides / buildLiveSlides', () => {
     it('builds overall then complete WODs only for categories with data', () => {
       const slides = buildIdleSlides(['Open', 'Scaled'], [1, 2], [openA, openB]);
@@ -171,11 +213,25 @@ describe('display-logic', () => {
           kind: 'standings',
           category: 'Open',
           view: { kind: 'overall' },
+          half: 'top',
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+          half: 'bottom',
         },
         {
           kind: 'standings',
           category: 'Open',
           view: { kind: 'wod', wodNumber: 1 },
+          half: 'top',
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'wod', wodNumber: 1 },
+          half: 'bottom',
         },
       ]);
     });
@@ -237,11 +293,25 @@ describe('display-logic', () => {
           kind: 'standings',
           category: 'Open',
           view: { kind: 'wod', wodNumber: 1 },
+          half: 'top',
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'wod', wodNumber: 1 },
+          half: 'bottom',
         },
         {
           kind: 'standings',
           category: 'Open',
           view: { kind: 'overall' },
+          half: 'top',
+        },
+        {
+          kind: 'standings',
+          category: 'Open',
+          view: { kind: 'overall' },
+          half: 'bottom',
         },
       ]);
     });
@@ -311,7 +381,10 @@ describe('display-logic', () => {
         groupSize: 2,
         random: () => 0.999,
       });
+      // WOD 1 has only one verified score → single half; overall has 2 teams.
       expect(slides.map((s) => s.kind)).toEqual([
+        'gallery',
+        'standings',
         'gallery',
         'standings',
         'gallery',
@@ -321,11 +394,19 @@ describe('display-logic', () => {
         kind: 'standings',
         category: 'Open',
         view: { kind: 'wod', wodNumber: 1 },
+        half: 'top',
       });
       expect(slides[3]).toEqual({
         kind: 'standings',
         category: 'Open',
         view: { kind: 'overall' },
+        half: 'top',
+      });
+      expect(slides[5]).toEqual({
+        kind: 'standings',
+        category: 'Open',
+        view: { kind: 'overall' },
+        half: 'bottom',
       });
     });
   });

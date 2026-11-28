@@ -4,7 +4,6 @@ import {
   normalizeHeatsDisplayConfig,
   normalizeHeatsPayload,
   resolveHeatsKey,
-  splitHeatsColumns,
 } from './heats-logic';
 import { HeatsDisplayConfig, HeatsPayload } from './heats-types';
 
@@ -15,7 +14,10 @@ function samplePayload(): HeatsPayload {
         wodNumber: 1,
         wodLabel: 'WOD1',
         division: 'Scaled',
-        heats: [{ entries: [{ teamName: 'S1', judge: 'J1' }] }],
+        heats: [
+          { entries: [{ teamName: 'S1', judge: 'J1' }] },
+          { entries: [{ teamName: 'S2', judge: 'J1b' }] },
+        ],
       },
       {
         wodNumber: 1,
@@ -119,20 +121,28 @@ describe('heats-logic', () => {
   });
 
   describe('buildHeatsSlides', () => {
-    it('only includes enabled heats keys and numbers heats by order', () => {
+    it('emits one slide per heat with numbering by division order', () => {
       const slides = buildHeatsSlides(
         samplePayload(),
         display({ heatsWod1: true, heatsWod4Rope: true })
       );
-      expect(slides.map((s) => s.heatsKey)).toEqual(['1', '4-rope']);
-      expect(slides[0].sections.map((s) => s.division)).toEqual([
-        'Scaled',
-        'Open',
+      expect(
+        slides.map((s) => ({
+          key: s.heatsKey,
+          division: s.sections[0]?.division,
+          heat: s.heatNumber,
+        }))
+      ).toEqual([
+        { key: '1', division: 'Scaled', heat: 1 },
+        { key: '1', division: 'Scaled', heat: 2 },
+        { key: '1', division: 'Open', heat: 1 },
+        { key: '4-rope', division: 'Open', heat: 1 },
       ]);
-      expect(slides[0].sections[0].heats[0].heatNumber).toBe(1);
+      expect(slides[0].sections[0].heats).toHaveSize(1);
+      expect(slides[0].sections[0].heats[0].entries[0].teamName).toBe('S1');
     });
 
-    it('splits TTMM heats into one slide per division', () => {
+    it('splits TTMM divisions into separate heat slides', () => {
       const slides = buildHeatsSlides(
         {
           blocks: [
@@ -161,20 +171,11 @@ describe('heats-logic', () => {
         'T-T-M-M Single-Unders',
         'T-T-M-M Double-Unders',
       ]);
+      expect(slides.map((s) => s.heatNumber)).toEqual([1, 1]);
     });
 
     it('returns nothing when heats flags are off', () => {
       expect(buildHeatsSlides(samplePayload(), display())).toEqual([]);
-    });
-  });
-
-  describe('splitHeatsColumns', () => {
-    it('puts the first half on the left and the rest on the right', () => {
-      expect(splitHeatsColumns([1, 2, 3])).toEqual([[1, 2], [3]]);
-      expect(splitHeatsColumns([1, 2, 3, 4])).toEqual([
-        [1, 2],
-        [3, 4],
-      ]);
     });
   });
 

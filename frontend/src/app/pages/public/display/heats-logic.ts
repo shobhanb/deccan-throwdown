@@ -15,14 +15,15 @@ export type HeatsSlideSection = {
 };
 
 /**
- * One slide = one heats key.
- * WOD 4 (TTMM) stations are split one division per slide to avoid overflow.
+ * One slide = one heat (one division + one heat number).
+ * Keeps type large enough to read from the floor.
  */
 export type HeatsSlideRef = {
   kind: 'heats';
   wodNumber: number;
   wodLabel: string;
   heatsKey: HeatsKey;
+  heatNumber: number;
   sections: HeatsSlideSection[];
 };
 
@@ -307,24 +308,7 @@ export function isTtmmHeatsKey(key: HeatsKey): boolean {
   return key.startsWith('4');
 }
 
-/** Split heats into left / right columns (first half, second half). */
-export function splitHeatsColumns<T>(heats: T[]): [T[], T[]] {
-  if (heats.length <= 1) {
-    return [heats, []];
-  }
-  const mid = Math.ceil(heats.length / 2);
-  return [heats.slice(0, mid), heats.slice(mid)];
-}
-
-function sectionFromBlock(block: HeatsBlock): HeatsSlideSection {
-  return {
-    division: block.division,
-    wodLabel: block.wodLabel,
-    heats: heatsWithNumbers(block.heats),
-  };
-}
-
-/** Build heats slides for explicitly enabled heats keys only. */
+/** Build heats slides for explicitly enabled heats keys only — one heat per slide. */
 export function buildHeatsSlides(
   payload: HeatsPayload | null | undefined,
   display?: Partial<HeatsDisplayConfig> | null
@@ -342,27 +326,29 @@ export function buildHeatsSlides(
       continue;
     }
 
-    // TTMM stations put Open + Scaled on separate pages (too tall together).
-    if (isTtmmHeatsKey(key) && matched.length > 1) {
-      for (const block of matched) {
+    for (const block of matched) {
+      const numbered = heatsWithNumbers(block.heats);
+      if (numbered.length === 0) {
+        continue;
+      }
+      const wodLabel = block.wodLabel || primaryWodLabel([block]);
+      for (const heat of numbered) {
         slides.push({
           kind: 'heats',
           wodNumber: wodNumberForHeatsKey(key),
-          wodLabel: block.wodLabel || primaryWodLabel([block]),
+          wodLabel,
           heatsKey: key,
-          sections: [sectionFromBlock(block)],
+          heatNumber: heat.heatNumber,
+          sections: [
+            {
+              division: block.division,
+              wodLabel: block.wodLabel,
+              heats: [heat],
+            },
+          ],
         });
       }
-      continue;
     }
-
-    slides.push({
-      kind: 'heats',
-      wodNumber: wodNumberForHeatsKey(key),
-      wodLabel: primaryWodLabel(matched),
-      heatsKey: key,
-      sections: matched.map(sectionFromBlock),
-    });
   }
 
   return slides;

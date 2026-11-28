@@ -41,14 +41,10 @@ import {
 } from './display-logic';
 import {
   defaultHeatsDisplayConfig,
-  isTtmmHeatsKey,
   normalizeHeatsDisplayConfig,
-  splitHeatsColumns,
 } from './heats-logic';
 import {
   HeatsDisplayConfig,
-  HeatsHeatView,
-  HeatsKey,
   HeatsPayload,
 } from './heats-types';
 
@@ -206,7 +202,12 @@ export class DisplayPage implements OnInit {
       return `WOD${next.wodNumber} description`;
     }
     if (next.kind === 'heats') {
-      return `WOD${next.wodNumber} heats`;
+      const division = next.sections[0]?.division;
+      const heatLabel = `Heat ${next.heatNumber}`;
+      if (division) {
+        return `WOD${next.wodNumber} ${division} ${heatLabel}`;
+      }
+      return `WOD${next.wodNumber} ${heatLabel}`;
     }
     if (next.view.kind === 'overall') {
       return 'Overall Leaderboard';
@@ -322,15 +323,6 @@ export class DisplayPage implements OnInit {
       slide.category,
       nameById
     );
-  }
-
-  isTtmmHeatsSlide(heatsKey: HeatsKey): boolean {
-    return isTtmmHeatsKey(heatsKey);
-  }
-
-  heatsColumns(heats: HeatsHeatView[]): HeatsHeatView[][] {
-    const [left, right] = splitHeatsColumns(heats);
-    return right.length > 0 ? [left, right] : [left];
   }
 
   getStationSummary(row: DisplayRow): string[] {
@@ -460,14 +452,11 @@ export class DisplayPage implements OnInit {
       };
     }
     if (slide.kind === 'heats') {
-      const divisions = [
-        ...new Set(
-          slide.sections.map((section) => section.division).filter(Boolean)
-        ),
-      ];
+      const division = slide.sections[0]?.division ?? null;
+      const heatTitle = `Heat ${slide.heatNumber}`;
       return {
         kind: 'Heats',
-        category: divisions.length === 1 ? divisions[0] : null,
+        category: division ? `${division} · ${heatTitle}` : heatTitle,
         title: `WOD ${slide.wodNumber} — ${slide.wodLabel}`,
       };
     }

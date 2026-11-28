@@ -13,8 +13,15 @@ export type StandingsView =
   | { kind: 'overall' }
   | { kind: 'wod'; wodNumber: number };
 
+export type StandingsHalf = 'top' | 'bottom';
+
 export type DisplaySlide =
-  | { kind: 'standings'; category: string; view: StandingsView }
+  | {
+      kind: 'standings';
+      category: string;
+      view: StandingsView;
+      half: StandingsHalf;
+    }
   | { kind: 'gallery'; images: string[] }
   | { kind: 'wodInfo'; wodNumber: number }
   | HeatsSlideRef;
@@ -177,6 +184,40 @@ export function wodsWithVerifiedLeaderboards(
   ];
 }
 
+/** One or two standings slides (top / bottom half) for a category + view. */
+export function standingsSlidesFor(
+  category: string,
+  view: StandingsView,
+  teams: apiTeamsOutputDetailModel[]
+): DisplaySlide[] {
+  const rows =
+    view.kind === 'overall'
+      ? buildIdleOverallRows(teams, category)
+      : buildIdleWodRows(teams, category, view.wodNumber);
+  if (rows.length === 0) {
+    return [];
+  }
+  if (rows.length === 1) {
+    return [{ kind: 'standings', category, view, half: 'top' }];
+  }
+  return [
+    { kind: 'standings', category, view, half: 'top' },
+    { kind: 'standings', category, view, half: 'bottom' },
+  ];
+}
+
+/** Split ranked rows into top / bottom halves (ceil to the top). */
+export function sliceRowsForHalf(
+  rows: DisplayRow[],
+  half: StandingsHalf
+): DisplayRow[] {
+  if (rows.length <= 1) {
+    return half === 'top' ? rows : [];
+  }
+  const mid = Math.ceil(rows.length / 2);
+  return half === 'top' ? rows.slice(0, mid) : rows.slice(mid);
+}
+
 /**
  * Idle slides: per category Overall, then each WOD with verified scores.
  * Skips category/view pairs with no verified data.
@@ -190,19 +231,19 @@ export function buildIdleSlides(
   const slides: DisplaySlide[] = [];
   for (const category of categories) {
     if (categoryHasOverallData(category, teams)) {
-      slides.push({
-        kind: 'standings',
-        category,
-        view: { kind: 'overall' },
-      });
+      slides.push(
+        ...standingsSlidesFor(category, { kind: 'overall' }, teams)
+      );
     }
     for (const wodNumber of leaderboardWods) {
       if (categoryHasVerifiedWodData(category, wodNumber, teams)) {
-        slides.push({
-          kind: 'standings',
-          category,
-          view: { kind: 'wod', wodNumber },
-        });
+        slides.push(
+          ...standingsSlidesFor(
+            category,
+            { kind: 'wod', wodNumber },
+            teams
+          )
+        );
       }
     }
   }
@@ -244,19 +285,19 @@ export function buildLiveSlides(
   for (const category of categories) {
     for (const wodNumber of leaderboardWods) {
       if (categoryHasVerifiedWodData(category, wodNumber, teams)) {
-        slides.push({
-          kind: 'standings',
-          category,
-          view: { kind: 'wod', wodNumber },
-        });
+        slides.push(
+          ...standingsSlidesFor(
+            category,
+            { kind: 'wod', wodNumber },
+            teams
+          )
+        );
       }
     }
     if (categoryHasOverallData(category, teams)) {
-      slides.push({
-        kind: 'standings',
-        category,
-        view: { kind: 'overall' },
-      });
+      slides.push(
+        ...standingsSlidesFor(category, { kind: 'overall' }, teams)
+      );
     }
   }
 
@@ -435,14 +476,18 @@ export function buildIdleOverallRows(
     .filter((team) => team.category === category)
     .map((team) => {
       const points = totalVerifiedPoints(team);
-      const wodBreakdown = team.scores
+      const wodParts = team.scores
         .filter((score) => score.verified)
         .sort((a, b) => a.wod_number - b.wod_number)
         .map(
           (score) =>
-            `W${score.wod_number} #${score.wod_rank ?? '—'} (${score.wod_points ?? 0})`
-        )
-        .join(' · ');
+            `WOD${score.wod_number} #${score.wod_rank ?? '—'} (${score.wod_points ?? 0})`
+        );
+      const wodLines: string[] = [];
+      for (let i = 0; i < wodParts.length; i += 3) {
+        wodLines.push(wodParts.slice(i, i + 3).join(' · '));
+      }
+      const wodBreakdown = wodLines.join('\n');
       return {
         teamId: team.id,
         teamName: team.team_name,
@@ -493,13 +538,15 @@ export function buildRowsForSlide(
   if (slide.kind !== 'standings') {
     return [];
   }
+  let rows: DisplayRow[];
   if (live && slide.view.kind === 'wod') {
-    return buildLiveRows(teams, slide.category, slide.view.wodNumber);
+    rows = buildLiveRows(teams, slide.category, slide.view.wodNumber);
+  } else if (slide.view.kind === 'overall') {
+    rows = buildIdleOverallRows(teams, slide.category);
+  } else {
+    rows = buildIdleWodRows(teams, slide.category, slide.view.wodNumber);
   }
-  if (slide.view.kind === 'overall') {
-    return buildIdleOverallRows(teams, slide.category);
-  }
-  return buildIdleWodRows(teams, slide.category, slide.view.wodNumber);
+  return sliceRowsForHalf(rows, slide.half);
 }
 
 export interface FlagDrivenSlidesOptions {
@@ -564,19 +611,19 @@ export function buildFlagDrivenSlides(
   for (const category of categories) {
     for (const [wodNumber, enabled] of leaderboardWods) {
       if (enabled && categoryHasVerifiedWodData(category, wodNumber, teams)) {
-        slides.push({
-          kind: 'standings',
-          category,
-          view: { kind: 'wod', wodNumber },
-        });
+        slides.push(
+          ...standingsSlidesFor(
+            category,
+            { kind: 'wod', wodNumber },
+            teams
+          )
+        );
       }
     }
     if (config.leaderboardOverall && categoryHasOverallData(category, teams)) {
-      slides.push({
-        kind: 'standings',
-        category,
-        view: { kind: 'overall' },
-      });
+      slides.push(
+        ...standingsSlidesFor(category, { kind: 'overall' }, teams)
+      );
     }
   }
 
