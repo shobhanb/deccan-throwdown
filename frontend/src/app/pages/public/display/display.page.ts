@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe, isPlatformBrowser } from '@angular/common';
@@ -79,6 +82,9 @@ export class DisplayPage implements OnInit {
   private readonly eventShortName = defaultConfig;
   private readonly config = appConfig[this.eventShortName];
   private rotateTimer: ReturnType<typeof setInterval> | null = null;
+  private boardScrollEl = viewChild<ElementRef<HTMLElement>>('boardScroll');
+  private autoScrollRaf: number | null = null;
+  private autoScrollTimers: ReturnType<typeof setTimeout>[] = [];
 
   eventName = this.config?.eventName ?? 'Deccan Throwdown';
   leaderboardEnabled = this.config?.leaderboardEnabled ?? false;
@@ -261,6 +267,22 @@ export class DisplayPage implements OnInit {
     this.destroyRef.onDestroy(() => {
       this.displayChrome.fullscreen.set(false);
       this.clearRotateTimer();
+      this.clearBoardAutoScroll();
+    });
+
+    effect(() => {
+      const key = this.slideKey();
+      const durationMs = this.rotateMs();
+      const slide = this.currentSlide();
+      void key;
+      if (!isPlatformBrowser(this.platformId)) {
+        return;
+      }
+      this.clearBoardAutoScroll();
+      // Wait for the new slide DOM to paint before measuring overflow.
+      this.autoScrollTimers.push(
+        setTimeout(() => this.startBoardAutoScroll(durationMs, slide), 80)
+      );
     });
   }
 
@@ -306,6 +328,71 @@ export class DisplayPage implements OnInit {
       clearInterval(this.rotateTimer);
       this.rotateTimer = null;
     }
+  }
+
+  private clearBoardAutoScroll(): void {
+    if (this.autoScrollRaf != null) {
+      cancelAnimationFrame(this.autoScrollRaf);
+      this.autoScrollRaf = null;
+    }
+    for (const timer of this.autoScrollTimers) {
+      clearTimeout(timer);
+    }
+    this.autoScrollTimers = [];
+  }
+
+  /**
+   * When board content is taller than the viewport, slowly scroll top → bottom
+   * (and loop) for the duration of the slide. No-op when nothing overflows.
+   */
+  private startBoardAutoScroll(
+    rotateMs: number,
+    slide: DisplaySlide | null
+  ): void {
+    this.clearBoardAutoScroll();
+    const el = this.boardScrollEl()?.nativeElement;
+    if (!el || !slide || slide.kind === 'gallery') {
+      if (el) {
+        el.scrollTop = 0;
+      }
+      return;
+    }
+
+    el.scrollTop = 0;
+    const overflow = el.scrollHeight - el.clientHeight;
+    if (overflow <= 4) {
+      return;
+    }
+
+    const holdMs = Math.min(1800, Math.max(800, rotateMs * 0.12));
+    const scrollMs = Math.max(2500, rotateMs - holdMs * 2);
+
+    const runPass = () => {
+      const start = performance.now();
+      const from = 0;
+      const to = overflow;
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / scrollMs);
+        const eased =
+          t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        el.scrollTop = from + (to - from) * eased;
+        if (t < 1) {
+          this.autoScrollRaf = requestAnimationFrame(step);
+          return;
+        }
+        this.autoScrollRaf = null;
+        // Pause at bottom, jump to top, pause, then loop while this slide is up.
+        this.autoScrollTimers.push(
+          setTimeout(() => {
+            el.scrollTop = 0;
+            this.autoScrollTimers.push(setTimeout(runPass, holdMs));
+          }, holdMs)
+        );
+      };
+      this.autoScrollRaf = requestAnimationFrame(step);
+    };
+
+    this.autoScrollTimers.push(setTimeout(runPass, holdMs));
   }
 
   getTtmmComponents(row: DisplayRow): TtmmScoreboardComponentView[] {

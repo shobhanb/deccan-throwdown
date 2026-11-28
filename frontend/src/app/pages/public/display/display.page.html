@@ -87,7 +87,11 @@
     </div>
     }
 
-    <div class="display-board" [attr.data-slide]="slideKey()">
+    <div
+      #boardScroll
+      class="display-board"
+      [attr.data-slide]="slideKey()"
+    >
       @if (currentSlide(); as slide) {
         @switch (slide.kind) {
           @case ('gallery') {
